@@ -3,6 +3,7 @@ import { AppState, Semester } from '../types';
 import { TABS } from '../data/defaultData';
 import { AKL_SUBJECTS_CATALOG } from '../curriculumAkl';
 import { downloadAllDocsWord, downloadDocForTab } from '../utils/docExport';
+import { KopEditor } from './KopEditor';
 
 interface BerandaTabProps {
   state: AppState;
@@ -189,6 +190,12 @@ export const BerandaTab: React.FC<BerandaTabProps> = ({
           </div>
         </div>
       )}
+
+      <KopEditor
+        state={state}
+        onChangeProfile={onChangeProfile}
+        showToast={showToast}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-6 items-start">
         {/* Data Induk */}

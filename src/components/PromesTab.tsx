@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppState, Semester } from '../types';
 import { DocHeader } from './DocHeader';
+import { docKop } from '../utils/docExport';
 
 interface PromesTabProps {
   state: AppState;
@@ -10,6 +11,8 @@ interface PromesTabProps {
   onAutoSebar: (sem: Semester) => void;
   onClearPromes: (sem: Semester) => void;
   onToggleCell: (tpId: string, cellKey: string) => void;
+  onChangeProfile?: (key: string, val: any) => void;
+  showToast?: (msg: string) => void;
 }
 
 export const PromesTab: React.FC<PromesTabProps> = ({
@@ -19,7 +22,9 @@ export const PromesTab: React.FC<PromesTabProps> = ({
   onSemSelect,
   onAutoSebar,
   onClearPromes,
-  onToggleCell
+  onToggleCell,
+  onChangeProfile,
+  showToast
 }) => {
   const p = state.profil;
   const sem = state.ui.sem;
@@ -84,6 +89,8 @@ export const PromesTab: React.FC<PromesTabProps> = ({
           onCopy={onCopyDoc}
           noToggle
           state={state}
+          onChangeProfile={onChangeProfile}
+          showToast={showToast}
           extra={
             <div className="inline-flex border border-slate-300 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-900 shadow-xs">
               <button
@@ -167,6 +174,7 @@ export const PromesTab: React.FC<PromesTabProps> = ({
 
         <div className="docwrap">
           <article className="doc-paper wide font-serif">
+            <div dangerouslySetInnerHTML={{ __html: docKop(state) }} />
             <h2>PROGRAM SEMESTER {sem}</h2>
             <p className="sub">
               Semester {sem === 1 ? 'Ganjil' : 'Genap'} Tahun Pelajaran {dots(p.ta)}
@@ -345,6 +353,8 @@ export const PromesTab: React.FC<PromesTabProps> = ({
         onCopy={onCopyDoc}
         noToggle
         state={state}
+        onChangeProfile={onChangeProfile}
+        showToast={showToast}
       />
       {renderDoc()}
     </div>

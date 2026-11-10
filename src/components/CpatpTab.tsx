@@ -547,6 +547,7 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
         onToggleView={onToggleView}
         onCopy={onCopyDoc}
         state={state}
+        onChangeProfile={onChangeProfile}
         showToast={showToast}
       />
       {isDocView ? renderDoc() : renderEdit()}

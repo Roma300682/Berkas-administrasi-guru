@@ -14,6 +14,8 @@ interface ModulTabProps {
   onToggleDimensi: (unitId: string, dim: string) => void;
   onGenModul: (unitId: string) => void;
   onTabSelect: (tabId: string) => void;
+  onChangeProfile?: (key: string, val: any) => void;
+  showToast?: (msg: string) => void;
 }
 
 export const ModulTab: React.FC<ModulTabProps> = ({
@@ -25,7 +27,9 @@ export const ModulTab: React.FC<ModulTabProps> = ({
   onChangeModul,
   onToggleDimensi,
   onGenModul,
-  onTabSelect
+  onTabSelect,
+  onChangeProfile,
+  showToast
 }) => {
   const p = state.profil;
   const dots = (s?: string) => (s ? s : '…………………');
@@ -40,6 +44,9 @@ export const ModulTab: React.FC<ModulTabProps> = ({
           isDocView={isDocView}
           onToggleView={onToggleView}
           onCopy={onCopyDoc}
+          state={state}
+          onChangeProfile={onChangeProfile}
+          showToast={showToast}
         />
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-12 text-center flex flex-col items-center gap-4">
           <p className="text-slate-600 dark:text-slate-400 m-0">
@@ -227,6 +234,8 @@ export const ModulTab: React.FC<ModulTabProps> = ({
         onToggleView={onToggleView}
         onCopy={onCopyDoc}
         state={state}
+        onChangeProfile={onChangeProfile}
+        showToast={showToast}
       />
       {isDocView ? renderDoc() : renderEdit()}
     </div>

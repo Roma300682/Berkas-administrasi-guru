@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AppState } from '../types';
 import {
   downloadDocForTab,
@@ -6,6 +6,7 @@ import {
   downloadAllLkpdWord,
   triggerDocDownload,
 } from '../utils/docExport';
+import { KopEditor } from './KopEditor';
 
 interface DocHeaderProps {
   title: string;
@@ -17,6 +18,7 @@ interface DocHeaderProps {
   noToggle?: boolean;
   extra?: React.ReactNode;
   state?: AppState;
+  onChangeProfile?: (key: string, val: any) => void;
   showToast?: (msg: string) => void;
 }
 
@@ -30,8 +32,11 @@ export const DocHeader: React.FC<DocHeaderProps> = ({
   noToggle,
   extra,
   state,
+  onChangeProfile,
   showToast,
 }) => {
+  const [showKopEditor, setShowKopEditor] = useState(false);
+
   const handleDownloadWord = () => {
     if (state) {
       const filename = downloadDocForTab(state, tab);
@@ -39,7 +44,6 @@ export const DocHeader: React.FC<DocHeaderProps> = ({
       return;
     }
 
-    // Fallback DOM extraction if state is not passed
     const docEl =
       document.querySelector('article.doc-paper') ||
       document.querySelector('article.font-serif');
@@ -133,6 +137,21 @@ export const DocHeader: React.FC<DocHeaderProps> = ({
           </button>
         )}
 
+        {state && onChangeProfile && (
+          <button
+            type="button"
+            onClick={() => setShowKopEditor(prev => !prev)}
+            className={`px-3.5 py-1.5 rounded-lg text-xs lg:text-sm font-medium transition-colors border flex items-center gap-1.5 cursor-pointer ${
+              showKopEditor
+                ? 'bg-amber-600 text-white border-amber-600'
+                : 'bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-700'
+            }`}
+          >
+            <span>🏫</span>
+            <span>{showKopEditor ? 'Tutup Pengaturan Kop' : 'Edit Kop & Logo Sekolah'}</span>
+          </button>
+        )}
+
         {(isDocView || noToggle) && (
           <>
             <button
@@ -156,6 +175,15 @@ export const DocHeader: React.FC<DocHeaderProps> = ({
 
         {extra}
       </div>
+
+      {showKopEditor && state && onChangeProfile && (
+        <KopEditor
+          state={state}
+          onChangeProfile={onChangeProfile}
+          showToast={showToast}
+          compact
+        />
+      )}
     </div>
   );
 };

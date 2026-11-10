@@ -27,6 +27,12 @@ export default function App() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && parsed.profil && parsed.bulan && parsed.tp && parsed.unit) {
+          const defProf = blankState().profil;
+          parsed.profil = {
+            ...defProf,
+            ...parsed.profil,
+            sekolah: parsed.profil.sekolah || defProf.sekolah,
+          };
           return parsed;
         }
       }
@@ -625,6 +631,8 @@ export default function App() {
             onToggleWeekOff={handleToggleWeekOff}
             onAddMonth={handleAddMonth}
             onDeleteMonth={handleDeleteMonth}
+            onChangeProfile={handleChangeProfile}
+            showToast={showToast}
           />
         );
       case 'cpatp':
@@ -656,6 +664,8 @@ export default function App() {
             state={state}
             onCopyDoc={handleCopyDoc}
             onTabSelect={handleTabSelect}
+            onChangeProfile={handleChangeProfile}
+            showToast={showToast}
           />
         );
       case 'promes':
@@ -668,6 +678,8 @@ export default function App() {
             onAutoSebar={handleAutoSebar}
             onClearPromes={handleClearPromes}
             onToggleCell={handleToggleCell}
+            onChangeProfile={handleChangeProfile}
+            showToast={showToast}
           />
         );
       case 'kktp':
@@ -682,6 +694,7 @@ export default function App() {
             onGenKktp={handleGenKktp}
             onGenAllKktp={handleGenAllKktp}
             onTabSelect={handleTabSelect}
+            showToast={showToast}
           />
         );
       case 'modul':
@@ -696,6 +709,8 @@ export default function App() {
             onToggleDimensi={handleToggleDimensi}
             onGenModul={handleGenModul}
             onTabSelect={handleTabSelect}
+            onChangeProfile={handleChangeProfile}
+            showToast={showToast}
           />
         );
       case 'lkpd':
@@ -709,6 +724,8 @@ export default function App() {
             onChangeLkpd={handleChangeLkpd}
             onGenLkpd={handleGenLkpd}
             onTabSelect={handleTabSelect}
+            onChangeProfile={handleChangeProfile}
+            showToast={showToast}
           />
         );
       default:

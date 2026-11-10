@@ -12,6 +12,8 @@ interface WaktuTabProps {
   onToggleWeekOff: (monthId: string, weekIdx: number) => void;
   onAddMonth: (sem: Semester) => void;
   onDeleteMonth: (id: string) => void;
+  onChangeProfile?: (key: string, val: any) => void;
+  showToast?: (msg: string) => void;
 }
 
 export const WaktuTab: React.FC<WaktuTabProps> = ({
@@ -22,7 +24,9 @@ export const WaktuTab: React.FC<WaktuTabProps> = ({
   onChangeMonth,
   onToggleWeekOff,
   onAddMonth,
-  onDeleteMonth
+  onDeleteMonth,
+  onChangeProfile,
+  showToast
 }) => {
   const p = state.profil;
   const jp = Number(p.jp) || 0;
@@ -178,6 +182,8 @@ export const WaktuTab: React.FC<WaktuTabProps> = ({
         onToggleView={onToggleView}
         onCopy={onCopyDoc}
         state={state}
+        onChangeProfile={onChangeProfile}
+        showToast={showToast}
       />
       {isDocView ? renderDoc() : renderEdit()}
     </div>

@@ -17,6 +17,15 @@ export interface Profile {
   b1: number;
   b2: number;
   b3: number;
+  pakaiKop?: boolean;
+  kopBaris1?: string;
+  kopBaris2?: string;
+  kopBidang?: string;
+  kopAlamat?: string;
+  kopKontak?: string;
+  logoKiri?: string;
+  logoKanan?: string;
+  ukuranLogo?: number;
 }
 
 export interface MonthItem {

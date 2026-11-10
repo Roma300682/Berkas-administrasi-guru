@@ -7,9 +7,17 @@ interface ProtaTabProps {
   state: AppState;
   onCopyDoc: () => void;
   onTabSelect: (tabId: string) => void;
+  onChangeProfile?: (key: string, val: any) => void;
+  showToast?: (msg: string) => void;
 }
 
-export const ProtaTab: React.FC<ProtaTabProps> = ({ state, onCopyDoc, onTabSelect }) => {
+export const ProtaTab: React.FC<ProtaTabProps> = ({
+  state,
+  onCopyDoc,
+  onTabSelect,
+  onChangeProfile,
+  showToast
+}) => {
   const p = state.profil;
   const jp = Number(p.jp) || 0;
 
@@ -36,6 +44,8 @@ export const ProtaTab: React.FC<ProtaTabProps> = ({ state, onCopyDoc, onTabSelec
           onCopy={onCopyDoc}
           noToggle
           state={state}
+          onChangeProfile={onChangeProfile}
+          showToast={showToast}
         />
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-12 text-center flex flex-col items-center gap-4">
           <p className="text-slate-600 dark:text-slate-400 m-0 max-w-lg">
@@ -63,6 +73,8 @@ export const ProtaTab: React.FC<ProtaTabProps> = ({ state, onCopyDoc, onTabSelec
         onCopy={onCopyDoc}
         noToggle
         state={state}
+        onChangeProfile={onChangeProfile}
+        showToast={showToast}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 no-print">

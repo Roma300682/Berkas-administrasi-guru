@@ -63,6 +63,54 @@ function jpTotal(state: AppState, sem: Semester): number {
     .reduce((acc, t) => acc + (Number(t.jp) || 0), 0);
 }
 
+export function docKop(state: AppState): string {
+  const p = state.profil;
+  if (p.pakaiKop === false) return '';
+
+  const size = Math.max(40, Math.min(120, Number(p.ukuranLogo) || 72));
+  const hasLeft = Boolean(p.logoKiri);
+  const hasRight = Boolean(p.logoKanan);
+  const baris1 = p.kopBaris1 ?? 'PEMERINTAH PROVINSI DAERAH KHUSUS';
+  const baris2 = p.kopBaris2 ?? 'DINAS PENDIDIKAN';
+  const sekolah = p.sekolah || 'NAMA SATUAN PENDIDIKAN / SEKOLAH';
+  const bidang = p.kopBidang ?? '';
+  const alamat = p.kopAlamat ?? '';
+  const kontak = p.kopKontak ?? '';
+
+  const leftCell = hasLeft
+    ? `<td style="width:${size + 16}px;vertical-align:middle;text-align:center;border:none;padding:0 8pt 6pt 0">
+         <img src="${p.logoKiri}" width="${size}" height="${size}" style="width:${size}px;height:${size}px;object-fit:contain;display:inline-block" alt="Logo Kiri" />
+       </td>`
+    : hasRight
+    ? `<td style="width:${size + 16}px;border:none;padding:0"></td>`
+    : '';
+
+  const rightCell = hasRight
+    ? `<td style="width:${size + 16}px;vertical-align:middle;text-align:center;border:none;padding:0 0 6pt 8pt">
+         <img src="${p.logoKanan}" width="${size}" height="${size}" style="width:${size}px;height:${size}px;object-fit:contain;display:inline-block" alt="Logo Kanan" />
+       </td>`
+    : hasLeft
+    ? `<td style="width:${size + 16}px;border:none;padding:0"></td>`
+    : '';
+
+  return `<table class="kop-table" style="width:100%;border-collapse:collapse;border:none;border-bottom:3pt double #111111;margin:0 0 12pt 0;padding-bottom:6pt">
+    <tbody>
+      <tr>
+        ${leftCell}
+        <td style="vertical-align:middle;text-align:center;border:none;padding:0 4pt 6pt 4pt;line-height:1.25">
+          ${baris1 ? `<div style="font-size:11pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.03em;margin:0">${esc(baris1)}</div>` : ''}
+          ${baris2 ? `<div style="font-size:11.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.03em;margin:1pt 0">${esc(baris2)}</div>` : ''}
+          <div style="font-size:14pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.04em;margin:2pt 0;color:#000000">${esc(sekolah)}</div>
+          ${bidang ? `<div style="font-size:9.5pt;font-weight:bold;text-transform:uppercase;margin:1pt 0;color:#111111">${esc(bidang)}</div>` : ''}
+          ${alamat ? `<div style="font-size:9pt;margin:1pt 0;color:#222222">${esc(alamat)}</div>` : ''}
+          ${kontak ? `<div style="font-size:8.5pt;font-style:italic;margin:1pt 0 0;color:#333333">${esc(kontak)}</div>` : ''}
+        </td>
+        ${rightCell}
+      </tr>
+    </tbody>
+  </table>`;
+}
+
 function docIdent(state: AppState, extra?: [string, string][]): string {
   const p = state.profil;
   const rows: [string, string][] = [
@@ -187,6 +235,7 @@ export function generateWaktuHtml(state: AppState): string {
     .join('');
 
   return `<div class="doc-section">
+    ${docKop(state)}
     <h2 style="text-align:center;font-size:13pt;margin:0 0 2pt;text-transform:uppercase;letter-spacing:0.04em">ANALISIS ALOKASI WAKTU</h2>
     <p class="sub" style="text-align:center;font-size:11pt;margin:0 0 12pt;color:#444444">Tahun Pelajaran ${dots(p.ta)}</p>
     ${docIdent(state, [['Alokasi per Minggu', `${jp} JP`]])}
@@ -259,6 +308,7 @@ export function generateCpatpHtml(state: AppState): string {
     .join('');
 
   return `<div class="doc-section">
+    ${docKop(state)}
     <h2 style="text-align:center;font-size:13pt;margin:0 0 2pt;text-transform:uppercase;letter-spacing:0.04em">CAPAIAN PEMBELAJARAN DAN ALUR TUJUAN PEMBELAJARAN</h2>
     <p class="sub" style="text-align:center;font-size:11pt;margin:0 0 12pt;color:#444444">Tahun Pelajaran ${dots(p.ta)}</p>
     ${docIdent(state, [['Alokasi per Minggu', `${Number(p.jp) || 4} JP`]])}
@@ -325,6 +375,7 @@ export function generateProtaHtml(state: AppState): string {
     .join('');
 
   return `<div class="doc-section">
+    ${docKop(state)}
     <h2 style="text-align:center;font-size:13pt;margin:0 0 2pt;text-transform:uppercase;letter-spacing:0.04em">PROGRAM TAHUNAN</h2>
     <p class="sub" style="text-align:center;font-size:11pt;margin:0 0 12pt;color:#444444">Tahun Pelajaran ${dots(p.ta)}</p>
     ${docIdent(state, [['Alokasi per Minggu', `${Number(p.jp) || 4} JP`]])}
@@ -422,6 +473,7 @@ export function generatePromesHtml(state: AppState, semParam?: Semester): string
       const breakBefore = idx > 0 ? '<br clear="all" style="page-break-before:always" />' : '';
       return `${breakBefore}
       <div class="doc-section">
+        ${docKop(state)}
         <h2 style="text-align:center;font-size:13pt;margin:0 0 2pt;text-transform:uppercase;letter-spacing:0.04em">PROGRAM SEMESTER ${s}</h2>
         <p class="sub" style="text-align:center;font-size:11pt;margin:0 0 12pt;color:#444444">Semester ${s === 1 ? 'Ganjil' : 'Genap'} Tahun Pelajaran ${dots(p.ta)}</p>
         ${docIdent(state, [['Alokasi per Minggu', `${Number(p.jp) || 4} JP`]])}
@@ -486,6 +538,7 @@ export function generateKktpHtml(state: AppState): string {
     .join('');
 
   return `<div class="doc-section">
+    ${docKop(state)}
     <h2 style="text-align:center;font-size:13pt;margin:0 0 2pt;text-transform:uppercase;letter-spacing:0.04em">KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)</h2>
     <p class="sub" style="text-align:center;font-size:11pt;margin:0 0 12pt;color:#444444">Tahun Pelajaran ${dots(p.ta)}</p>
     ${docIdent(state, [['Alokasi per Minggu', `${Number(p.jp) || 4} JP`]])}
@@ -541,6 +594,7 @@ export function generateModulHtml(state: AppState, unitIdParam?: string): string
 
       return `${breakBefore}
       <div class="doc-section">
+        ${docKop(state)}
         <h2 style="text-align:center;font-size:13pt;margin:0 0 2pt;text-transform:uppercase;letter-spacing:0.04em">MODUL AJAR</h2>
         <p class="sub" style="text-align:center;font-size:11pt;margin:0 0 12pt;color:#444444">${esc(u.nama)} · Semester ${u.sem} · Tahun Pelajaran ${dots(p.ta)}</p>
         ${docIdent(state, [['Alokasi Waktu', `${uJp} JP × ${Number(p.menit) || 40} menit`]])}
@@ -651,6 +705,7 @@ export function generateLkpdHtml(state: AppState, unitIdParam?: string): string 
 
       return `${breakBefore}
       <div class="doc-section">
+        ${docKop(state)}
         <h2 style="text-align:center;font-size:13pt;margin:0 0 2pt;text-transform:uppercase;letter-spacing:0.04em">LEMBAR KERJA PESERTA DIDIK (LKPD)</h2>
         <p class="sub" style="text-align:center;font-size:11pt;margin:0 0 12pt;color:#444444">${esc(l.judul || `LKPD ${u.nama}`)} · Tahun Pelajaran ${dots(p.ta)}</p>
         ${docIdent(state, [['Unit / Semester', `${esc(u.nama)} / Semester ${u.sem}`]])}
