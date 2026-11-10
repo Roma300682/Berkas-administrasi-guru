@@ -3,6 +3,7 @@ import { AppState, Semester, CpItem, UnitItem, TpItem } from '../types';
 import { DocHeader } from './DocHeader';
 import { AKL_SUBJECTS_CATALOG } from '../curriculumAkl';
 import { generateStandardCurriculum } from '../serverCurriculum';
+import { generateCpatpHtml } from '../utils/docExport';
 
 interface CpatpTabProps {
   state: AppState;
@@ -527,106 +528,14 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
     </div>
   );
 
-  const renderDoc = () => {
-    const rows: { t: TpItem; u: UnitItem; s: Semester; cp?: CpItem }[] = [];
-    [1, 2].forEach(s => {
-      orderedTps(s as Semester).forEach(t => {
-        const u = state.unit.find(x => x.id === t.unitId);
-        if (u) {
-          const cp = state.cp.find(c => c.id === u.cpId);
-          rows.push({ t, u, s: s as Semester, cp });
-        }
-      });
-    });
-
-    return (
-      <div className="bg-white border border-slate-300 rounded-xl overflow-hidden shadow-md">
-        <article className="p-8 text-slate-900 font-serif text-sm leading-relaxed max-w-5xl mx-auto space-y-6">
-          <h2 className="text-center font-bold text-base uppercase tracking-wider m-0">
-            Capaian Pembelajaran dan Alur Tujuan Pembelajaran
-          </h2>
-          <p className="text-center text-xs text-slate-600 m-0">
-            Tahun Pelajaran {dots(p.ta)}
-          </p>
-
-          <table className="w-full text-xs font-serif border-collapse mb-4">
-            <tbody>
-              <tr>
-                <td className="py-1 pr-2 w-36">Satuan Pendidikan</td>
-                <td className="py-1">: {dots(p.sekolah)}</td>
-                <td className="py-1 pr-2 w-32">Fase / Kelas</td>
-                <td className="py-1">: {dots(p.fase)} / {dots(p.kelas)}</td>
-              </tr>
-              <tr>
-                <td className="py-1 pr-2">Mata Pelajaran</td>
-                <td className="py-1">: {dots(p.mapel)}</td>
-                <td className="py-1 pr-2">Tahun Pelajaran</td>
-                <td className="py-1">: {dots(p.ta)}</td>
-              </tr>
-              <tr>
-                <td className="py-1 pr-2">Nama Guru</td>
-                <td className="py-1">: {dots(p.guru)}</td>
-                <td className="py-1 pr-2">Alokasi per minggu</td>
-                <td className="py-1">: {Number(p.jp) || 4} JP</td>
-              </tr>
-            </tbody>
-          </table>
-
-          {rows.length === 0 ? (
-            <p className="text-xs text-slate-600 italic">Belum ada tujuan pembelajaran.</p>
-          ) : (
-            <table className="w-full border-collapse border border-slate-800 text-xs font-serif">
-              <thead>
-                <tr className="bg-emerald-50">
-                  <th className="border border-slate-800 p-2 text-left">Elemen</th>
-                  <th className="border border-slate-800 p-2 text-left">Capaian Pembelajaran</th>
-                  <th className="border border-slate-800 p-2 text-left">Lingkup Materi</th>
-                  <th className="border border-slate-800 p-2 text-left">Alur Tujuan Pembelajaran</th>
-                  <th className="border border-slate-800 p-2 text-center w-14">JP</th>
-                  <th className="border border-slate-800 p-2 text-center w-14">Smt</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((r, idx) => (
-                  <tr key={r.t.id}>
-                    <td className="border border-slate-800 p-2 align-top font-medium">
-                      {r.cp?.elemen || ''}
-                    </td>
-                    <td className="border border-slate-800 p-2 align-top">{r.cp?.teks || ''}</td>
-                    <td className="border border-slate-800 p-2 align-top">{r.u.nama}</td>
-                    <td className="border border-slate-800 p-2 align-top">
-                      {getNo(r.t.id)}. {r.t.teks}
-                    </td>
-                    <td className="border border-slate-800 p-2 text-center align-top">{r.t.jp}</td>
-                    <td className="border border-slate-800 p-2 text-center align-top">{r.s}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-
-          <table className="w-full border-collapse mt-8 text-xs font-serif">
-            <tbody>
-              <tr>
-                <td className="w-1/2 align-top">
-                  Mengetahui,<br />
-                  Kepala Sekolah<br /><br /><br /><br />
-                  <b><u>{dots(p.kepsek)}</u></b><br />
-                  NIP. {p.nipKs || '…………………'}
-                </td>
-                <td className="w-1/2 align-top text-right">
-                  {p.kota || '…………'}, {p.tgl || '…………………'}<br />
-                  Guru Mata Pelajaran<br /><br /><br /><br />
-                  <b><u>{dots(p.guru)}</u></b><br />
-                  NIP. {p.nip || '…………………'}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </article>
-      </div>
-    );
-  };
+  const renderDoc = () => (
+    <div className="docwrap">
+      <article
+        className="doc-paper wide font-serif"
+        dangerouslySetInnerHTML={{ __html: generateCpatpHtml(state) }}
+      />
+    </div>
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -637,6 +546,8 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
         isDocView={isDocView}
         onToggleView={onToggleView}
         onCopy={onCopyDoc}
+        state={state}
+        showToast={showToast}
       />
       {isDocView ? renderDoc() : renderEdit()}
     </div>

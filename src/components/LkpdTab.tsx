@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppState } from '../types';
 import { DocHeader } from './DocHeader';
+import { generateLkpdHtml } from '../utils/docExport';
 
 interface LkpdTabProps {
   state: AppState;
@@ -165,157 +166,32 @@ export const LkpdTab: React.FC<LkpdTabProps> = ({
     </div>
   );
 
-  const renderDoc = () => {
-    const rowCount = Math.max(1, Number(lkpdData.baris) || 3);
-    const taskList = lines(lkpdData.tugas);
-
-    return (
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-wrap gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-xs">
-          {state.unit.map((u, i) => (
-            <button
-              key={u.id}
-              onClick={() => onSelectUnitL(u.id)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
-                u.id === uId
-                  ? 'bg-emerald-700 border-emerald-700 text-white'
-                  : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300'
-              }`}
-            >
-              {u.nama || `Unit ${i + 1}`} <span className="opacity-75 ml-1">S{u.sem}</span>
-            </button>
-          ))}
-        </div>
-
-        <div className="bg-white border border-slate-300 rounded-xl overflow-hidden shadow-md">
-          <article className="p-8 text-slate-900 font-serif text-sm leading-relaxed max-w-4xl mx-auto space-y-6">
-            <h2 className="text-center font-bold text-base uppercase tracking-wider m-0">
-              Lembar Kerja Peserta Didik (LKPD)
-            </h2>
-            <p className="text-center text-xs text-slate-600 m-0">
-              {lkpdData.judul || `LKPD ${currentUnit.nama}`} · Tahun Pelajaran {dots(p.ta)}
-            </p>
-
-            <table className="w-full text-xs font-serif border-collapse mb-4 border border-slate-800">
-              <tbody>
-                <tr>
-                  <td className="p-2 border border-slate-800 w-36 font-medium">Nama Kelompok</td>
-                  <td className="p-2 border border-slate-800"></td>
-                </tr>
-                <tr>
-                  <td className="p-2 border border-slate-800 font-medium">Anggota</td>
-                  <td className="p-2 border border-slate-800 h-16"></td>
-                </tr>
-                <tr>
-                  <td className="p-2 border border-slate-800 font-medium">Kelas / Tanggal</td>
-                  <td className="p-2 border border-slate-800"></td>
-                </tr>
-              </tbody>
-            </table>
-
-            {lkpdData.tujuan && (
-              <div>
-                <h4 className="font-bold text-xs mt-3 mb-1">Tujuan Pembelajaran</h4>
-                {nl(lkpdData.tujuan)}
-              </div>
-            )}
-            {lkpdData.petunjuk && (
-              <div>
-                <h4 className="font-bold text-xs mt-3 mb-1">Petunjuk Belajar</h4>
-                {nl(lkpdData.petunjuk)}
-              </div>
-            )}
-            {lkpdData.alat && (
-              <div>
-                <h4 className="font-bold text-xs mt-3 mb-1">Alat dan Bahan</h4>
-                {nl(lkpdData.alat)}
-              </div>
-            )}
-            {lkpdData.kegiatan && (
-              <div>
-                <h4 className="font-bold text-xs mt-3 mb-1">Langkah Kegiatan</h4>
-                {nl(lkpdData.kegiatan)}
-              </div>
-            )}
-
-            <div>
-              <h4 className="font-bold text-xs mt-3 mb-1">Tugas</h4>
-              {taskList.length === 0 ? (
-                <p className="text-xs text-slate-500 italic">Belum ada tugas.</p>
-              ) : (
-                taskList.map((t, idx) => (
-                  <div key={idx} className="mb-4">
-                    <p className="font-semibold text-xs mb-1">{t}</p>
-                    {Array.from({ length: rowCount }).map((_, rIdx) => (
-                      <div key={rIdx} className="border-b border-slate-400 h-6 mb-1" />
-                    ))}
-                  </div>
-                ))
-              )}
-            </div>
-
-            {lkpdData.kesimpulan && (
-              <div>
-                <h4 className="font-bold text-xs mt-3 mb-1">Kesimpulan</h4>
-                <p className="mb-2">{lkpdData.kesimpulan}</p>
-                {Array.from({ length: Math.min(rowCount, 3) }).map((_, rIdx) => (
-                  <div key={rIdx} className="border-b border-slate-400 h-6 mb-1" />
-                ))}
-              </div>
-            )}
-
-            {lkpdData.refleksi && (
-              <div>
-                <h4 className="font-bold text-xs mt-3 mb-1">Refleksi</h4>
-                <p className="mb-2">{lkpdData.refleksi}</p>
-                <div className="flex items-center gap-6 text-xs font-sans mt-2">
-                  <label className="flex items-center gap-1.5">
-                    <span className="w-4 h-4 border border-slate-800 inline-block" /> Aku sudah paham
-                  </label>
-                  <label className="flex items-center gap-1.5">
-                    <span className="w-4 h-4 border border-slate-800 inline-block" /> Aku masih perlu latihan
-                  </label>
-                  <label className="flex items-center gap-1.5">
-                    <span className="w-4 h-4 border border-slate-800 inline-block" /> Aku belum paham
-                  </label>
-                </div>
-              </div>
-            )}
-
-            <div className="pt-2">
-              <h4 className="font-bold text-xs mt-3 mb-1">Penilaian Guru</h4>
-              <div className="flex flex-wrap gap-4 text-xs font-sans">
-                {lv.map((l, i) => (
-                  <label key={i} className="flex items-center gap-1.5">
-                    {l[0]} ({l[1]}) <span className="w-4 h-4 border border-slate-800 inline-block" />
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <table className="w-full border-collapse mt-8 text-xs font-serif">
-              <tbody>
-                <tr>
-                  <td className="w-1/2 align-top">
-                    Mengetahui,<br />
-                    Kepala Sekolah<br /><br /><br /><br />
-                    <b><u>{dots(p.kepsek)}</u></b><br />
-                    NIP. {p.nipKs || '…………………'}
-                  </td>
-                  <td className="w-1/2 align-top text-right">
-                    {p.kota || '…………'}, {p.tgl || '…………………'}<br />
-                    Guru Mata Pelajaran<br /><br /><br /><br />
-                    <b><u>{dots(p.guru)}</u></b><br />
-                    NIP. {p.nip || '…………………'}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </article>
-        </div>
+  const renderDoc = () => (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-xs no-print">
+        {state.unit.map((u, i) => (
+          <button
+            key={u.id}
+            onClick={() => onSelectUnitL(u.id)}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors cursor-pointer ${
+              u.id === uId
+                ? 'bg-emerald-700 border-emerald-700 text-white'
+                : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300'
+            }`}
+          >
+            {u.nama || `Unit ${i + 1}`} <span className="opacity-75 ml-1">S{u.sem}</span>
+          </button>
+        ))}
       </div>
-    );
-  };
+
+      <div className="docwrap">
+        <article
+          className="doc-paper font-serif"
+          dangerouslySetInnerHTML={{ __html: generateLkpdHtml(state, uId) }}
+        />
+      </div>
+    </div>
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -326,6 +202,7 @@ export const LkpdTab: React.FC<LkpdTabProps> = ({
         isDocView={isDocView}
         onToggleView={onToggleView}
         onCopy={onCopyDoc}
+        state={state}
       />
       {isDocView ? renderDoc() : renderEdit()}
     </div>

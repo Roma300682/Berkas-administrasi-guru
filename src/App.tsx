@@ -16,6 +16,7 @@ import { PromesTab } from './components/PromesTab';
 import { KktpTab } from './components/KktpTab';
 import { ModulTab } from './components/ModulTab';
 import { LkpdTab } from './components/LkpdTab';
+import { copyCleanDocToClipboard } from './utils/docExport';
 
 const KEY = 'berkas-ajar-guru-v1';
 
@@ -493,32 +494,10 @@ export default function App() {
 
   // Copy Document helper
   const handleCopyDoc = async () => {
-    const article = document.querySelector('article.font-serif');
-    if (!article) {
-      showToast('Dokumen tidak ditemukan.');
-      return;
-    }
-    const html = `<div style="font-family:Times New Roman,serif;font-size:12pt">${article.innerHTML}</div>`;
-    const text = (article as HTMLElement).innerText;
-
-    try {
-      if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
-        await navigator.clipboard.write([
-          new ClipboardItem({
-            'text/html': new Blob([html], { type: 'text/html' }),
-            'text/plain': new Blob([text], { type: 'text/plain' })
-          })
-        ]);
-        showToast('Dokumen disalin. Tempel langsung di Word atau Google Docs.');
-        return;
-      }
-    } catch (e) {}
-
-    try {
-      await navigator.clipboard.writeText(text);
-      showToast('Teks dokumen disalin.');
-      return;
-    } catch (e) {
+    const ok = await copyCleanDocToClipboard(state, state.ui.tab);
+    if (ok) {
+      showToast('Dokumen disalin dengan format tabel rapi. Tempel langsung di Word atau Google Docs.');
+    } else {
       showToast('Gagal menyalin dokumen.');
     }
   };

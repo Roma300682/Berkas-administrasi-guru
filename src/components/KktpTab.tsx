@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppState, Semester, TpItem } from '../types';
 import { DocHeader } from './DocHeader';
+import { generateKktpHtml } from '../utils/docExport';
 
 interface KktpTabProps {
   state: AppState;
@@ -232,100 +233,11 @@ export const KktpTab: React.FC<KktpTabProps> = ({
   );
 
   const renderDoc = () => (
-    <div className="bg-white border border-slate-300 rounded-xl overflow-x-auto shadow-md">
-      <article className="p-8 text-slate-900 font-serif text-sm leading-relaxed min-w-[900px] space-y-6">
-        <h2 className="text-center font-bold text-base uppercase tracking-wider m-0">
-          Kriteria Ketercapaian Tujuan Pembelajaran (KKTP)
-        </h2>
-        <p className="text-center text-xs text-slate-600 m-0">
-          Tahun Pelajaran {dots(p.ta)}
-        </p>
-
-        <table className="w-full text-xs font-serif border-collapse mb-4">
-          <tbody>
-            <tr>
-              <td className="py-1 pr-2 w-36">Satuan Pendidikan</td>
-              <td className="py-1">: {dots(p.sekolah)}</td>
-              <td className="py-1 pr-2 w-32">Fase / Kelas</td>
-              <td className="py-1">: {dots(p.fase)} / {dots(p.kelas)}</td>
-            </tr>
-            <tr>
-              <td className="py-1 pr-2">Mata Pelajaran</td>
-              <td className="py-1">: {dots(p.mapel)}</td>
-              <td className="py-1 pr-2">Tahun Pelajaran</td>
-              <td className="py-1">: {dots(p.ta)}</td>
-            </tr>
-            <tr>
-              <td className="py-1 pr-2">Nama Guru</td>
-              <td className="py-1">: {dots(p.guru)}</td>
-              <td className="py-1 pr-2">Alokasi per minggu</td>
-              <td className="py-1">: {Number(p.jp) || 4} JP</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <table className="w-full border-collapse border border-slate-800 text-xs font-serif">
-          <thead>
-            <tr className="bg-emerald-50">
-              <th className="border border-slate-800 p-2 text-center w-10" rowSpan={2}>
-                No
-              </th>
-              <th className="border border-slate-800 p-2 text-left" rowSpan={2}>
-                Tujuan Pembelajaran
-              </th>
-              <th className="border border-slate-800 p-2 text-left" rowSpan={2}>
-                Kriteria Ketercapaian
-              </th>
-              <th className="border border-slate-800 p-2 text-center" colSpan={4}>
-                Rubrik / Interval Nilai
-              </th>
-              <th className="border border-slate-800 p-2 text-left w-32" rowSpan={2}>
-                Teknik Asesmen
-              </th>
-            </tr>
-            <tr className="bg-emerald-50/80">
-              {lv.map((l, i) => (
-                <th key={i} className="border border-slate-800 p-1 text-center text-[11px] w-28">
-                  {l[0]}<br />({l[1]})
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {orderedTps.map(t => (
-              <tr key={t.id}>
-                <td className="border border-slate-800 p-2 text-center align-top">{getNo(t.id)}</td>
-                <td className="border border-slate-800 p-2 align-top">{t.teks}</td>
-                <td className="border border-slate-800 p-2 align-top">{t.ind}</td>
-                <td className="border border-slate-800 p-2 align-top text-[11px]">{t.r1}</td>
-                <td className="border border-slate-800 p-2 align-top text-[11px]">{t.r2}</td>
-                <td className="border border-slate-800 p-2 align-top text-[11px]">{t.r3}</td>
-                <td className="border border-slate-800 p-2 align-top text-[11px]">{t.r4}</td>
-                <td className="border border-slate-800 p-2 align-top">{t.teknik}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <table className="w-full border-collapse mt-8 text-xs font-serif">
-          <tbody>
-            <tr>
-              <td className="w-1/2 align-top">
-                Mengetahui,<br />
-                Kepala Sekolah<br /><br /><br /><br />
-                <b><u>{dots(p.kepsek)}</u></b><br />
-                NIP. {p.nipKs || '…………………'}
-              </td>
-              <td className="w-1/2 align-top text-right">
-                {p.kota || '…………'}, {p.tgl || '…………………'}<br />
-                Guru Mata Pelajaran<br /><br /><br /><br />
-                <b><u>{dots(p.guru)}</u></b><br />
-                NIP. {p.nip || '…………………'}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </article>
+    <div className="docwrap">
+      <article
+        className="doc-paper wide font-serif"
+        dangerouslySetInnerHTML={{ __html: generateKktpHtml(state) }}
+      />
     </div>
   );
 
@@ -338,6 +250,7 @@ export const KktpTab: React.FC<KktpTabProps> = ({
         isDocView={isDocView}
         onToggleView={onToggleView}
         onCopy={onCopyDoc}
+        state={state}
       />
       {isDocView ? renderDoc() : renderEdit()}
     </div>

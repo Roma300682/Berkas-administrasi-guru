@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppState, Semester } from '../types';
 import { DocHeader } from './DocHeader';
+import { generateWaktuHtml } from '../utils/docExport';
 
 interface WaktuTabProps {
   state: AppState;
@@ -159,150 +160,11 @@ export const WaktuTab: React.FC<WaktuTabProps> = ({
   );
 
   const renderDoc = () => (
-    <div className="bg-white border border-slate-300 rounded-xl overflow-hidden shadow-md">
-      <article className="p-8 text-slate-900 font-serif text-sm leading-relaxed max-w-4xl mx-auto space-y-6">
-        <h2 className="text-center font-bold text-base uppercase tracking-wider m-0">
-          Analisis Alokasi Waktu
-        </h2>
-        <p className="text-center text-xs text-slate-600 m-0">
-          Tahun Pelajaran {dots(p.ta)}
-        </p>
-
-        {/* Identity Table */}
-        <table className="w-full text-xs font-serif border-collapse mb-4">
-          <tbody>
-            <tr>
-              <td className="py-1 pr-2 w-36">Satuan Pendidikan</td>
-              <td className="py-1">: {dots(p.sekolah)}</td>
-              <td className="py-1 pr-2 w-32">Fase / Kelas</td>
-              <td className="py-1">: {dots(p.fase)} / {dots(p.kelas)}</td>
-            </tr>
-            <tr>
-              <td className="py-1 pr-2">Mata Pelajaran</td>
-              <td className="py-1">: {dots(p.mapel)}</td>
-              <td className="py-1 pr-2">Tahun Pelajaran</td>
-              <td className="py-1">: {dots(p.ta)}</td>
-            </tr>
-            <tr>
-              <td className="py-1 pr-2">Nama Guru</td>
-              <td className="py-1">: {dots(p.guru)}</td>
-              <td className="py-1 pr-2">Alokasi per minggu</td>
-              <td className="py-1">: {jp} JP</td>
-            </tr>
-          </tbody>
-        </table>
-
-        {/* Semester Tables */}
-        {[1, 2].map(s => {
-          const sem = s as Semester;
-          const bs = getBulanSem(sem);
-          const w = bs.reduce((acc, b) => acc + b.n, 0);
-          const o = bs.reduce((acc, b) => acc + b.off.length, 0);
-          const ef = w - o;
-
-          return (
-            <div key={sem} className="space-y-2">
-              <h3 className="font-bold text-xs uppercase tracking-wide mt-4 mb-1">
-                Semester {sem} ({sem === 1 ? 'Ganjil' : 'Genap'})
-              </h3>
-              <table className="w-full border-collapse border border-slate-800 text-xs font-serif">
-                <thead>
-                  <tr className="bg-emerald-50">
-                    <th className="border border-slate-800 p-1.5 text-center w-10">No</th>
-                    <th className="border border-slate-800 p-1.5 text-left">Bulan</th>
-                    <th className="border border-slate-800 p-1.5 text-center w-20">Jml Minggu</th>
-                    <th className="border border-slate-800 p-1.5 text-center w-20">Tidak Efektif</th>
-                    <th className="border border-slate-800 p-1.5 text-center w-20">Efektif</th>
-                    <th className="border border-slate-800 p-1.5 text-center w-20">JP Efektif</th>
-                    <th className="border border-slate-800 p-1.5 text-left">Keterangan</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {bs.map((b, idx) => {
-                    const eff = mgEf(b);
-                    return (
-                      <tr key={b.id}>
-                        <td className="border border-slate-800 p-1.5 text-center">{idx + 1}</td>
-                        <td className="border border-slate-800 p-1.5">{b.nama}</td>
-                        <td className="border border-slate-800 p-1.5 text-center">{b.n}</td>
-                        <td className="border border-slate-800 p-1.5 text-center">{b.off.length}</td>
-                        <td className="border border-slate-800 p-1.5 text-center">{eff}</td>
-                        <td className="border border-slate-800 p-1.5 text-center">{eff * jp}</td>
-                        <td className="border border-slate-800 p-1.5">{b.ket}</td>
-                      </tr>
-                    );
-                  })}
-                  <tr className="font-bold bg-slate-100">
-                    <td className="border border-slate-800 p-1.5 text-center" colSpan={2}>
-                      Jumlah
-                    </td>
-                    <td className="border border-slate-800 p-1.5 text-center">{w}</td>
-                    <td className="border border-slate-800 p-1.5 text-center">{o}</td>
-                    <td className="border border-slate-800 p-1.5 text-center">{ef}</td>
-                    <td className="border border-slate-800 p-1.5 text-center">{ef * jp}</td>
-                    <td className="border border-slate-800 p-1.5"></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          );
-        })}
-
-        {/* Recapitulation Table */}
-        <div className="space-y-2 pt-2">
-          <h3 className="font-bold text-xs uppercase tracking-wide mt-4 mb-1">
-            Rekapitulasi Kebutuhan JP
-          </h3>
-          <table className="w-full border-collapse border border-slate-800 text-xs font-serif">
-            <thead>
-              <tr className="bg-emerald-50">
-                <th className="border border-slate-800 p-1.5 text-center w-24">Semester</th>
-                <th className="border border-slate-800 p-1.5 text-center">JP Efektif</th>
-                <th className="border border-slate-800 p-1.5 text-center">JP Materi</th>
-                <th className="border border-slate-800 p-1.5 text-center">Sisa JP</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[1, 2].map(s => {
-                const sem = s as Semester;
-                const av = jpAvail(sem);
-                const tot = jpTotal(sem);
-                return (
-                  <tr key={sem}>
-                    <td className="border border-slate-800 p-1.5 text-center">{sem}</td>
-                    <td className="border border-slate-800 p-1.5 text-center">{av}</td>
-                    <td className="border border-slate-800 p-1.5 text-center">{tot}</td>
-                    <td className="border border-slate-800 p-1.5 text-center">{av - tot}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          <p className="text-[11px] text-slate-600 italic m-0">
-            * JP efektif = minggu efektif × {jp} JP per minggu. Sisa JP dipakai untuk asesmen, remedial, dan kegiatan sekolah.
-          </p>
-        </div>
-
-        {/* Signature */}
-        <table className="w-full border-collapse mt-8 text-xs font-serif">
-          <tbody>
-            <tr>
-              <td className="w-1/2 align-top">
-                Mengetahui,<br />
-                Kepala Sekolah<br /><br /><br /><br />
-                <b><u>{dots(p.kepsek)}</u></b><br />
-                NIP. {p.nipKs || '…………………'}
-              </td>
-              <td className="w-1/2 align-top text-right">
-                {p.kota || '…………'}, {p.tgl || '…………………'}<br />
-                Guru Mata Pelajaran<br /><br /><br /><br />
-                <b><u>{dots(p.guru)}</u></b><br />
-                NIP. {p.nip || '…………………'}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </article>
+    <div className="docwrap">
+      <article
+        className="doc-paper font-serif"
+        dangerouslySetInnerHTML={{ __html: generateWaktuHtml(state) }}
+      />
     </div>
   );
 
@@ -315,6 +177,7 @@ export const WaktuTab: React.FC<WaktuTabProps> = ({
         isDocView={isDocView}
         onToggleView={onToggleView}
         onCopy={onCopyDoc}
+        state={state}
       />
       {isDocView ? renderDoc() : renderEdit()}
     </div>

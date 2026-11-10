@@ -83,11 +83,12 @@ export const PromesTab: React.FC<PromesTabProps> = ({
           onToggleView={() => {}}
           onCopy={onCopyDoc}
           noToggle
+          state={state}
           extra={
             <div className="inline-flex border border-slate-300 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-900 shadow-xs">
               <button
                 onClick={() => onSemSelect(1)}
-                className={`px-3.5 py-1.5 text-xs font-medium ${
+                className={`px-3.5 py-1.5 text-xs font-medium cursor-pointer ${
                   sem === 1 ? 'bg-emerald-700 text-white' : 'text-slate-700 dark:text-slate-300'
                 }`}
               >
@@ -95,7 +96,7 @@ export const PromesTab: React.FC<PromesTabProps> = ({
               </button>
               <button
                 onClick={() => onSemSelect(2)}
-                className={`px-3.5 py-1.5 text-xs font-medium ${
+                className={`px-3.5 py-1.5 text-xs font-medium cursor-pointer ${
                   sem === 2 ? 'bg-emerald-700 text-white' : 'text-slate-700 dark:text-slate-300'
                 }`}
               >
@@ -121,7 +122,6 @@ export const PromesTab: React.FC<PromesTabProps> = ({
 
   const renderDoc = () => {
     let lastU: string | null = null;
-    let k = 0;
     const inactiveKet = bs
       .filter(b => b.off.length > 0)
       .map(b => `${b.nama}${b.ket ? ` (${b.ket})` : ''}: minggu ${b.off.map(i => i + 1).join(', ')}`)
@@ -129,11 +129,11 @@ export const PromesTab: React.FC<PromesTabProps> = ({
 
     return (
       <div className="flex flex-col gap-6">
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 no-print">
           <div className="inline-flex border border-slate-300 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-900 shadow-xs">
             <button
               onClick={() => onSemSelect(1)}
-              className={`px-3.5 py-1.5 text-xs font-medium ${
+              className={`px-3.5 py-1.5 text-xs font-medium cursor-pointer ${
                 sem === 1 ? 'bg-emerald-700 text-white' : 'text-slate-700 dark:text-slate-300'
               }`}
             >
@@ -141,7 +141,7 @@ export const PromesTab: React.FC<PromesTabProps> = ({
             </button>
             <button
               onClick={() => onSemSelect(2)}
-              className={`px-3.5 py-1.5 text-xs font-medium ${
+              className={`px-3.5 py-1.5 text-xs font-medium cursor-pointer ${
                 sem === 2 ? 'bg-emerald-700 text-white' : 'text-slate-700 dark:text-slate-300'
               }`}
             >
@@ -150,13 +150,13 @@ export const PromesTab: React.FC<PromesTabProps> = ({
           </div>
           <button
             onClick={() => onAutoSebar(sem)}
-            className="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-medium transition-colors"
+            className="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-medium transition-colors cursor-pointer"
           >
             Sebar Otomatis
           </button>
           <button
             onClick={() => onClearPromes(sem)}
-            className="px-3.5 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-medium transition-colors border border-slate-300 dark:border-slate-700"
+            className="px-3.5 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-medium transition-colors border border-slate-300 dark:border-slate-700 cursor-pointer"
           >
             Kosongkan Jadwal
           </button>
@@ -165,60 +165,58 @@ export const PromesTab: React.FC<PromesTabProps> = ({
           </span>
         </div>
 
-        <div className="bg-white border border-slate-300 rounded-xl overflow-x-auto shadow-md">
-          <article className="p-8 text-slate-900 font-serif text-sm leading-relaxed min-w-[800px] space-y-6">
-            <h2 className="text-center font-bold text-base uppercase tracking-wider m-0">
-              Program Semester {sem}
-            </h2>
-            <p className="text-center text-xs text-slate-600 m-0">
+        <div className="docwrap">
+          <article className="doc-paper wide font-serif">
+            <h2>PROGRAM SEMESTER {sem}</h2>
+            <p className="sub">
               Semester {sem === 1 ? 'Ganjil' : 'Genap'} Tahun Pelajaran {dots(p.ta)}
             </p>
 
-            <table className="w-full text-xs font-serif border-collapse mb-4">
+            <table className="idt">
               <tbody>
                 <tr>
-                  <td className="py-1 pr-2 w-36">Satuan Pendidikan</td>
-                  <td className="py-1">: {dots(p.sekolah)}</td>
-                  <td className="py-1 pr-2 w-32">Fase / Kelas</td>
-                  <td className="py-1">: {dots(p.fase)} / {dots(p.kelas)}</td>
+                  <td style={{ width: '130pt' }}>Satuan Pendidikan</td>
+                  <td>: {dots(p.sekolah)}</td>
+                  <td style={{ width: '120pt', paddingLeft: '12pt' }}>Tahun Pelajaran</td>
+                  <td>: {dots(p.ta)}</td>
                 </tr>
                 <tr>
-                  <td className="py-1 pr-2">Mata Pelajaran</td>
-                  <td className="py-1">: {dots(p.mapel)}</td>
-                  <td className="py-1 pr-2">Tahun Pelajaran</td>
-                  <td className="py-1">: {dots(p.ta)}</td>
+                  <td>Mata Pelajaran</td>
+                  <td>: {dots(p.mapel)}</td>
+                  <td style={{ paddingLeft: '12pt' }}>Nama Guru</td>
+                  <td>: {dots(p.guru)}</td>
                 </tr>
                 <tr>
-                  <td className="py-1 pr-2">Nama Guru</td>
-                  <td className="py-1">: {dots(p.guru)}</td>
-                  <td className="py-1 pr-2">Alokasi per minggu</td>
-                  <td className="py-1">: {Number(p.jp) || 4} JP</td>
+                  <td>Fase / Kelas</td>
+                  <td>: {dots(p.fase)} / {dots(p.kelas)}</td>
+                  <td style={{ paddingLeft: '12pt' }}>Alokasi per Minggu</td>
+                  <td>: {Number(p.jp) || 4} JP</td>
                 </tr>
               </tbody>
             </table>
 
-            <table className="w-full border-collapse border border-slate-800 text-[11px] font-serif">
+            <table className="dtbl">
               <thead>
-                <tr className="bg-emerald-50">
-                  <th className="border border-slate-800 p-1 text-center w-8" rowSpan={2}>
+                <tr>
+                  <th style={{ width: '28px' }} rowSpan={2}>
                     No
                   </th>
-                  <th className="border border-slate-800 p-1 text-left min-w-[240px]" rowSpan={2}>
+                  <th style={{ minWidth: '220px' }} rowSpan={2}>
                     Tujuan Pembelajaran
                   </th>
-                  <th className="border border-slate-800 p-1 text-center w-12" rowSpan={2}>
+                  <th style={{ width: '36px' }} rowSpan={2}>
                     JP
                   </th>
                   {bs.map(b => (
-                    <th key={b.id} className="border border-slate-800 p-1 text-center" colSpan={b.n}>
+                    <th key={b.id} colSpan={b.n}>
                       {b.nama}
                     </th>
                   ))}
                 </tr>
-                <tr className="bg-emerald-50/70">
+                <tr>
                   {bs.map(b =>
                     Array.from({ length: b.n }).map((_, i) => (
-                      <th key={`${b.id}-${i}`} className="border border-slate-800 p-0.5 text-center w-7">
+                      <th key={`${b.id}-${i}`} style={{ width: '24px', padding: '2px' }}>
                         {i + 1}
                       </th>
                     ))
@@ -230,26 +228,19 @@ export const PromesTab: React.FC<PromesTabProps> = ({
                   const u = state.unit.find(x => x.id === t.unitId);
                   const showGroup = u && u.id !== lastU;
                   if (u) lastU = u.id;
-                  k++;
                   const set = state.promes[t.id] || [];
 
                   return (
                     <React.Fragment key={t.id}>
                       {showGroup && u && (
-                        <tr className="bg-slate-200 font-bold">
-                          <td className="border border-slate-800 p-1.5" colSpan={3 + totalCols}>
-                            {u.nama}
-                          </td>
+                        <tr className="grp">
+                          <td colSpan={3 + totalCols}>{u.nama}</td>
                         </tr>
                       )}
                       <tr>
-                        <td className="border border-slate-800 p-1 text-center align-middle">
-                          {getNo(t.id)}
-                        </td>
-                        <td className="border border-slate-800 p-1 align-middle">{t.teks}</td>
-                        <td className="border border-slate-800 p-1 text-center align-middle">
-                          {t.jp}
-                        </td>
+                        <td className="c">{getNo(t.id)}</td>
+                        <td>{t.teks}</td>
+                        <td className="c">{t.jp}</td>
                         {bs.map(b =>
                           Array.from({ length: b.n }).map((_, i) => {
                             const key = `${b.id}:${i}`;
@@ -260,7 +251,14 @@ export const PromesTab: React.FC<PromesTabProps> = ({
                               return (
                                 <td
                                   key={key}
-                                  className="border border-slate-800 p-0 text-center bg-slate-300 text-slate-600 font-bold text-[10px]"
+                                  className="c"
+                                  style={{
+                                    background: '#d4d4d4',
+                                    color: '#555555',
+                                    fontWeight: 700,
+                                    padding: 0,
+                                    verticalAlign: 'middle'
+                                  }}
                                   title="Libur / Tidak Efektif"
                                 >
                                   L
@@ -272,11 +270,18 @@ export const PromesTab: React.FC<PromesTabProps> = ({
                               <td
                                 key={key}
                                 onClick={() => onToggleCell(t.id, key)}
-                                className={`border border-slate-800 p-0 text-center cursor-pointer transition-colors ${
-                                  isOn ? 'bg-emerald-700 text-white font-bold' : 'hover:bg-emerald-100'
-                                }`}
+                                className="c cursor-pointer transition-colors"
+                                style={{
+                                  padding: 0,
+                                  verticalAlign: 'middle',
+                                  background: isOn ? '#0E6B5A' : undefined,
+                                  color: isOn ? '#ffffff' : undefined
+                                }}
                               >
-                                <button className="w-full h-7 bg-transparent border-0 cursor-pointer font-bold text-xs flex items-center justify-center">
+                                <button
+                                  type="button"
+                                  className="w-full h-7 bg-transparent border-0 cursor-pointer font-bold text-xs flex items-center justify-center"
+                                >
                                   {isOn ? '✓' : ''}
                                 </button>
                               </td>
@@ -287,31 +292,34 @@ export const PromesTab: React.FC<PromesTabProps> = ({
                     </React.Fragment>
                   );
                 })}
-                <tr className="bg-slate-100 font-bold">
-                  <td className="border border-slate-800 p-1.5 text-right" colSpan={3}>
+                <tr className="tot">
+                  <td className="r" colSpan={3}>
                     Jumlah JP
                   </td>
-                  <td className="border border-slate-800 p-1.5 text-center" colSpan={totalCols}>
+                  <td className="c" colSpan={totalCols}>
                     {jpTotal} JP
                   </td>
                 </tr>
               </tbody>
             </table>
 
-            <p className="text-[11px] text-slate-600 italic m-0">
-              ✓ = minggu pembelajaran. L = minggu tidak efektif.{inactiveKet ? ` Minggu tidak efektif — ${inactiveKet}.` : ''}
+            <p style={{ fontSize: '9.5pt', color: '#444444' }}>
+              <i>
+                ✓ = minggu pembelajaran. L = minggu tidak efektif.
+                {inactiveKet ? ` Minggu tidak efektif — ${inactiveKet}.` : ''}
+              </i>
             </p>
 
-            <table className="w-full border-collapse mt-8 text-xs font-serif">
+            <table className="sign">
               <tbody>
                 <tr>
-                  <td className="w-1/2 align-top">
+                  <td>
                     Mengetahui,<br />
                     Kepala Sekolah<br /><br /><br /><br />
                     <b><u>{dots(p.kepsek)}</u></b><br />
                     NIP. {p.nipKs || '…………………'}
                   </td>
-                  <td className="w-1/2 align-top text-right">
+                  <td style={{ textAlign: 'right' }}>
                     {p.kota || '…………'}, {p.tgl || '…………………'}<br />
                     Guru Mata Pelajaran<br /><br /><br /><br />
                     <b><u>{dots(p.guru)}</u></b><br />
@@ -336,6 +344,7 @@ export const PromesTab: React.FC<PromesTabProps> = ({
         onToggleView={() => {}}
         onCopy={onCopyDoc}
         noToggle
+        state={state}
       />
       {renderDoc()}
     </div>

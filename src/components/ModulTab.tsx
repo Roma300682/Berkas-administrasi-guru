@@ -2,6 +2,7 @@ import React from 'react';
 import { AppState, UnitItem, TpItem } from '../types';
 import { DocHeader } from './DocHeader';
 import { DIMENSIONS } from '../data/defaultData';
+import { generateModulHtml } from '../utils/docExport';
 
 interface ModulTabProps {
   state: AppState;
@@ -191,12 +192,12 @@ export const ModulTab: React.FC<ModulTabProps> = ({
 
   const renderDoc = () => (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-xs">
+      <div className="flex flex-wrap gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-xs no-print">
         {state.unit.map((u, i) => (
           <button
             key={u.id}
             onClick={() => onSelectUnit(u.id)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors cursor-pointer ${
               u.id === uId
                 ? 'bg-emerald-700 border-emerald-700 text-white'
                 : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300'
@@ -207,243 +208,11 @@ export const ModulTab: React.FC<ModulTabProps> = ({
         ))}
       </div>
 
-      <div className="bg-white border border-slate-300 rounded-xl overflow-hidden shadow-md">
-        <article className="p-8 text-slate-900 font-serif text-sm leading-relaxed max-w-4xl mx-auto space-y-6">
-          <h2 className="text-center font-bold text-base uppercase tracking-wider m-0">
-            Modul Ajar
-          </h2>
-          <p className="text-center text-xs text-slate-600 m-0">
-            {currentUnit.nama} · Semester {currentUnit.sem} · Tahun Pelajaran {dots(p.ta)}
-          </p>
-
-          <table className="w-full text-xs font-serif border-collapse mb-4">
-            <tbody>
-              <tr>
-                <td className="py-1 pr-2 w-36">Satuan Pendidikan</td>
-                <td className="py-1">: {dots(p.sekolah)}</td>
-                <td className="py-1 pr-2 w-32">Fase / Kelas</td>
-                <td className="py-1">: {dots(p.fase)} / {dots(p.kelas)}</td>
-              </tr>
-              <tr>
-                <td className="py-1 pr-2">Mata Pelajaran</td>
-                <td className="py-1">: {dots(p.mapel)}</td>
-                <td className="py-1 pr-2">Alokasi Waktu</td>
-                <td className="py-1">: {unitJp} JP × {Number(p.menit) || 40} menit</td>
-              </tr>
-              <tr>
-                <td className="py-1 pr-2">Nama Guru</td>
-                <td className="py-1">: {dots(p.guru)}</td>
-                <td className="py-1 pr-2">Tahun Pelajaran</td>
-                <td className="py-1">: {dots(p.ta)}</td>
-              </tr>
-            </tbody>
-          </table>
-
-          {/* A. Informasi Umum */}
-          <h3 className="font-bold text-xs uppercase tracking-wide mt-4 mb-1">A. Informasi Umum</h3>
-          {modulData.awal && (
-            <div>
-              <h4 className="font-bold text-xs mt-2 mb-1">Kompetensi Awal</h4>
-              {nl(modulData.awal)}
-            </div>
-          )}
-          {modulData.dimensi && modulData.dimensi.length > 0 && (
-            <div>
-              <h4 className="font-bold text-xs mt-2 mb-1">Dimensi Profil Lulusan</h4>
-              <ul className="list-disc pl-5 m-0">
-                {modulData.dimensi.map((d, i) => (
-                  <li key={i}>{d}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {modulData.sarana && (
-            <div>
-              <h4 className="font-bold text-xs mt-2 mb-1">Sarana dan Prasarana</h4>
-              {nl(modulData.sarana)}
-            </div>
-          )}
-          {modulData.target && (
-            <div>
-              <h4 className="font-bold text-xs mt-2 mb-1">Target Peserta Didik</h4>
-              {nl(modulData.target)}
-            </div>
-          )}
-          {modulData.model && (
-            <div>
-              <h4 className="font-bold text-xs mt-2 mb-1">Model dan Pendekatan Pembelajaran</h4>
-              {nl(modulData.model)}
-            </div>
-          )}
-
-          {/* B. Komponen Inti */}
-          <h3 className="font-bold text-xs uppercase tracking-wide mt-4 mb-1">B. Komponen Inti</h3>
-          <div>
-            <h4 className="font-bold text-xs mt-2 mb-1">Tujuan Pembelajaran</h4>
-            <ul className="list-decimal pl-5 m-0">
-              {unitTps.map((t, i) => (
-                <li key={t.id} className="mb-1">{t.teks}</li>
-              ))}
-            </ul>
-          </div>
-          {modulData.pemahaman && (
-            <div>
-              <h4 className="font-bold text-xs mt-2 mb-1">Pemahaman Bermakna</h4>
-              {nl(modulData.pemahaman)}
-            </div>
-          )}
-          {modulData.pemantik && (
-            <div>
-              <h4 className="font-bold text-xs mt-2 mb-1">Pertanyaan Pemantik</h4>
-              {nl(modulData.pemantik)}
-            </div>
-          )}
-          <div>
-            <h4 className="font-bold text-xs mt-2 mb-1">Kegiatan Pembelajaran</h4>
-            {modulData.pendahuluan && (
-              <div className="mb-2">
-                <p className="font-semibold text-xs italic m-0">Pendahuluan</p>
-                {nl(modulData.pendahuluan)}
-              </div>
-            )}
-            {modulData.memahami && (
-              <div className="mb-2">
-                <p className="font-semibold text-xs italic m-0">Inti — Memahami</p>
-                {nl(modulData.memahami)}
-              </div>
-            )}
-            {modulData.mengaplikasi && (
-              <div className="mb-2">
-                <p className="font-semibold text-xs italic m-0">Inti — Mengaplikasi</p>
-                {nl(modulData.mengaplikasi)}
-              </div>
-            )}
-            {modulData.merefleksi && (
-              <div className="mb-2">
-                <p className="font-semibold text-xs italic m-0">Inti — Merefleksi</p>
-                {nl(modulData.merefleksi)}
-              </div>
-            )}
-            {modulData.penutup && (
-              <div className="mb-2">
-                <p className="font-semibold text-xs italic m-0">Penutup</p>
-                {nl(modulData.penutup)}
-              </div>
-            )}
-          </div>
-
-          {/* C. Asesmen */}
-          <h3 className="font-bold text-xs uppercase tracking-wide mt-4 mb-1">
-            C. Asesmen dan Tindak Lanjut
-          </h3>
-          {modulData.diagnostik && (
-            <div>
-              <h4 className="font-bold text-xs mt-2 mb-1">Asesmen Diagnostik</h4>
-              {nl(modulData.diagnostik)}
-            </div>
-          )}
-          {modulData.formatif && (
-            <div>
-              <h4 className="font-bold text-xs mt-2 mb-1">Asesmen Formatif</h4>
-              {nl(modulData.formatif)}
-            </div>
-          )}
-          {modulData.sumatif && (
-            <div>
-              <h4 className="font-bold text-xs mt-2 mb-1">Asesmen Sumatif</h4>
-              {nl(modulData.sumatif)}
-            </div>
-          )}
-
-          <div>
-            <h4 className="font-bold text-xs mt-2 mb-1">Kriteria Ketercapaian (KKTP)</h4>
-            <table className="w-full border-collapse border border-slate-800 text-[11px] font-serif">
-              <thead>
-                <tr className="bg-emerald-50">
-                  <th className="border border-slate-800 p-1 text-left">Tujuan Pembelajaran</th>
-                  {lv.map((l, i) => (
-                    <th key={i} className="border border-slate-800 p-1 text-center w-24">
-                      {l[0]}<br />({l[1]})
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {unitTps.map(t => (
-                  <tr key={t.id}>
-                    <td className="border border-slate-800 p-1">{t.teks}</td>
-                    <td className="border border-slate-800 p-1 text-[10px]">{t.r1}</td>
-                    <td className="border border-slate-800 p-1 text-[10px]">{t.r2}</td>
-                    <td className="border border-slate-800 p-1 text-[10px]">{t.r3}</td>
-                    <td className="border border-slate-800 p-1 text-[10px]">{t.r4}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {modulData.remedial && (
-            <div>
-              <h4 className="font-bold text-xs mt-2 mb-1">Remedial</h4>
-              {nl(modulData.remedial)}
-            </div>
-          )}
-          {modulData.pengayaan && (
-            <div>
-              <h4 className="font-bold text-xs mt-2 mb-1">Pengayaan</h4>
-              {nl(modulData.pengayaan)}
-            </div>
-          )}
-
-          {/* D. Refleksi & Pustaka */}
-          <h3 className="font-bold text-xs uppercase tracking-wide mt-4 mb-1">
-            D. Refleksi dan Lampiran
-          </h3>
-          {modulData.refGuru && (
-            <div>
-              <h4 className="font-bold text-xs mt-2 mb-1">Refleksi Guru</h4>
-              {nl(modulData.refGuru)}
-            </div>
-          )}
-          {modulData.refSiswa && (
-            <div>
-              <h4 className="font-bold text-xs mt-2 mb-1">Refleksi Peserta Didik</h4>
-              {nl(modulData.refSiswa)}
-            </div>
-          )}
-          {modulData.pustaka && (
-            <div>
-              <h4 className="font-bold text-xs mt-2 mb-1">Daftar Pustaka</h4>
-              {nl(modulData.pustaka)}
-            </div>
-          )}
-
-          <div>
-            <h4 className="font-bold text-xs mt-2 mb-1">Lampiran</h4>
-            <p className="m-0">
-              LKPD: {state.lkpd[uId]?.judul || `LKPD ${currentUnit.nama}`}
-            </p>
-          </div>
-
-          <table className="w-full border-collapse mt-8 text-xs font-serif">
-            <tbody>
-              <tr>
-                <td className="w-1/2 align-top">
-                  Mengetahui,<br />
-                  Kepala Sekolah<br /><br /><br /><br />
-                  <b><u>{dots(p.kepsek)}</u></b><br />
-                  NIP. {p.nipKs || '…………………'}
-                </td>
-                <td className="w-1/2 align-top text-right">
-                  {p.kota || '…………'}, {p.tgl || '…………………'}<br />
-                  Guru Mata Pelajaran<br /><br /><br /><br />
-                  <b><u>{dots(p.guru)}</u></b><br />
-                  NIP. {p.nip || '…………………'}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </article>
+      <div className="docwrap">
+        <article
+          className="doc-paper font-serif"
+          dangerouslySetInnerHTML={{ __html: generateModulHtml(state, uId) }}
+        />
       </div>
     </div>
   );
@@ -457,6 +226,7 @@ export const ModulTab: React.FC<ModulTabProps> = ({
         isDocView={isDocView}
         onToggleView={onToggleView}
         onCopy={onCopyDoc}
+        state={state}
       />
       {isDocView ? renderDoc() : renderEdit()}
     </div>
