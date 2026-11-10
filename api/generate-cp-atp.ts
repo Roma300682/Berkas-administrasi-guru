@@ -2,12 +2,33 @@ import { GoogleGenAI } from '@google/genai';
 import { generateStandardCurriculum } from '../src/serverCurriculum';
 
 export default async function handler(req: any, res: any) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(200).json({ status: 'ok' });
   }
 
   try {
-    const { mapel, fase, kelas, topik } = req.body || {};
+    let body = req.body;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch (_) {
+        body = {};
+      }
+    }
+    const { mapel, fase, kelas, topik } = body || {};
     const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
     if (apiKey && apiKey.trim().length > 10) {
@@ -68,7 +89,7 @@ Berikan hasil dalam format JSON murni (tanpa markdown code block) dengan struktu
         });
 
         const timeoutPromise = new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('timeout')), 5000)
+          setTimeout(() => reject(new Error('timeout')), 4500)
         );
 
         const response: any = await Promise.race([geminiCall, timeoutPromise]);

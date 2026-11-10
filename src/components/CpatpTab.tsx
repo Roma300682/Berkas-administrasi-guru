@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AppState, Semester, CpItem, UnitItem, TpItem } from '../types';
 import { DocHeader } from './DocHeader';
 import { AKL_SUBJECTS_CATALOG } from '../curriculumAkl';
+import { generateStandardCurriculum } from '../serverCurriculum';
 
 interface CpatpTabProps {
   state: AppState;
@@ -67,6 +68,9 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
     }
 
     setIsGenerating(true);
+    let applied = false;
+
+    // 1. Coba hubungi server endpoint (AI backend / Vercel Serverless)
     try {
       const res = await fetch('/api/generate-cp-atp', {
         method: 'POST',
@@ -79,24 +83,36 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
         })
       });
 
-      const data = await res.json().catch(() => null);
-
-      if (!res.ok) {
-        throw new Error(data?.error || `Gagal menghubungi server (${res.status})`);
+      if (res.ok) {
+        const data = await res.json().catch(() => null);
+        if (data && Array.isArray(data.cp) && Array.isArray(data.units)) {
+          onApplyAiData(data);
+          applied = true;
+          if (data.isFallback) {
+            showToast(`CP & ATP ${activeMapel} berhasil disusun sesuai Keputusan BSKAP No. 046/H/KR/2025!`);
+          } else {
+            showToast(`CP & ATP ${activeMapel} berhasil digenerate oleh AI sesuai BSKAP Kemendikdasmen!`);
+          }
+          return;
+        }
       }
+    } catch (_netErr) {
+      // Jika server tidak dapat dihubungi atau 500, lanjutkan ke fallback client-side otomatis
+    }
 
-      if (!data || !Array.isArray(data.cp) || !Array.isArray(data.units)) {
-        throw new Error('Format data kurikulum dari server tidak sesuai.');
-      }
-
-      onApplyAiData(data);
-      if (data.isFallback) {
+    // 2. Fallback tangguh di sisi klien: Menyusun kurikulum standar BSKAP No. 046/H/KR/2025 secara offline/langsung
+    try {
+      const fallbackData = generateStandardCurriculum(activeMapel, activeFase, activeKelas, aiTopic);
+      if (fallbackData && Array.isArray(fallbackData.cp) && Array.isArray(fallbackData.units)) {
+        onApplyAiData(fallbackData);
+        applied = true;
         showToast(`CP & ATP ${activeMapel} berhasil disusun sesuai Keputusan BSKAP No. 046/H/KR/2025!`);
-      } else {
-        showToast(`CP & ATP ${activeMapel} berhasil digenerate oleh AI sesuai BSKAP Kemendikdasmen!`);
+        return;
       }
-    } catch (err: any) {
-      showToast(err.message || 'Terjadi kesalahan saat menyusun berkas ajar.');
+    } catch (clientErr: any) {
+      if (!applied) {
+        showToast(clientErr?.message || 'Terjadi kesalahan saat menyusun berkas ajar.');
+      }
     } finally {
       setIsGenerating(false);
     }
