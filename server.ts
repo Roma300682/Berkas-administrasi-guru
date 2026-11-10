@@ -41,7 +41,18 @@ Fase: ${fase || 'E'} (Jenjang ${tier}, Kelas ${kelas || 'X'})
 ${topik ? `Fokus / Topik Khusus Tambahan: ${topik}` : ''}
 
 PEDOMAN SPESIFIKASI MATA PELAJARAN:
-1. Elemen CP WAJIB menggunakan elemen resmi Kurikulum Merdeka yang khusus untuk mata pelajaran ${mapel || 'tersebut'} (misalnya jika Matematika gunakan Bilangan/Aljabar/Geometri/Data; jika Bahasa gunakan Menyimak/Membaca/Berbicara/Menulis; jika IPA/IPAS gunakan Pemahaman & Keterampilan Proses; jika Kejuruan gunakan elemen bidang keahlian tersebut). JANGAN mencampuradukkan materi atau istilah dari mata pelajaran lain.
+1. Elemen CP WAJIB menggunakan elemen resmi Kurikulum Merdeka yang khusus untuk mata pelajaran ${mapel || 'tersebut'} sesuai standar Keputusan Kepala BSKAP Nomor 046/H/KR/2025:
+   - Jika Akuntansi dan Keuangan Lembaga (AKL) SMK:
+     * Dasar-Dasar Akuntansi dan Keuangan Lembaga (Fase E - X): 7 Elemen (Proses Bisnis AKL, Perkembangan Teknologi & Isu Global, Profil Pekerjaan/Entrepreneur, Lingkup Kerja & Etika Profesi, K3LH Budaya Kerja, Prinsip Dasar Akuntansi & Perbankan, Spreadsheet).
+     * Konsentrasi Keahlian Akuntansi (Fase F - XI/XII): 5 Elemen (Akuntansi Perusahaan Jasa Dagang Manufaktur, Akuntansi Keuangan, Akuntansi Lembaga/Instansi Pemerintah, Komputer Akuntansi, Perpajakan).
+     * Praktikum Akuntansi Perusahaan Jasa, Dagang & Manufaktur: Jurnal Khusus, Buku Pembantu, Kartu Persediaan, Worksheet, Laporan Keuangan SAK EMKM, Biaya Produksi & HPP Pesanan/Proses.
+     * Akuntansi Keuangan: Kas Kecil/Bank, Rekonsiliasi, Piutang & Cadangan, Wesel, Persediaan Perpetual FIFO/Average, Aset Tetap & Depresiasi, Utang Obligasi, Ekuitas PT & Koperasi.
+     * Praktikum Akuntansi Lembaga / Instansi Pemerintah: SAP Akrual PP 71/2010, APBD & APBDes, Jurnal Finansial LO, Jurnal Anggaran LRA, LRA, LO, Neraca Pemda, Siskeudes.
+     * Komputer Akuntansi: Setup Data Awal, Bagan Akun, Master Data Pelanggan/Pemasok, Saldo Awal Nol, Faktur Pembelian/Penjualan, Rekonsiliasi Bank, Laporan Digital & Backup.
+     * Administrasi Perpajakan: KUP, PPh 21 TER (Tarif Efektif Rata-Rata), PPh Badan Pasal 31E, PPN 11%/12%, e-Faktur, e-Bupot Unifikasi, e-Billing, SPT Masa & Tahunan DJP Online.
+     * Layanan Perbankan: 6 Elemen (Ekonomi Bisnis & Admin Umum, Kelola Kas Teller 3D, Customer Service & KYC, Akuntansi Bank & Kredit 5C, Core Banking Komputer, Pajak Bunga Bank).
+     * Layanan Perbankan Syariah: 6 Elemen (Fiqih Muamalah & DPS DSN-MUI, Teller & CS Syariah, Wadiah & Mudharabah, Pembiayaan Murabahah/Musyarakah/Ijarah, PSAK 101-112, Komputerisasi Syariah & ZISWAF).
+   - JANGAN mencampuradukkan materi atau istilah dari mata pelajaran lain.
 2. Setiap kalimat Tujuan Pembelajaran (TP) harus spesifik ke materi ${mapel || 'tersebut'}, diawali kata kerja operasional aktif (misal: "menganalisis...", "menghitung...", "mempraktikkan...", "mengevaluasi...").
 3. Distribusikan ke Semester 1 dan Semester 2 secara seimbang, lengkap dengan alokasi JP per TP (4-16 JP).
 4. Sediakan rubrik KKTP 4 tingkat (Perlu Bimbingan, Cukup, Baik, Sangat Baik) yang kontekstual dengan materi ${mapel || 'tersebut'}, beserta teknik penilaiannya (tes tertulis, unjuk kerja praktik, observasi, portofolio).

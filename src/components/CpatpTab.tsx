@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AppState, Semester, CpItem, UnitItem, TpItem } from '../types';
 import { DocHeader } from './DocHeader';
+import { AKL_SUBJECTS_CATALOG } from '../curriculumAkl';
 
 interface CpatpTabProps {
   state: AppState;
@@ -19,6 +20,7 @@ interface CpatpTabProps {
   onDeleteTp: (id: string) => void;
   onMoveTp: (id: string, dir: number) => void;
   onApplyAiData: (data: any) => void;
+  onChangeProfile?: (key: string, value: any) => void;
   showToast: (msg: string) => void;
 }
 
@@ -39,6 +41,7 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
   onDeleteTp,
   onMoveTp,
   onApplyAiData,
+  onChangeProfile,
   showToast
 }) => {
   const p = state.profil;
@@ -46,17 +49,32 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
 
   const [aiTopic, setAiTopic] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [aklFilter, setAklFilter] = useState<'semua' | 'fase-e' | 'konsentrasi' | 'pilihan'>('semua');
 
-  const handleAiGenerate = async () => {
+  const handleAiGenerate = async (
+    targetMapel?: string,
+    targetFase?: string,
+    targetKelas?: string
+  ) => {
+    const activeMapel = targetMapel || p.mapel || 'Akuntansi';
+    const activeFase = targetFase || p.fase || 'E';
+    const activeKelas = targetKelas || p.kelas || 'X';
+
+    if (onChangeProfile && targetMapel) {
+      onChangeProfile('mapel', targetMapel);
+      if (targetFase) onChangeProfile('fase', targetFase);
+      if (targetKelas) onChangeProfile('kelas', targetKelas);
+    }
+
     setIsGenerating(true);
     try {
       const res = await fetch('/api/generate-cp-atp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          mapel: p.mapel || 'Akuntansi',
-          fase: p.fase || 'E',
-          kelas: p.kelas || 'X',
+          mapel: activeMapel,
+          fase: activeFase,
+          kelas: activeKelas,
           topik: aiTopic
         })
       });
@@ -73,9 +91,9 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
 
       onApplyAiData(data);
       if (data.isFallback) {
-        showToast('CP, ATP, KKTP & Prota berhasil disusun sesuai Standar BSNP / Kurikulum Merdeka!');
+        showToast(`CP & ATP ${activeMapel} berhasil disusun sesuai Keputusan BSKAP No. 046/H/KR/2025!`);
       } else {
-        showToast('CP, ATP, KKTP, Prota & Promes berhasil digenerate oleh AI sesuai kurikulum.kemendikdasmen.go.id!');
+        showToast(`CP & ATP ${activeMapel} berhasil digenerate oleh AI sesuai BSKAP Kemendikdasmen!`);
       }
     } catch (err: any) {
       showToast(err.message || 'Terjadi kesalahan saat menyusun berkas ajar.');
@@ -135,6 +153,98 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
           </p>
         </div>
 
+        {/* Katalog Lengkap Mapel Akuntansi & Keuangan Lembaga (AKL) */}
+        <div className="bg-emerald-950/80 border border-emerald-700/70 rounded-xl p-3.5 flex flex-col gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-emerald-800/80 pb-2.5">
+            <div className="flex flex-col">
+              <span className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
+                <span>📚 Jurusan Akuntansi & Keuangan Lembaga (AKL) — Keputusan BSKAP No. 046/H/KR/2025</span>
+              </span>
+              <span className="text-[11px] text-emerald-400/90">
+                Pilih mata pelajaran untuk otomatis menyusun CP, ATP per semester, JP, KKTP rubrik 4 tingkat, dan Prota:
+              </span>
+            </div>
+            <div className="flex items-center gap-1 bg-emerald-900/60 p-1 rounded-lg border border-emerald-700/60 self-start sm:self-auto text-[10px]">
+              <span className="text-emerald-300 font-semibold px-1.5">Filter:</span>
+              {[
+                { id: 'semua', l: 'Semua (9 Mapel)' },
+                { id: 'fase-e', l: 'Fase E (X)' },
+                { id: 'konsentrasi', l: 'Konsentrasi (XI-XII)' },
+                { id: 'pilihan', l: 'Mapel Pilihan' }
+              ].map(f => (
+                <button
+                  key={f.id}
+                  type="button"
+                  onClick={() => setAklFilter(f.id as any)}
+                  className={`px-2 py-0.5 rounded font-medium transition-colors cursor-pointer ${
+                    aklFilter === f.id
+                      ? 'bg-emerald-400 text-slate-950 font-bold'
+                      : 'text-emerald-200 hover:text-white hover:bg-emerald-800/80'
+                  }`}
+                >
+                  {f.l}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {AKL_SUBJECTS_CATALOG.filter(s => {
+              if (aklFilter === 'fase-e') return s.fase === 'E';
+              if (aklFilter === 'konsentrasi') return s.kategori.includes('Konsentrasi');
+              if (aklFilter === 'pilihan') return s.kategori.includes('Pilihan');
+              return true;
+            }).map(s => {
+              const isSelected = p.mapel === s.nama;
+              return (
+                <div
+                  key={s.id}
+                  className={`p-2.5 rounded-xl border transition-all flex flex-col justify-between gap-2 ${
+                    isSelected
+                      ? 'bg-emerald-900/90 border-emerald-400 ring-2 ring-emerald-400/50 shadow-md'
+                      : 'bg-emerald-950/60 border-emerald-800/80 hover:border-emerald-600 hover:bg-emerald-900/40'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span className="text-base shrink-0">{s.icon}</span>
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-white truncate" title={s.nama}>
+                          {s.shortName}
+                        </div>
+                        <div className="text-[10px] text-emerald-300 font-medium">
+                          {s.tag}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-[10.5px] text-emerald-200/80 line-clamp-2 m-0 leading-tight">
+                    {s.deskripsi}
+                  </p>
+
+                  <button
+                    type="button"
+                    disabled={isGenerating}
+                    onClick={() => handleAiGenerate(s.nama, s.fase, s.kelas)}
+                    className={`w-full py-1.5 px-2 text-xs rounded-lg font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 ${
+                      isSelected
+                        ? 'bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-black'
+                        : 'bg-emerald-800 hover:bg-emerald-700 text-white border border-emerald-600/80'
+                    }`}
+                  >
+                    {isGenerating && p.mapel === s.nama ? (
+                      <span>⏳ Sedang menyusun...</span>
+                    ) : (
+                      <span>⚡ Generate CP–ATP {s.shortName}</span>
+                    )}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="flex flex-wrap items-end gap-3 pt-2">
           <label className="flex flex-col gap-1 flex-1 min-w-[220px] text-xs font-medium text-emerald-200">
             Fokus / Topik Tambahan Khusus (Opsional)
@@ -159,7 +269,7 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
             />
           </label>
           <button
-            onClick={handleAiGenerate}
+            onClick={() => handleAiGenerate()}
             disabled={isGenerating}
             className="px-5 py-2.5 bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold rounded-lg text-sm transition-colors shadow-lg flex items-center gap-2 disabled:opacity-50 cursor-pointer"
           >

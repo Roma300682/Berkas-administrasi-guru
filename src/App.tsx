@@ -667,6 +667,7 @@ export default function App() {
             onDeleteTp={handleDeleteTp}
             onMoveTp={handleMoveTp}
             onApplyAiData={handleApplyAiData}
+            onChangeProfile={handleChangeProfile}
             showToast={showToast}
           />
         );

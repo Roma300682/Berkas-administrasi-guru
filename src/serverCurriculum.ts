@@ -1,3 +1,7 @@
+import { getAklCurriculum, AKL_SUBJECTS_CATALOG } from './curriculumAkl';
+
+export { AKL_SUBJECTS_CATALOG };
+
 export interface CurriculumResponse {
   cp: Array<{ elemen: string; teks: string }>;
   units: Array<{
@@ -29,6 +33,431 @@ export function generateStandardCurriculum(
   const kelas = (kelasInput || 'X').trim().toUpperCase();
   const topik = (topikInput || '').trim();
   const lowerMapel = mapel.toLowerCase();
+
+  // 0. Akuntansi dan Keuangan Lembaga (AKL) - Semua Mata Pelajaran Resmi BSKAP No. 046/H/KR/2025
+  const isAklRelated =
+    lowerMapel.includes('akuntansi') ||
+    lowerMapel.includes('keuangan') ||
+    lowerMapel.includes('pajak') ||
+    lowerMapel.includes('perbankan') ||
+    lowerMapel.includes('syariah') ||
+    lowerMapel.includes('manufaktur') ||
+    lowerMapel.includes('jasa dagang') ||
+    lowerMapel.includes('lembaga') ||
+    lowerMapel.includes('komputer akuntansi') ||
+    lowerMapel.includes('myob') ||
+    lowerMapel.includes('accurate') ||
+    lowerMapel.includes('akl');
+
+  if (isAklRelated) {
+    const aklResult = getAklCurriculum(mapel, fase, kelas, topik);
+    if (aklResult) return aklResult;
+  }
+
+  // 0A. Mata Pelajaran Pilihan Akuntansi: Layanan Perbankan Syariah (Fase F, Kelas XII SMK)
+  // Sesuai Keputusan Kepala BSKAP Nomor 046/H/KR/2025
+  if (
+    lowerMapel.includes('syariah') ||
+    (lowerMapel.includes('perbankan') && (lowerMapel.includes('syariah') || kelas.includes('XII') || kelas.includes('12')))
+  ) {
+    const f = fase === 'E' ? 'F' : fase;
+    return {
+      isFallback: true,
+      cp: [
+        {
+          elemen: 'Fiqih Muamalah dan Regulasi Bank Syariah',
+          teks: `Pada akhir Fase ${f}, peserta didik mampu memahami landasan hukum fiqih muamalah perbankan syariah, larangan riba, gharar, maysir, tadlis, dan risywah, fatwa Dewan Syariah Nasional MUI (DSN-MUI), tata kelola dan peran Dewan Pengawas Syariah (DPS), serta regulasi perbankan syariah oleh Otoritas Jasa Keuangan (OJK).`
+        },
+        {
+          elemen: 'Pengelolaan Kas Teller dan Customer Service Syariah',
+          teks: `Pada akhir Fase ${f}, peserta didik mampu menerapkan SOP kas teller syariah, verifikasi uang rupiah dan valas, rekonsiliasi kas harian, Islamic Service Excellence, prosedur KYC/CDD pembukaan rekening syariah, penanganan komplain nasabah, serta pengelolaan dana kebajikan sosial (Qardhul Hasan) dan ZISWAF.`
+        },
+        {
+          elemen: 'Penghimpunan Dana Syariah (Wadiah dan Mudharabah)',
+          teks: `Pada akhir Fase ${f}, peserta didik mampu memproses pembukaan, mutasi, dan penutupan rekening tabungan dan giro syariah dengan akad Wadiah Yad Dhamanah, penempatan deposito syariah akad Mudharabah Mutlaqah dan Muqayyadah, serta perhitungan distribusi bagi hasil berbasis nisbah (revenue sharing).`
+        },
+        {
+          elemen: 'Pembiayaan Syariah (Murabahah, Salam, Istishna, Musyarakah, Ijarah)',
+          teks: `Pada akhir Fase ${f}, peserta didik mampu menganalisis analisis kelayakan pembiayaan syariah, simulasi pembiayaan jual beli (Murabahah, Salam, Istishna'), pembiayaan kemitraan bagi hasil (Mudharabah dan Musyarakah), pembiayaan sewa beli (Ijarah dan IMBT), penjaminan (Rahn/Kafalah), dan administrasi akad pembiayaan.`
+        },
+        {
+          elemen: 'Akuntansi Perbankan Syariah (PSAK 101–112)',
+          teks: `Pada akhir Fase ${f}, peserta didik mampu mencatat transaksi perbankan syariah ke dalam jurnal umum dan buku besar syariah berbasis standar PSAK 101–112, mencatat transaksi dana syirkah temporer, margin murabahah tangguhan, amortisasi, serta menyusun laporan keuangan bank syariah.`
+        },
+        {
+          elemen: 'Komputer Akuntansi dan Pelaporan Keuangan Syariah',
+          teks: `Pada akhir Fase ${f}, peserta didik mampu mengoperasikan aplikasi spreadsheet dan software komputer akuntansi/core banking syariah untuk pemrosesan transaksi harian, neraca saldo, rekonsiliasi, serta penyajian laporan posisi keuangan dan laporan sumber & penyaluran dana kebajikan.`
+        }
+      ],
+      units: [
+        {
+          nama: topik ? `Fiqih Muamalah, Tata Kelola Syariah & ${topik}` : 'Prinsip Fiqih Muamalah dan Regulasi Perbankan Syariah',
+          sem: 1,
+          elemen: 'Fiqih Muamalah dan Regulasi Bank Syariah',
+          tps: [
+            {
+              teks: 'membedakan konsep bunga bank konvensional dengan prinsip bagi hasil syariah serta larangan riba, maysir, dan gharar',
+              jp: 6,
+              ind: 'Peserta didik dapat menjelaskan perbedaan fundamental sistem bunga dan bagi hasil serta dalil larangan transaksi ribawi.',
+              r1: 'Belum memahami perbedaan mendasar antara bunga dan bagi hasil dalam transaksi perbankan.',
+              r2: 'Dapat menyebutkan larangan riba dan gharar dengan bimbingan dalil acuan.',
+              r3: 'Mampu menganalisis perbedaan sistem bunga dan nisbah bagi hasil secara mandiri, logis, dan tepat.',
+              r4: 'Mampu menyusun perbandingan komparatif keadilan ekonomi sistem bagi hasil syariah terhadap stabilitas moneter.',
+              teknik: 'Tes tertulis dan diskusi komparasi'
+            },
+            {
+              teks: 'menganalisis peran Dewan Pengawas Syariah (DPS) dan kepatuhan syariah (sharia compliance) dalam operasional bank syariah',
+              jp: 8,
+              ind: 'Peserta didik dapat menguraikan fungsi pengawasan DPS dan fatwa DSN-MUI dalam keabsahan produk bank syariah.',
+              r1: 'Belum memahami fungsi pengawasan DPS pada produk bank syariah.',
+              r2: 'Dapat menyebutkan peran DPS dengan bantuan teks peraturan OJK.',
+              r3: 'Mampu menjelaskan mekanisme audit kepatuhan syariah dan implementasi fatwa DSN-MUI secara mandiri.',
+              r4: 'Mampu menganalisis studi kasus ketidakpatuhan syariah (sharia non-compliance risk) dan dampaknya bagi reputasi bank.',
+              teknik: 'Studi kasus tata kelola syariah'
+            }
+          ]
+        },
+        {
+          nama: 'Produk Penghimpunan Dana Wadiah dan Deposito Mudharabah',
+          sem: 1,
+          elemen: 'Penghimpunan Dana Syariah (Wadiah dan Mudharabah)',
+          tps: [
+            {
+              teks: 'menerapkan administrasi pembukaan rekening tabungan dan giro syariah dengan akad Wadiah Yad Dhamanah',
+              jp: 8,
+              ind: 'Peserta didik dapat mengisi slip pembukaan rekening, verifikasi data nasabah (KYC), dan menjelaskan akad titipan bergaransi.',
+              r1: 'Belum menguasai rukun dan ketentuan akad Wadiah Yad Dhamanah.',
+              r2: 'Dapat memproses berkas pembukaan tabungan syariah dengan template panduan.',
+              r3: 'Mampu melayani pembukaan rekening tabungan dan giro wadiah secara mandiri, santun, dan sesuai SOP bank syariah.',
+              r4: 'Mampu mengedukasi nasabah mengenai fitur kartu debit syariah, bebas biaya riba, dan pemberian bonus (athaya) sukarela.',
+              teknik: 'Simulasi CS pembukaan rekening syariah'
+            },
+            {
+              teks: 'mengelola penempatan deposito syariah akad Mudharabah serta menghitung nisbah bagi hasil (revenue sharing)',
+              jp: 8,
+              ind: 'Peserta didik dapat menghitung bagi hasil deposito syariah berdasarkan saldo rata-rata, persentase nisbah, dan pendapatan bank.',
+              r1: 'Keliru menghitung pembagian nisbah dan salah memasukkan angka pendapatan bank.',
+              r2: 'Mampu menghitung bagi hasil nasabah dengan rumus panduan acuan guru.',
+              r3: 'Mampu menghitung distribusi bagi hasil deposito syariah dengan tepat, teliti, dan mandiri.',
+              r4: 'Mampu membandingkan simulasi return investasi bagi hasil deposito syariah berbagai tenor (1, 3, 6, 12 bulan).',
+              teknik: 'Perhitungan nisbah dan tes tertulis'
+            }
+          ]
+        },
+        {
+          nama: 'Skema Pembiayaan Jual Beli: Murabahah, Salam, dan Istishna',
+          sem: 1,
+          elemen: 'Pembiayaan Syariah (Murabahah, Salam, Istishna, Musyarakah, Ijarah)',
+          tps: [
+            {
+              teks: 'menyusun simulasi akad pembiayaan Murabahah, menghitung harga pokok barang, margin keuntungan, dan angsuran bulanan',
+              jp: 10,
+              ind: 'Peserta didik dapat membuat tabel angsuran Murabahah dengan transparansi harga beli dan margin keuntungan yang disepakati.',
+              r1: 'Belum memahami prinsip transparansi harga beli dan margin dalam jual beli Murabahah.',
+              r2: 'Dapat menghitung margin pembiayaan dengan rumus bantuan bertahap.',
+              r3: 'Mampu menyusun simulasi pembiayaan Murabahah lengkap dengan jadwal angsuran secara tepat dan mandiri.',
+              r4: 'Mampu merancang draf perjanjian akad Murabahah bil Wakalah untuk pembiayaan konsumtif/modal kerja mikro.',
+              teknik: 'Simulasi akad murabahah dan uji hitung'
+            },
+            {
+              teks: 'menganalisis skema dan alur pembiayaan pesanan pertanian (Salam) dan konstruksi/manufaktur (Istishna)',
+              jp: 8,
+              ind: 'Peserta didik dapat membedakan spesifikasi barang pesanan, alur pembayaran di muka (Salam), dan pembayaran bertahap (Istishna).',
+              r1: 'Sering tertukar antara karakteristik akad Salam dan Istishna.',
+              r2: 'Dapat menjelaskan skema akad Salam dengan bantuan diagram alur transaksi.',
+              r3: 'Mampu menganalisis alur pembiayaan Salam dan Istishna paralel secara mandiri dan akurat.',
+              r4: 'Mampu menyusun skema solusi pembiayaan rantai pasok pertanian dan perumahan berbasis akad pesanan syariah.',
+              teknik: 'Analisis skema pembiayaan dan portofolio'
+            }
+          ]
+        },
+        {
+          nama: 'Pembiayaan Bagi Hasil (Mudharabah, Musyarakah) dan Sewa (Ijarah)',
+          sem: 2,
+          elemen: 'Pembiayaan Syariah (Murabahah, Salam, Istishna, Musyarakah, Ijarah)',
+          tps: [
+            {
+              teks: 'menganalisis skema pembiayaan kemitraan Musyarakah dan Mudharabah serta perhitungan bagi hasil untung-rugi',
+              jp: 8,
+              ind: 'Peserta didik dapat membedakan peran shahibul maal dan mudharib serta menghitung rasio laba usaha mitra.',
+              r1: 'Belum memahami pembagian risiko kerugian (loss sharing) dalam akad kemitraan syariah.',
+              r2: 'Dapat menghitung bagi hasil kemitraan sederhana dengan panduan rasio modal.',
+              r3: 'Mampu menganalisis kelayakan usaha mitra dan menyusun pembagian bagi hasil Musyarakah secara adil dan mandiri.',
+              r4: 'Mampu mengevaluasi mitigasi risiko moral hazard dalam pembiayaan bagi hasil sektor UMKM.',
+              teknik: 'Studi kasus bagi hasil dan tes tertulis'
+            },
+            {
+              teks: 'memproses simulasi akad sewa beli Ijarah Muntahiya Bittamlik (IMBT) dan pembiayaan multijasa syariah',
+              jp: 8,
+              ind: 'Peserta didik dapat menguraikan manfaat sewa guna usaha syariah dan perpindahan kepemilikan aset di akhir periode sewa.',
+              r1: 'Belum memahami mekanisme pengalihan kepemilikan pada akad IMBT (hibah atau jual).',
+              r2: 'Dapat menjelaskan alur sewa Ijarah dengan bantuan bagan skema.',
+              r3: 'Mampu menyusun perhitungan ujrah (biaya sewa) dan jadwal pembayaran IMBT secara mandiri dan teliti.',
+              r4: 'Mampu merancang skema pembiayaan sewa multijasa syariah untuk biaya pendidikan atau porsi ibadah haji.',
+              teknik: 'Praktik simulasi akad sewa'
+            }
+          ]
+        },
+        {
+          nama: 'Operasional Pelayanan Prima Islami dan Kas Teller Syariah',
+          sem: 2,
+          elemen: 'Pengelolaan Kas Teller dan Customer Service Syariah',
+          tps: [
+            {
+              teks: 'mempraktikkan Islamic Service Excellence, etika muamalah perbankan, dan prosedur KYC pembukaan rekening syariah',
+              jp: 6,
+              ind: 'Peserta didik dapat menunjukkan salam pembuka islami, mendengarkan aktif, dan menjelaskan akad syariah secara ramah.',
+              r1: 'Gaya komunikasi masih kaku dan belum menguasai penjelasan akad syariah secara lugas.',
+              r2: 'Dapat melayani nasabah sesuai skenario dialog standar yang disediakan.',
+              r3: 'Mampu mempraktikkan pelayanan nasabah beretika islami (shiddiq, amanah, fathanah, tabligh) secara luwes dan mandiri.',
+              r4: 'Mampu menangani komplain nasabah secara tenang, amanah, dan memberikan solusi syariah yang memuaskan.',
+              teknik: 'Role play pelayanan prima islami'
+            },
+            {
+              teks: 'melaksanakan transaksi kas teller syariah, transfer kliring syariah, dan penghimpunan dana ZISWAF/Qardh',
+              jp: 8,
+              ind: 'Peserta didik dapat melayani setoran tunai, penarikan, transfer antar-bank syariah, dan penerimaan titipan zakat/infaq.',
+              r1: 'Masih lambat dalam penghitungan uang fisik dan penginputan nominal slip setoran teller.',
+              r2: 'Dapat menyelesaikan transaksi kas teller dengan bimbingan kepala kasir.',
+              r3: 'Mampu melaksanakan transaksi kas teller syariah secara cepat, teliti, zero error, dan mandiri.',
+              r4: 'Mampu mengelola pelaporan dana kebajikan sosial (Qardhul Hasan) dan penyaluran dana ZISWAF secara transparan.',
+              teknik: 'Simulasi transaksi teller syariah'
+            }
+          ]
+        },
+        {
+          nama: 'Akuntansi Transaksi Syariah (PSAK 101–112) dan Komputerisasi Laporan Keuangan',
+          sem: 2,
+          elemen: 'Akuntansi Perbankan Syariah (PSAK 101–112)',
+          tps: [
+            {
+              teks: 'menjurnal transaksi penghimpunan dana Wadiah/Mudharabah dan penyaluran pembiayaan Murabahah sesuai standar PSAK Syariah',
+              jp: 10,
+              ind: 'Peserta didik dapat mencatat mutasi rekening dana syariah dan piutang murabahah ke dalam jurnal umum perbankan syariah.',
+              r1: 'Masih keliru menempatkan akun dana syirkah temporer dan pendapatan margin ditangguhkan.',
+              r2: 'Dapat menjurnal transaksi simpanan wadiah dengan bantuan daftar akun bank syariah.',
+              r3: 'Mampu menjurnal transaksi penghimpunan dan pembiayaan syariah secara tepat akun, balance, dan mandiri.',
+              r4: 'Mampu mengoreksi jurnal penyesuaian amortisasi margin dan rekonsiliasi bagi hasil bulanan.',
+              teknik: 'Praktik pembukuan akuntansi syariah'
+            },
+            {
+              teks: 'mengoperasikan aplikasi spreadsheet/komputer akuntansi untuk menyusun laporan posisi keuangan dan dana kebajikan bank syariah',
+              jp: 8,
+              ind: 'Peserta didik dapat menyajikan komponen neraca syariah (aset, liabilitas, dana syirkah temporer, ekuitas) dan laporan dana kebajikan.',
+              r1: 'Komponen dana syirkah temporer belum dipisahkan dari liabilitas murni.',
+              r2: 'Dapat menyusun neraca bank syariah dengan template laporan keuangan PSAK 101.',
+              r3: 'Mampu menyajikan laporan keuangan bank syariah lengkap dan seimbang secara mandiri.',
+              r4: 'Mampu menganalisis rasio keuangan bank syariah (NPF, FDR, CAR, ROA) dan tingkat kesehatan bank syariah.',
+              teknik: 'Penyusunan laporan keuangan syariah terkomputerisasi'
+            }
+          ]
+        }
+      ]
+    };
+  }
+
+  // 0B. Mata Pelajaran Pilihan Akuntansi: Layanan Perbankan (Fase F, Kelas XI SMK)
+  // Sesuai Keputusan Kepala BSKAP Nomor 046/H/KR/2025 (6 Elemen Resmi)
+  if (
+    lowerMapel.includes('layanan perbankan') ||
+    lowerMapel.includes('perbankan') ||
+    (lowerMapel.includes('bank') && !lowerMapel.includes('darah'))
+  ) {
+    const f = fase === 'E' ? 'F' : fase;
+    return {
+      isFallback: true,
+      cp: [
+        {
+          elemen: 'Ekonomi Bisnis dan Administrasi Umum',
+          teks: `Pada akhir Fase ${f}, peserta didik mampu memahami masalah-masalah ekonomi, model dan pelaku ekonomi, perilaku konsumen dan produsen, pasar dan terbentuknya harga pasar, penerapan ilmu ekonomi dalam kegiatan usaha, serta administrasi dan fungsi-fungsi manajemen operasional perbankan.`
+        },
+        {
+          elemen: 'Pengelolaan Kas Perbankan',
+          teks: `Pada akhir Fase ${f}, peserta didik mampu memahami dan mengelola kas kecil (petty cash), kas bank, operasional penerimaan dan pengeluaran kas teller, pemeriksaan keaslian fisik uang rupiah dan valuta asing (3D), transaksi warkat kliring (cek dan bilyet giro), serta rekonsiliasi kas bank harian.`
+        },
+        {
+          elemen: 'Layanan Lembaga Perbankan dan Keuangan Mikro',
+          teks: `Pada akhir Fase ${f}, peserta didik mampu memahami sistem perbankan di Indonesia, jenis lembaga keuangan bank dan bukan bank, pemasaran produk simpanan (tabungan, giro, deposito), pelayanan nasabah (Customer Service dan KYC/CDD), penggunaan instrumen perbankan digital (ATM, mobile/internet banking, QRIS), analisis kredit perbankan prinsip 5C, pengikatan agunan, serta jasa safe deposit box.`
+        },
+        {
+          elemen: 'Akuntansi Perbankan',
+          teks: `Pada akhir Fase ${f}, peserta didik mampu memahami siklus akuntansi perbankan, melakukan pencatatan transaksi produk simpanan dana masyarakat, penyaluran kredit, kliring, transaksi antar-kantor, neraca saldo, jurnal penyesuaian, hingga penyusunan laporan keuangan perbankan.`
+        },
+        {
+          elemen: 'Komputer Akuntansi Layanan Perbankan',
+          teks: `Pada akhir Fase ${f}, peserta didik mampu mengoperasikan program spreadsheet dan aplikasi komputer akuntansi/core banking layanan perbankan untuk mengentri data nasabah, memproses transaksi keuangan simpanan dan pinjaman, serta menyajikan laporan keuangan perbankan secara terkomputerisasi.`
+        },
+        {
+          elemen: 'Perpajakan Perbankan',
+          teks: `Pada akhir Fase ${f}, peserta didik mampu memahami ketentuan umum dan tata cara perpajakan (KUP), jenis-jenis pajak terkait transaksi perbankan (PPh Pasal 4 ayat 2 atas bunga simpanan dan diskonto, PPh Pasal 21, PPh Pasal 23, PPN), perhitungan pajak terutang, pemotongan, penyetoran, serta penyusunan laporan SPT masa pajak perbankan.`
+        }
+      ],
+      units: [
+        {
+          nama: topik ? `Ekonomi Bisnis, Administrasi Bank & ${topik}` : 'Ekonomi Bisnis dan Prinsip Manajemen Lembaga Perbankan',
+          sem: 1,
+          elemen: 'Ekonomi Bisnis dan Administrasi Umum',
+          tps: [
+            {
+              teks: 'menganalisis masalah ekonomi, peran bank sebagai lembaga intermediasi keuangan, dan fungsi manajemen bank',
+              jp: 6,
+              ind: 'Peserta didik dapat menguraikan fungsi intermediasi perbankan dalam memobilisasi dana masyarakat serta struktur organisasi bank.',
+              r1: 'Belum mampu menjelaskan fungsi intermediasi perbankan.',
+              r2: 'Dapat menyebutkan fungsi bank dengan bantuan diagram alur perbankan.',
+              r3: 'Mampu menganalisis peran bank dalam stabilitas moneter dan fungsi manajemen operasional bank secara mandiri.',
+              r4: 'Mampu mengevaluasi dampak suku bunga acuan Bank Indonesia (BI-Rate) terhadap likuiditas perbankan nasional.',
+              teknik: 'Tes tertulis dan diskusi kelas'
+            },
+            {
+              teks: 'menerapkan tata kelola administrasi perbankan dan kearsipan dokumen transaksi nasabah',
+              jp: 6,
+              ind: 'Peserta didik dapat mengelola warkat arsip nasabah, pembukuan agenda, dan prosedur retensi dokumen bank.',
+              r1: 'Pengarsipan dokumen nasabah masih belum teratur sesuai nomor rekening.',
+              r2: 'Dapat menyusun arsip dokumen nasabah dengan panduan buku agenda.',
+              r3: 'Mampu mengelola tata naskah administrasi perbankan dan filling arsip secara rapi, aman, dan mandiri.',
+              r4: 'Mampu merancang prosedur digitalisasi arsip dokumen perbankan dan mitigasi risiko kehilangan data nasabah.',
+              teknik: 'Praktik kearsipan dokumen bank'
+            }
+          ]
+        },
+        {
+          nama: 'Pengelolaan Kas Kecil (Petty Cash) dan Kas Operasional Teller',
+          sem: 1,
+          elemen: 'Pengelolaan Kas Perbankan',
+          tps: [
+            {
+              teks: 'mengelola kas kecil (petty cash) operasional kantor bank dengan metode dana tetap (imprest fund system) dan dana berfluktuasi',
+              jp: 8,
+              ind: 'Peserta didik dapat menyusun bukti pengeluaran kas kecil, pencatatan mutasi, dan pengajuan pengisian kembali kas kecil.',
+              r1: 'Sering keliru mencatat mutasi pengeluaran kas kecil antara metode imprest dan fluktuasi.',
+              r2: 'Dapat membuat jurnal pembentukan kas kecil dengan bantuan format tabel.',
+              r3: 'Mampu mengelola administrasi kas kecil bank dan menyusun berita acara rekonsiliasi kas kecil secara mandiri dan tertib.',
+              r4: 'Mampu menganalisis efisiensi biaya operasional kantor bank berdasarkan histori mutasi kas kecil.',
+              teknik: 'Praktik lembar kerja petty cash'
+            },
+            {
+              teks: 'menerapkan SOP kas teller perbankan, pengujian keaslian uang kertas rupiah (metode 3D & UV) dan valuta asing',
+              jp: 8,
+              ind: 'Peserta didik dapat menghitung uang cepat (teknik 3 jari/mesin), verifikasi keaslian uang, dan melayani setoran/penarikan tunai.',
+              r1: 'Belum mampu membedakan uang asli dan uang palsu pada spesimen uji.',
+              r2: 'Dapat melayani setoran tunai dengan asistensi kepala kasir.',
+              r3: 'Mampu memeriksa keaslian uang rupiah/valas dan melayani transaksi teller sesuai SOP secara cepat, teliti, dan mandiri.',
+              r4: 'Mampu mengelola modal awal teller (cash in hand limit), penyetoran kas ke khasanah brankas, dan menjaga zero discrepancy.',
+              teknik: 'Simulasi operasional teller dan uji fisik uang'
+            }
+          ]
+        },
+        {
+          nama: 'Layanan Nasabah (Customer Service) dan Produk Simpanan Perbankan',
+          sem: 1,
+          elemen: 'Layanan Lembaga Perbankan dan Keuangan Mikro',
+          tps: [
+            {
+              teks: 'menerapkan standar pelayanan prima (Service Excellence) dan prosedur KYC/CDD dalam pembukaan rekening dana',
+              jp: 8,
+              ind: 'Peserta didik dapat mempraktikkan 3S (Senyum, Sapa, Salam), verifikasi e-KTP, NPWP, dan form profil risiko nasabah.',
+              r1: 'Gaya penyambutan nasabah masih kaku dan tahapan verifikasi data KYC terlewati.',
+              r2: 'Dapat melayani pembukaan rekening tabungan dengan lembar skrip panduan.',
+              r3: 'Mampu melayani pembukaan rekening tabungan dan giro secara ramah, profesional, dan patuh regulasi KYC secara mandiri.',
+              r4: 'Mampu menerapkan Enhanced Due Diligence (EDD) untuk nasabah berisiko tinggi (PEP) dan pencegahan anti pencucian uang (APU-PPT).',
+              teknik: 'Role play customer service'
+            },
+            {
+              teks: 'mengadministrasikan produk deposito berjangka, penerbitan kartu debit/ATM, dan layanan safe deposit box',
+              jp: 8,
+              ind: 'Peserta didik dapat menghitung bunga tabungan/deposito, bilyet deposito ARO, serta prosedur sewa safe deposit box.',
+              r1: 'Keliru menghitung pajak bunga 20% dan pembagian bunga bulanan.',
+              r2: 'Dapat memproses perpanjangan bilyet deposito dengan pendampingan supervisor.',
+              r3: 'Mampu memproses penempatan deposito berjangka dan administrasi safe deposit box secara tertib dan mandiri.',
+              r4: 'Mampu mengedukasi nasabah mengenai perbandingan imbal hasil instrumen simpanan dan proteksi penjaminan LPS (Lembaga Penjamin Simpanan).',
+              teknik: 'Simulasi produk simpanan dan tes hitung'
+            }
+          ]
+        },
+        {
+          nama: 'Lalu Lintas Pembayaran, Warkat Kliring, dan Sistem Transfer',
+          sem: 2,
+          elemen: 'Pengelolaan Kas Perbankan',
+          tps: [
+            {
+              teks: 'memverifikasi keabsahan warkat kliring (cek dan bilyet giro) serta memproses setoran kliring masuk dan keluar',
+              jp: 8,
+              ind: 'Peserta didik dapat memeriksa tanggal efektif, tanda tangan basah, nominal terbilang, dan alasan penolakan warkat kliring.',
+              r1: 'Belum mampu membedakan fungsi cek tunai dan bilyet giro pemindahbukuan.',
+              r2: 'Dapat memeriksa kelengkapan formal warkat cek dengan bimbingan daftar periksa (checklist).',
+              r3: 'Mampu memverifikasi keabsahan warkat kliring dan memproses transaksi kliring penyerahan/pengembalian secara mandiri.',
+              r4: 'Mampu mengidentifikasi warkat kliring palsu/kosong dan menerapkan sanksi Daftar Hitam Nasional (DHN) Bank Indonesia.',
+              teknik: 'Analisis dokumen warkat dan tes tertulis'
+            },
+            {
+              teks: 'memproses transaksi transfer dana sistem BI-FAST, SKNBI, dan Real Time Gross Settlement (RTGS)',
+              jp: 8,
+              ind: 'Peserta didik dapat memilih jalur transfer dana yang tepat berdasarkan nominal, kecepatan waktu, dan biaya transaksi.',
+              r1: 'Keliru membedakan batasan nominal transfer SKNBI, BI-FAST, dan RTGS.',
+              r2: 'Dapat menginput formulir transfer dana antar-bank dengan panduan format data.',
+              r3: 'Mampu memproses transaksi transfer dana BI-FAST dan RTGS secara akurat, cepat, dan mandiri.',
+              r4: 'Mampu menginvestigasi kegagalan transfer dana, retur kliring, dan proses penyelesaian sengketa transaksi antar-bank.',
+              teknik: 'Praktik simulasi transfer dan studi kasus'
+            }
+          ]
+        },
+        {
+          nama: 'Siklus Akuntansi Transaksi Perbankan dan Analisis Kredit 5C',
+          sem: 2,
+          elemen: 'Akuntansi Perbankan',
+          tps: [
+            {
+              teks: 'mencatat transaksi operasional penghimpunan dana dan penyaluran kredit ke sistem akuntansi perbankan',
+              jp: 8,
+              ind: 'Peserta didik dapat menjurnal setoran/penarikan nasabah, kliring, transfer, dan pencairan kredit pada buku besar perbankan.',
+              r1: 'Masih tertukar antara posisi kas bank, simpanan nasabah (liabilitas bank), dan kredit (aset bank).',
+              r2: 'Dapat menjurnal transaksi perbankan sederhana dengan bantuan bagan akun standar bank.',
+              r3: 'Mampu menjurnal seluruh transaksi operasional perbankan secara tepat akun, balance, dan mandiri.',
+              r4: 'Mampu menyusun neraca saldo harian bank dan menganalisis laporan laba rugi operasional kantor cabang.',
+              teknik: 'Praktik pembukuan jurnal perbankan'
+            },
+            {
+              teks: 'menganalisis kelayakan calon debitur menggunakan prinsip 5C (Character, Capacity, Capital, Collateral, Condition)',
+              jp: 8,
+              ind: 'Peserta didik dapat melakukan wawancara kredit, verifikasi SLIK OJK (checking kredit), dan analisis rasio kemampuan mencicil.',
+              r1: 'Belum memahami indikator penilaian watak (character) dan kapasitas membayar calon debitur.',
+              r2: 'Dapat mengumpulkan dokumen persyaratan kredit usaha mikro dengan bantuan daftar berkas.',
+              r3: 'Mampu menganalisis kelayakan kredit berdasarkan prinsip 5C secara komprehensif, objektif, dan mandiri.',
+              r4: 'Mampu menyusun nota analisis kredit (credit memo) serta rekomendasi persetujuan/penolakan kredit kepada komite kredit.',
+              teknik: 'Studi kasus kredit dan analisis kelayakan'
+            }
+          ]
+        },
+        {
+          nama: 'Komputer Akuntansi Layanan Perbankan dan Ketentuan Perpajakan Bank',
+          sem: 2,
+          elemen: 'Komputer Akuntansi Layanan Perbankan',
+          tps: [
+            {
+              teks: 'mengoperasikan program spreadsheet dan aplikasi komputer akuntansi untuk pemrosesan data transaksi bank terkomputerisasi',
+              jp: 8,
+              ind: 'Peserta didik dapat mengentri data mutasi rekening nasabah, mencetak mutasi rekening koran, dan rekonsiliasi kas bank terotomatisasi.',
+              r1: 'Masih canggung mengoperasikan menu entri transaksi pada aplikasi komputer akuntansi perbankan.',
+              r2: 'Dapat mengentri data transaksi simpanan nasabah dengan petunjuk teknis guru.',
+              r3: 'Mampu memproses transaksi perbankan secara komputerisasi dan menyajikan neraca saldo cabang secara mandiri.',
+              r4: 'Mampu mendeteksi anomali entri data dan melakukan backup database transaksi perbankan secara teratur.',
+              teknik: 'Praktik komputer akuntansi perbankan'
+            },
+            {
+              teks: 'menghitung, memotong, dan menyusun laporan perpajakan perbankan (PPh Pasal 4 ayat 2, PPh 21, PPh 23)',
+              jp: 6,
+              ind: 'Peserta didik dapat menghitung PPh final bunga deposito/tabungan nasabah dan menyiapkan bukti potong serta SPT masa.',
+              r1: 'Belum menguasai ketentuan pembebasan pajak bunga simpanan di bawah batas nominal tertentu.',
+              r2: 'Dapat menghitung PPh bunga deposito 20% dengan panduan rumus acuan.',
+              r3: 'Mampu menghitung kewajiban pajak perbankan, menyusun bukti potong, dan mengarsipkan dokumen pajak secara mandiri.',
+              r4: 'Mampu menyusun rekonsiliasi fiskal perbankan dan merumuskan kepatuhan pelaporan SPT Masa PPh perbankan.',
+              teknik: 'Perhitungan pajak dan penugasan lembar kerja'
+            }
+          ]
+        }
+      ]
+    };
+  }
 
   // 1. Matematika
   if (lowerMapel.includes('matematik')) {

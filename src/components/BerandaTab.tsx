@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AppState, Semester } from '../types';
 import { TABS } from '../data/defaultData';
+import { AKL_SUBJECTS_CATALOG } from '../curriculumAkl';
 
 interface BerandaTabProps {
   state: AppState;
@@ -220,8 +221,73 @@ export const BerandaTab: React.FC<BerandaTabProps> = ({
                 className="px-3 py-2 mt-1 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100 text-sm"
                 value={p.mapel}
                 onChange={e => onChangeProfile('mapel', e.target.value)}
-                placeholder="mis. Akuntansi, Matematika, dll."
+                placeholder="mis. Akuntansi, Layanan Perbankan, Matematika, dll."
               />
+
+              {/* Katalog Mata Pelajaran Lengkap Akuntansi & Keuangan Lembaga (AKL) */}
+              <div className="mt-3 p-3 bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 rounded-xl flex flex-col gap-2.5 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <div>
+                    <span className="text-xs font-bold text-emerald-900 dark:text-emerald-200 flex items-center gap-1.5">
+                      <span>📚 Jurusan Akuntansi & Keuangan Lembaga (AKL) — BSKAP 046/H/KR/2025</span>
+                    </span>
+                    <span className="text-[11px] text-emerald-700 dark:text-emerald-400">
+                      Pilih mata pelajaran untuk otomatis menyetel Profil Mapel, Fase, dan Tingkat Kelas:
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onTabSelect('cpatp')}
+                    className="self-start sm:self-center text-[11px] font-bold text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>Buka tab CP-ATP ➔</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 pt-1">
+                  {AKL_SUBJECTS_CATALOG.map(s => {
+                    const isSelected = p.mapel === s.nama;
+                    return (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => {
+                          onChangeProfile('mapel', s.nama);
+                          onChangeProfile('fase', s.fase);
+                          onChangeProfile('kelas', s.kelas);
+                          showToast(`Mapel AKL: ${s.nama} (${s.fase} - ${s.kelas}) aktif! Buka tab CP-ATP untuk generate perangkat ajar.`);
+                        }}
+                        className={`p-2.5 rounded-lg text-left transition-all border cursor-pointer flex flex-col justify-between gap-1.5 ${
+                          isSelected
+                            ? 'bg-emerald-600 text-white border-emerald-500 shadow-md ring-2 ring-emerald-300 dark:ring-emerald-500'
+                            : 'bg-white dark:bg-slate-800/90 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-600 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/20'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-1.5">
+                          <span className="text-base">{s.icon}</span>
+                          <span
+                            className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                              isSelected
+                                ? 'bg-emerald-700 text-emerald-100'
+                                : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                            }`}
+                          >
+                            {s.tingkat}
+                          </span>
+                        </div>
+                        <div>
+                          <div className={`text-xs font-bold leading-tight ${isSelected ? 'text-white' : 'text-slate-900 dark:text-slate-100'}`}>
+                            {s.shortName}
+                          </div>
+                          <div className={`text-[10px] mt-0.5 line-clamp-1 ${isSelected ? 'text-emerald-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                            {s.kategori}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </label>
             <label className="flex flex-col gap-1 text-xs font-medium text-slate-600 dark:text-slate-400">
               Fase
