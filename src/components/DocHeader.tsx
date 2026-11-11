@@ -4,6 +4,7 @@ import {
   downloadDocForTab,
   downloadAllModulWord,
   downloadAllLkpdWord,
+  downloadAllSoalWord,
   triggerDocDownload,
 } from '../utils/docExport';
 import { KopEditor } from './KopEditor';
@@ -57,33 +58,46 @@ export const DocHeader: React.FC<DocHeaderProps> = ({
     });
     triggerDocDownload(
       clone.innerHTML,
-      `${title.replace(/[^a-zA-Z0-9]+/g, '_')}.doc`,
+      `${title.replace(/[^a-zA-Z0-9]+/g, '_')}_A4.doc`,
       title,
-      tab === 'promes' || tab === 'kktp'
+      tab === 'cpatp' || tab === 'promes' || tab === 'kktp'
     );
-    showToast?.(`Berhasil mengunduh dokumen ${title}.doc`);
+    showToast?.(`Berhasil mengunduh dokumen ${title} (Format A4).doc`);
   };
 
   const handleDownloadAllUnits = () => {
     if (!state) return;
     if (tab === 'modul') {
       const fn = downloadAllModulWord(state);
-      showToast?.(`Berhasil mengunduh semua Modul Ajar (${fn})`);
+      showToast?.(`Berhasil mengunduh semua Modul Ajar Format A4 (${fn})`);
     } else if (tab === 'lkpd') {
       const fn = downloadAllLkpdWord(state);
-      showToast?.(`Berhasil mengunduh semua LKPD (${fn})`);
+      showToast?.(`Berhasil mengunduh semua LKPD Format A4 (${fn})`);
+    } else if (tab === 'soal') {
+      const fn = downloadAllSoalWord(state);
+      showToast?.(`Berhasil mengunduh semua Soal Ujian Format A4 (${fn})`);
     }
   };
 
+  const isLandscapeDoc = tab === 'cpatp' || tab === 'promes' || tab === 'kktp';
+
   return (
     <div className="flex flex-col gap-4 no-print">
-      <div>
-        <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-          {title}
-        </h1>
-        <p className="text-slate-600 dark:text-slate-400 mt-1 max-w-3xl text-sm lg:text-base">
-          {lead}
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            {title}
+          </h1>
+          <p className="text-slate-600 dark:text-slate-400 mt-1 max-w-3xl text-sm lg:text-base">
+            {lead}
+          </p>
+        </div>
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800">
+          <span>📄</span>
+          <span>
+            Format Kertas A4 ({isLandscapeDoc ? 'Landscape 29,7 × 21 cm' : 'Portrait 21 × 29,7 cm'})
+          </span>
+        </span>
       </div>
       <div className="flex flex-wrap items-center gap-2.5">
         {!noToggle && (
@@ -110,7 +124,7 @@ export const DocHeader: React.FC<DocHeaderProps> = ({
                   : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
               }`}
             >
-              Bentuk Dokumen
+              Bentuk Dokumen (A4)
             </button>
           </div>
         )}
@@ -121,10 +135,10 @@ export const DocHeader: React.FC<DocHeaderProps> = ({
           className="px-4 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs lg:text-sm font-semibold transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
         >
           <span>📥</span>
-          <span>Unduh Dokumen (.doc)</span>
+          <span>Unduh Dokumen A4 (.doc)</span>
         </button>
 
-        {state && state.unit.length > 1 && (tab === 'modul' || tab === 'lkpd') && (
+        {state && state.unit.length > 1 && (tab === 'modul' || tab === 'lkpd' || tab === 'soal') && (
           <button
             type="button"
             onClick={handleDownloadAllUnits}
@@ -132,7 +146,7 @@ export const DocHeader: React.FC<DocHeaderProps> = ({
           >
             <span>📚</span>
             <span>
-              Unduh Semua {tab === 'modul' ? 'Modul' : 'LKPD'} ({state.unit.length} Unit)
+              Unduh Semua {tab === 'modul' ? 'Modul' : tab === 'lkpd' ? 'LKPD' : 'Soal Ujian'} A4 ({state.unit.length} Unit)
             </span>
           </button>
         )}
@@ -168,7 +182,7 @@ export const DocHeader: React.FC<DocHeaderProps> = ({
               className="px-3.5 py-1.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 rounded-lg text-xs lg:text-sm font-medium transition-colors flex items-center gap-1.5 cursor-pointer"
             >
               <span>🖨️</span>
-              <span>Cetak / PDF</span>
+              <span>Cetak / PDF (A4)</span>
             </button>
           </>
         )}

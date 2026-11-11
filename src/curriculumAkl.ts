@@ -42,7 +42,7 @@ export const AKL_SUBJECTS_CATALOG: AklSubjectMeta[] = [
     elemenCount: 5,
     icon: '🏛️',
     kodeAtp: 'ATP-F.AKL',
-    ruangGtkUpdate: 'Inspirasi Ruang GTK: 5 Elemen Inti Konsentrasi AKL (BSKAP 046/H/KR/2025)'
+    ruangGtkUpdate: 'Inspirasi Ruang GTK: 5 Elemen Inti Konsentrasi Keahlian AKL'
   },
   {
     id: 'praktikum-jdm',

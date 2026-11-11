@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { AppState, Semester, UnitItem, TpItem } from './types';
+import { AppState, KaldikEvent, Semester, SoalPkg, UnitItem, TpItem } from './types';
 import { blankState, seedSampleData, uid, genKktp, genModul, genLkpd } from './data/defaultData';
 import { Navbar } from './components/Navbar';
 import { Toast } from './components/Toast';
@@ -16,7 +16,10 @@ import { PromesTab } from './components/PromesTab';
 import { KktpTab } from './components/KktpTab';
 import { ModulTab } from './components/ModulTab';
 import { LkpdTab } from './components/LkpdTab';
+import { SoalTab } from './components/SoalTab';
 import { copyCleanDocToClipboard } from './utils/docExport';
+import { getDefaultKaldikEvents, syncCalendarToBulan } from './utils/kalenderPendidikan';
+import { generateContextualSoal } from './utils/soalGenerator';
 
 const KEY = 'berkas-ajar-guru-v1';
 
@@ -33,6 +36,15 @@ export default function App() {
             ...parsed.profil,
             sekolah: parsed.profil.sekolah || defProf.sekolah,
           };
+          if (!parsed.kaldik || !Array.isArray(parsed.kaldik)) {
+            parsed.kaldik = getDefaultKaldikEvents(parsed.profil.ta || '2026/2027');
+          }
+          if (parsed.cetakKaldik === undefined) {
+            parsed.cetakKaldik = true;
+          }
+          if (!parsed.soal) {
+            parsed.soal = {};
+          }
           return parsed;
         }
       }
@@ -109,7 +121,7 @@ export default function App() {
     }
   };
 
-  // Analisis Waktu handlers
+  // Analisis Waktu & Kalender Pendidikan handlers
   const handleChangeMonth = (id: string, field: string, val: any) => {
     setState(prev => ({
       ...prev,
@@ -151,6 +163,69 @@ export default function App() {
     setState(prev => ({
       ...prev,
       bulan: prev.bulan.filter(b => b.id !== id)
+    }));
+  };
+
+  const handleSyncKaldik = (newTa?: string, resetDefaultEvents?: boolean) => {
+    setState(prev => {
+      const targetTa = newTa || prev.profil.ta || '2026/2027';
+      const events = resetDefaultEvents
+        ? getDefaultKaldikEvents(targetTa)
+        : prev.kaldik && prev.kaldik.length > 0
+        ? prev.kaldik
+        : getDefaultKaldikEvents(targetTa);
+      const syncedBulan = syncCalendarToBulan(prev.bulan, targetTa, events);
+      return {
+        ...prev,
+        profil: { ...prev.profil, ta: targetTa },
+        kaldik: events,
+        bulan: syncedBulan,
+      };
+    });
+  };
+
+  const handleAddKaldikEvent = (ev: Omit<KaldikEvent, 'id'>) => {
+    setState(prev => {
+      const nextEvents = [...(prev.kaldik || []), { ...ev, id: uid() }];
+      const syncedBulan = syncCalendarToBulan(prev.bulan, prev.profil.ta || '2026/2027', nextEvents);
+      return {
+        ...prev,
+        kaldik: nextEvents,
+        bulan: syncedBulan,
+      };
+    });
+  };
+
+  const handleDeleteKaldikEvent = (id: string) => {
+    setState(prev => {
+      const nextEvents = (prev.kaldik || []).filter(e => e.id !== id);
+      const syncedBulan = syncCalendarToBulan(prev.bulan, prev.profil.ta || '2026/2027', nextEvents);
+      return {
+        ...prev,
+        kaldik: nextEvents,
+        bulan: syncedBulan,
+      };
+    });
+  };
+
+  const handleToggleKaldikEventWeekOff = (id: string) => {
+    setState(prev => {
+      const nextEvents = (prev.kaldik || []).map(e =>
+        e.id === id ? { ...e, markWeekOff: !e.markWeekOff } : e
+      );
+      const syncedBulan = syncCalendarToBulan(prev.bulan, prev.profil.ta || '2026/2027', nextEvents);
+      return {
+        ...prev,
+        kaldik: nextEvents,
+        bulan: syncedBulan,
+      };
+    });
+  };
+
+  const handleToggleCetakKaldik = (val: boolean) => {
+    setState(prev => ({
+      ...prev,
+      cetakKaldik: val,
     }));
   };
 
@@ -498,6 +573,21 @@ export default function App() {
     showToast('Kerangka LKPD terisi.');
   };
 
+  // Soal Ujian (AI) handlers
+  const handleSelectUnitS = (unitId: string) => {
+    setState(prev => ({
+      ...prev,
+      ui: { ...prev.ui, unitS: unitId }
+    }));
+  };
+
+  const handleUpdateSoalPkg = (unitId: string, pkg: SoalPkg) => {
+    setState(prev => ({
+      ...prev,
+      soal: { ...(prev.soal || {}), [unitId]: pkg }
+    }));
+  };
+
   // Copy Document helper
   const handleCopyDoc = async () => {
     const ok = await copyCleanDocToClipboard(state, state.ui.tab);
@@ -527,6 +617,7 @@ export default function App() {
     const newTps: TpItem[] = [];
     const newModul: Record<string, any> = {};
     const newLkpd: Record<string, any> = {};
+    const newSoal: Record<string, SoalPkg> = {};
 
     (aiData.units || []).forEach((u: any) => {
       const uId = uid();
@@ -559,16 +650,26 @@ export default function App() {
 
       newModul[uId] = genModul(unitObj);
       newLkpd[uId] = genLkpd(unitObj, unitTpList);
+      newSoal[uId] = generateContextualSoal(state.profil.mapel, state.profil.kelas, unitObj, unitTpList);
     });
+
+    const firstUnitId = newUnits[0]?.id || state.ui.unit;
 
     const newState: AppState = {
       ...state,
       sample: false,
+      ui: {
+        ...state.ui,
+        unit: firstUnitId,
+        unitL: firstUnitId,
+        unitS: firstUnitId,
+      },
       cp: newCp.length > 0 ? newCp : state.cp,
       unit: newUnits.length > 0 ? newUnits : state.unit,
       tp: newTps.length > 0 ? newTps : state.tp,
       modul: newModul,
       lkpd: newLkpd,
+      soal: newSoal,
       promes: {}
     };
 
@@ -631,6 +732,11 @@ export default function App() {
             onToggleWeekOff={handleToggleWeekOff}
             onAddMonth={handleAddMonth}
             onDeleteMonth={handleDeleteMonth}
+            onSyncKaldik={handleSyncKaldik}
+            onAddKaldikEvent={handleAddKaldikEvent}
+            onDeleteKaldikEvent={handleDeleteKaldikEvent}
+            onToggleKaldikEventWeekOff={handleToggleKaldikEventWeekOff}
+            onToggleCetakKaldik={handleToggleCetakKaldik}
             onChangeProfile={handleChangeProfile}
             showToast={showToast}
           />
@@ -724,6 +830,18 @@ export default function App() {
             onChangeLkpd={handleChangeLkpd}
             onGenLkpd={handleGenLkpd}
             onTabSelect={handleTabSelect}
+            onChangeProfile={handleChangeProfile}
+            showToast={showToast}
+          />
+        );
+      case 'soal':
+        return (
+          <SoalTab
+            state={state}
+            onToggleView={handleToggleView}
+            onCopy={handleCopyDoc}
+            onSelectUnit={handleSelectUnitS}
+            onUpdateSoalPkg={handleUpdateSoalPkg}
             onChangeProfile={handleChangeProfile}
             showToast={showToast}
           />

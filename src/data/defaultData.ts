@@ -1,5 +1,7 @@
 import { AppState, MonthItem, Semester, UnitItem, TpItem, ModulItem, LkpdItem } from '../types';
 import { LOGO_PENDIDIKAN_SVG } from '../utils/logoPresets';
+import { getDefaultKaldikEvents, syncCalendarToBulan } from '../utils/kalenderPendidikan';
+import { generateContextualSoal } from '../utils/soalGenerator';
 
 export const DIMENSIONS = [
   'Keimanan dan Ketakwaan kepada Tuhan YME',
@@ -21,6 +23,7 @@ export const TABS = [
   { id: 'kktp', l: 'KKTP', n: 5 },
   { id: 'modul', l: 'Modul Ajar', n: 6 },
   { id: 'lkpd', l: 'LKPD', n: 7 },
+  { id: 'soal', l: 'Soal Ujian (AI)', n: 8 },
 ];
 
 export const uid = () => Math.random().toString(36).slice(2, 9);
@@ -34,20 +37,26 @@ export const mon = (sem: Semester, nama: string, n: number, off: number[] = [], 
   ket
 });
 
-export const getMonths = (withSampleOff: boolean): MonthItem[] => [
-  mon(1, 'Juli', 3, withSampleOff ? [0] : [], withSampleOff ? 'Masa Pengenalan Lingkungan Sekolah' : ''),
-  mon(1, 'Agustus', 4),
-  mon(1, 'September', 4),
-  mon(1, 'Oktober', 4, withSampleOff ? [1] : [], withSampleOff ? 'Asesmen sumatif tengah semester' : ''),
-  mon(1, 'November', 4),
-  mon(1, 'Desember', 3, withSampleOff ? [1, 2] : [], withSampleOff ? 'Asesmen sumatif akhir semester dan libur semester' : ''),
-  mon(2, 'Januari', 4, withSampleOff ? [0] : [], withSampleOff ? 'Libur semester' : ''),
-  mon(2, 'Februari', 4),
-  mon(2, 'Maret', 4, withSampleOff ? [1, 2] : [], withSampleOff ? 'Libur hari raya dan cuti bersama' : ''),
-  mon(2, 'April', 4),
-  mon(2, 'Mei', 4, withSampleOff ? [2] : [], withSampleOff ? 'Asesmen sumatif tengah semester' : ''),
-  mon(2, 'Juni', 3, withSampleOff ? [1, 2] : [], withSampleOff ? 'Asesmen sumatif akhir tahun dan libur kenaikan kelas' : '')
-];
+export const getMonths = (withSampleOff: boolean): MonthItem[] => {
+  const base = [
+    mon(1, 'Juli', 4, withSampleOff ? [0] : [], withSampleOff ? 'Masa Pengenalan Lingkungan Sekolah' : ''),
+    mon(1, 'Agustus', 4),
+    mon(1, 'September', 4),
+    mon(1, 'Oktober', 5, withSampleOff ? [1] : [], withSampleOff ? 'Asesmen sumatif tengah semester' : ''),
+    mon(1, 'November', 4),
+    mon(1, 'Desember', 4, withSampleOff ? [1, 3] : [], withSampleOff ? 'Asesmen sumatif akhir semester dan libur semester' : ''),
+    mon(2, 'Januari', 4, withSampleOff ? [0] : [], withSampleOff ? 'Libur semester' : ''),
+    mon(2, 'Februari', 4),
+    mon(2, 'Maret', 4, withSampleOff ? [1, 2] : [], withSampleOff ? 'Libur hari raya dan cuti bersama' : ''),
+    mon(2, 'April', 5),
+    mon(2, 'Mei', 4, withSampleOff ? [1] : [], withSampleOff ? 'Asesmen sumatif tengah semester' : ''),
+    mon(2, 'Juni', 4, withSampleOff ? [1, 3] : [], withSampleOff ? 'Asesmen sumatif akhir tahun dan libur kenaikan kelas' : '')
+  ];
+  if (withSampleOff) {
+    return syncCalendarToBulan(base, '2026/2027', getDefaultKaldikEvents('2026/2027'));
+  }
+  return base;
+};
 
 export const blankState = (): AppState => ({
   v: 1,
@@ -58,6 +67,7 @@ export const blankState = (): AppState => ({
     doc: {},
     unit: null,
     unitL: null,
+    unitS: null,
   },
   profil: {
     guru: '',
@@ -87,12 +97,15 @@ export const blankState = (): AppState => ({
     ukuranLogo: 72,
   },
   bulan: getMonths(false),
+  kaldik: getDefaultKaldikEvents('2026/2027'),
+  cetakKaldik: true,
   cp: [],
   unit: [],
   tp: [],
   promes: {},
   modul: {},
   lkpd: {},
+  soal: {},
 });
 
 export const intiText = (s: string): string => {
@@ -139,7 +152,7 @@ export const genModul = (u: UnitItem): ModulItem => {
     pengayaan: 'Studi kasus tingkat lanjut (analisis laporan/audit kasus industri) bagi peserta didik yang telah mencapai kriteria Sangat Baik.',
     refGuru: '1. Apakah pengalaman belajar Memahami, Mengaplikasi, dan Merefleksi berjalan optimal?\n2. Bagian mana dari strategi pembelajaran yang perlu ditingkatkan?\n3. Peserta didik mana yang memerlukan pendampingan khusus pada pertemuan berikutnya?',
     refSiswa: '1. Hal baru paling bermakna apa yang kamu kuasai pada pembelajaran hari ini?\n2. Bagian mana yang menurutmu masih menantang dan perlu latihan lagi?\n3. Bagaimana kamu akan menerapkan keterampilan ini di dunia kerja/kehidupan nyata?',
-    pustaka: 'Panduan Inspirasi CP & ATP Ruang GTK Kemendikdasmen (Keputusan Kepala BSKAP Nomor 046/H/KR/2025), Buku Teks Utama Kemendikdasmen, serta Standar Akuntansi Keuangan (SAK EP / SAK EMKM) & Regulasi Perpajakan terbaru.'
+    pustaka: 'Panduan Inspirasi CP & ATP Ruang GTK Kemendikdasmen, Buku Teks Utama Kemendikdasmen, serta Standar Akuntansi Keuangan (SAK EP / SAK EMKM) & Regulasi Perpajakan terbaru.'
   };
 };
 
@@ -282,13 +295,17 @@ export const seedSampleData = (): AppState => {
   autoSebarSem(1, s);
   autoSebarSem(2, s);
 
+  s.soal = {};
   s.unit.forEach(u => {
+    const unitTps = s.tp.filter(t => t.unitId === u.id);
     s.modul[u.id] = genModul(u);
-    s.lkpd[u.id] = genLkpd(u, s.tp.filter(t => t.unitId === u.id));
+    s.lkpd[u.id] = genLkpd(u, unitTps);
+    s.soal![u.id] = generateContextualSoal(s.profil.mapel, s.profil.kelas, u, unitTps);
   });
 
   s.ui.unit = u1.id;
   s.ui.unitL = u1.id;
+  s.ui.unitS = u1.id;
 
   return s;
 };

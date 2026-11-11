@@ -90,7 +90,7 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
           onApplyAiData(data);
           applied = true;
           if (data.isFallback) {
-            showToast(`CP & ATP ${activeMapel} berhasil disusun sesuai Pembaruan Inspirasi Ruang GTK Kemendikdasmen (BSKAP 046/H/KR/2025)!`);
+            showToast(`CP & ATP ${activeMapel} berhasil disusun sesuai Pembaruan Inspirasi Ruang GTK Kemendikdasmen!`);
           } else {
             showToast(`CP & ATP ${activeMapel} berhasil digenerate sesuai Inspirasi Ruang GTK Kemendikdasmen!`);
           }
@@ -157,9 +157,6 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs uppercase tracking-wider font-bold text-amber-300 bg-amber-950/80 px-2.5 py-0.5 rounded-full border border-amber-500/60">
               🌟 Pembaruan Inspirasi Ruang GTK Kemendikdasmen
-            </span>
-            <span className="text-xs uppercase tracking-wider font-bold text-emerald-300 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-600/60">
-              Keputusan BSKAP No. 046/H/KR/2025
             </span>
             <span className="text-xs font-semibold text-emerald-200 bg-teal-950/80 px-2 py-0.5 rounded border border-teal-700/50">
               Mata Pelajaran: <span className="text-white font-bold">{p.mapel || 'Belum diisi (isi di Data Induk)'}</span> · Fase {p.fase || 'E'} {p.kelas ? `(Kelas ${p.kelas})` : ''}

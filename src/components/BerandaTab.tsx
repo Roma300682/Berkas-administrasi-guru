@@ -79,6 +79,8 @@ export const BerandaTab: React.FC<BerandaTabProps> = ({
               }).length / U
             : 0
         );
+      case 'soal':
+        return U > 0 ? 2 : 0;
       default:
         return 0;
     }
@@ -95,7 +97,7 @@ export const BerandaTab: React.FC<BerandaTabProps> = ({
       case 'mulai':
         return 'Identitas guru dan sekolah';
       case 'waktu':
-        return `${mgSum(1) + mgSum(2)} minggu efektif · ${jpAvail(1) + jpAvail(2)} JP`;
+        return `${mgSum(1) + mgSum(2)} minggu efektif · ${jpAvail(1) + jpAvail(2)} JP · Kalender Pendidikan`;
       case 'cpatp':
         return `${U} unit · ${n} TP`;
       case 'prota':
@@ -118,6 +120,8 @@ export const BerandaTab: React.FC<BerandaTabProps> = ({
             return l && l.tugas;
           }).length
         } dari ${U} unit`;
+      case 'soal':
+        return `Kisi-kisi, Pilihan Ganda & Uraian (${U} unit)`;
       default:
         return '';
     }
@@ -153,19 +157,19 @@ export const BerandaTab: React.FC<BerandaTabProps> = ({
             Berkas Ajar Guru
           </h1>
           <p className="text-slate-600 dark:text-slate-400 mt-1 max-w-3xl text-sm lg:text-base">
-            Susun tujuh perangkat ajar dalam satu alur. Data yang diisi pada satu berkas dipakai otomatis di berkas berikutnya, jadi perubahan cukup dilakukan sekali.
+            Susun delapan perangkat ajar & evaluasi (termasuk Kalender Pendidikan terintegrasi dan Pembuatan Soal Ujian AI) dalam satu alur. Data yang diisi pada satu berkas dipakai otomatis di berkas berikutnya.
           </p>
         </div>
         <button
           type="button"
           onClick={() => {
             const fn = downloadAllDocsWord(state);
-            showToast(`Berhasil mengunduh paket lengkap 7 dokumen: ${fn}`);
+            showToast(`Berhasil mengunduh paket lengkap 8 dokumen: ${fn}`);
           }}
           className="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-colors flex items-center gap-2 cursor-pointer shrink-0"
         >
           <span>📥</span>
-          <span>Unduh Semua 7 Berkas Lengkap (.doc)</span>
+          <span>Unduh Semua 8 Berkas Lengkap (.doc)</span>
         </button>
       </div>
 
@@ -265,9 +269,6 @@ export const BerandaTab: React.FC<BerandaTabProps> = ({
                   <div>
                     <span className="text-xs font-bold text-emerald-900 dark:text-emerald-200 flex items-center gap-1.5 flex-wrap">
                       <span>🌟 Pembaruan CP & ATP Akuntansi (AKL) — Inspirasi Ruang GTK Kemendikdasmen</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-700">
-                        BSKAP No. 046/H/KR/2025
-                      </span>
                     </span>
                     <span className="text-[11px] text-emerald-700 dark:text-emerald-400">
                       Pilih dari 10 mata pelajaran AKL (SAK EP, Coretax DJP, TER PPh 21, SIPD RI, Siskeudes, PSAK Syariah 401–410):

@@ -98,6 +98,57 @@ export interface LkpdItem {
   refleksi?: string;
 }
 
+export interface KaldikEvent {
+  id: string;
+  date: string; // YYYY-MM-DD
+  title: string;
+  cat: 'libur-nasional' | 'libur-semester' | 'asesmen' | 'kegiatan';
+  markWeekOff?: boolean;
+}
+
+export interface SoalPgItem {
+  id: string;
+  tpKode: string;
+  indikatorSoal: string;
+  levelKognitif: string;
+  tanya: string;
+  opsi: {
+    A: string;
+    B: string;
+    C: string;
+    D: string;
+    E: string;
+  };
+  kunci: 'A' | 'B' | 'C' | 'D' | 'E';
+  pembahasan: string;
+}
+
+export interface SoalEssayItem {
+  id: string;
+  tpKode: string;
+  indikatorSoal: string;
+  levelKognitif: string;
+  tanya: string;
+  kunci: string;
+  skor: number;
+}
+
+export interface SoalPkg {
+  unitId: string;
+  jenisUjian: string;
+  waktuMenit: number;
+  topikFokus: string;
+  kesulitan: string;
+  jmlPg: number;
+  jmlEssay: number;
+  petunjuk: string;
+  cetakKisi?: boolean;
+  cetakNaskah?: boolean;
+  cetakKunci?: boolean;
+  pg: SoalPgItem[];
+  essay: SoalEssayItem[];
+}
+
 export interface AppState {
   v: number;
   sample: boolean;
@@ -107,13 +158,18 @@ export interface AppState {
     doc: Record<string, boolean>;
     unit: string | null;
     unitL: string | null;
+    unitS?: string | null;
   };
   profil: Profile;
   bulan: MonthItem[];
+  kaldik?: KaldikEvent[];
+  cetakKaldik?: boolean;
   cp: CpItem[];
   unit: UnitItem[];
   tp: TpItem[];
   promes: Record<string, string[]>; // tpId -> array of "monthId:weekIndex"
   modul: Record<string, ModulItem>;
   lkpd: Record<string, LkpdItem>;
+  soal?: Record<string, SoalPkg>;
 }
+
