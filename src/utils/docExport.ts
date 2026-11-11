@@ -266,20 +266,20 @@ export function generateWaktuHtml(state: AppState): string {
   };
   const catLabelMap: Record<string, string> = {
     'libur-nasional': 'Libur Nasional / Cuti Bersama',
-    'libur-semester': 'Libur Semester / Hari Raya',
-    asesmen: 'Asesmen (ASTS / ASAS / UKK)',
-    kegiatan: 'Kegiatan Akademik Sekolah',
+    'libur-semester': 'Libur Semester / Ramadan & Idul Fitri (Kaldik Jabar)',
+    asesmen: 'Asesmen (ASTS / PSAS / PSAT / UKK / ANBK Jabar)',
+    kegiatan: 'Kegiatan Akademik / MPLS / SmartTren / Rapor Disdik Jabar',
   };
 
   const kaldikSection =
     state.cetakKaldik !== false && kaldikEvents.length > 0
-      ? `<h3 style="font-size:11pt;margin:10pt 0 4pt;text-transform:uppercase;border-bottom:1pt solid #888888;padding-bottom:2pt">Daftar Agenda Kalender Pendidikan &amp; Hari Libur</h3>
+      ? `<h3 style="font-size:11pt;margin:10pt 0 4pt;text-transform:uppercase;border-bottom:1pt solid #888888;padding-bottom:2pt">Daftar Agenda Kalender Pendidikan Provinsi Jawa Barat (Disdik Jabar) &amp; Hari Libur</h3>
       <table class="dtbl" style="width:100%;border-collapse:collapse;margin:4pt 0 8pt;font-size:9.5pt">
         <thead>
           <tr>
             <th style="${thStyle};width:6%">No</th>
             <th style="${thStyle};width:22%">Tanggal</th>
-            <th style="${thStyle};width:38%">Uraian Agenda / Hari Libur</th>
+            <th style="${thStyle};width:38%">Uraian Agenda Kaldik Jawa Barat / Hari Libur</th>
             <th style="${thStyle};width:20%">Kategori</th>
             <th style="${thStyle};width:14%">Status Minggu</th>
           </tr>
@@ -303,7 +303,7 @@ export function generateWaktuHtml(state: AppState): string {
   return `<div class="doc-section">
     ${docKop(state)}
     <h2 style="text-align:center;font-size:12.5pt;margin:0 0 2pt;text-transform:uppercase;letter-spacing:0.03em">KALENDER PENDIDIKAN DAN ANALISIS ALOKASI WAKTU</h2>
-    <p class="sub" style="text-align:center;font-size:10.5pt;margin:0 0 10pt;color:#222222">Tahun Pelajaran ${dots(p.ta)}</p>
+    <p class="sub" style="text-align:center;font-size:10.5pt;margin:0 0 10pt;color:#222222">Acuan: Pedoman Kalender Pendidikan Dinas Pendidikan Provinsi Jawa Barat · Tahun Pelajaran ${dots(p.ta)}</p>
     ${docIdent(state, [['Alokasi per Minggu', `${jp} JP × ${Number(p.menit) || 45} menit`]])}
     ${semTables}
     <h3 style="font-size:11pt;margin:10pt 0 4pt;text-transform:uppercase;border-bottom:1pt solid #888888;padding-bottom:2pt">Rekapitulasi Kebutuhan Jam Pelajaran (JP)</h3>

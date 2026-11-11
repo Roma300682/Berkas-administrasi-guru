@@ -5,6 +5,7 @@ import { generateWaktuHtml } from '../utils/docExport';
 import {
   buildMonthGrid,
   CATEGORY_META,
+  getJabarMilestoneSummary,
   MONTH_MAP,
   parseTahunAjaran,
 } from '../utils/kalenderPendidikan';
@@ -115,25 +116,27 @@ export const WaktuTab: React.FC<WaktuTabProps> = ({
   const sem2Off = getBulanSem(2).reduce((a, b) => a + b.off.length, 0);
   const sem2Ef = sem2Weeks - sem2Off;
 
+  const jabarSummary = getJabarMilestoneSummary(p.ta);
+
   const renderEdit = () => (
     <div className="flex flex-col gap-6">
-      {/* Banner Integrasi Kalender Pendidikan & Analisis Waktu */}
+      {/* Banner Integrasi Kalender Pendidikan Provinsi Jawa Barat & Analisis Waktu */}
       <section className="bg-gradient-to-br from-emerald-900 via-emerald-950 to-teal-950 text-white rounded-2xl p-5 shadow-lg border border-emerald-700/60 flex flex-col gap-4">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40">
-                📅 Kalender Pendidikan Terintegrasi
+                🏛️ Kalender Pendidikan Provinsi Jawa Barat (Disdik Jabar)
               </span>
-              <span className="text-xs font-medium text-emerald-200 bg-emerald-900/80 px-2.5 py-0.5 rounded-full border border-emerald-700">
-                Tahun Pelajaran {startYear}/{endYear}
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-200 border border-emerald-400/40">
+                ⚡ Otomatis Update ({startYear}/{endYear})
               </span>
             </div>
             <h2 className="text-lg sm:text-xl font-bold mt-0.5">
-              Kalender Pendidikan & Perhitungan Minggu Efektif Otomatis
+              Kalender Pendidikan Jawa Barat & Perhitungan Minggu Efektif Otomatis
             </h2>
             <p className="text-xs text-emerald-200/90 max-w-3xl m-0 leading-relaxed">
-              Kalender di bawah terhubung langsung dengan <strong>Analisis Alokasi Waktu</strong> dan <strong>Program Semester (Promes)</strong>. Klik tombol <strong>Mg 1–Mg 5</strong> untuk menandai minggu efektif/tidak efektif, atau klik <strong>tanggal</strong> pada kalender untuk menambah agenda libur/asesmen sekolah.
+              Disesuaikan otomatis dengan <strong>Pedoman Kalender Pendidikan Dinas Pendidikan Provinsi Jawa Barat</strong> (HPMS &amp; MPLS Jabar, ANBK, ASTS, PSAS Ganjil, Titimangsa Rapor Smt 1, Libur Awal Ramadan &amp; <strong>SmartTren Ramadan Jabar</strong>, UKK SMK &amp; PSAJ, PSAT Kenaikan Kelas, Titimangsa Rapor Smt 2, dan SPMB/PPDB Jabar). Saat Tahun Pelajaran diubah, kalender, minggu efektif, dan Program Semester langsung ter-update otomatis.
             </p>
           </div>
 
@@ -145,11 +148,21 @@ export const WaktuTab: React.FC<WaktuTabProps> = ({
                 onChange={e => {
                   const nextTa = e.target.value;
                   onSyncKaldik(nextTa, true);
-                  showToast?.(`Kalender Pendidikan & Analisis Waktu disinkronkan ke TA ${nextTa}!`);
+                  showToast?.(`Kalender Pendidikan Jawa Barat, Analisis Waktu & Promes otomatis ter-update ke TA ${nextTa}!`);
                 }}
                 className="bg-transparent text-white font-bold focus:outline-hidden cursor-pointer"
               >
-                {['2024/2025', '2025/2026', '2026/2027', '2027/2028'].map(taOpt => (
+                {Array.from(
+                  new Set([
+                    '2024/2025',
+                    '2025/2026',
+                    '2026/2027',
+                    '2027/2028',
+                    '2028/2029',
+                    '2029/2030',
+                    `${startYear}/${endYear}`,
+                  ])
+                ).map(taOpt => (
                   <option key={taOpt} value={taOpt} className="text-slate-900">
                     {taOpt}
                   </option>
@@ -160,13 +173,25 @@ export const WaktuTab: React.FC<WaktuTabProps> = ({
             <button
               type="button"
               onClick={() => {
+                onSyncKaldik(`${startYear}/${endYear}`, true);
+                showToast?.(`Standar Kalender Pendidikan Provinsi Jawa Barat TA ${startYear}/${endYear} berhasil diterapkan & disinkronkan!`);
+              }}
+              className="px-3.5 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-lg text-xs transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
+            >
+              <span>🏛️</span>
+              <span>Muat Standar Kaldik Jawa Barat</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
                 onSyncKaldik(`${startYear}/${endYear}`, false);
-                showToast?.('Jumlah minggu, minggu tidak efektif, dan keterangan berhasil disinkronkan dari Kalender Pendidikan!');
+                showToast?.('Jumlah minggu, minggu tidak efektif, dan keterangan berhasil disinkronkan dari Kalender Pendidikan Jawa Barat!');
               }}
               className="px-3.5 py-2 bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold rounded-lg text-xs transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
             >
               <span>🔄</span>
-              <span>Hitung & Sinkronkan Minggu dari Kalender</span>
+              <span>Sinkronkan Minggu ke Analisis Waktu</span>
             </button>
 
             <button
@@ -215,10 +240,39 @@ export const WaktuTab: React.FC<WaktuTabProps> = ({
                 {sem1Ef + sem2Ef} Minggu Efektif · <span className="text-amber-300">{(sem1Ef + sem2Ef) * jp} JP</span>
               </div>
               <div className="text-[10px] text-emerald-400">
-                {kaldikEvents.length} agenda & hari libur tercatat
+                {kaldikEvents.length} agenda Kaldik Jawa Barat tercatat
               </div>
             </div>
             <span className="text-2xl">📊</span>
+          </div>
+        </div>
+
+        {/* Ringkasan Tanggal Penting Pedoman Kaldik Dinas Pendidikan Provinsi Jawa Barat */}
+        <div className="bg-emerald-950/60 border border-emerald-800/80 rounded-xl p-3.5">
+          <div className="text-xs font-bold text-amber-300 mb-2 flex items-center justify-between flex-wrap gap-2">
+            <span>📌 Ringkasan Agenda Pokok Kalender Pendidikan Provinsi Jawa Barat ({startYear}/{endYear})</span>
+            <span className="text-[11px] font-normal text-emerald-300">Acuan: Pedoman Kaldik Disdik Provinsi Jawa Barat</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 text-[11px]">
+            <div className="bg-emerald-900/50 border border-emerald-800/70 rounded-lg p-2">
+              <div className="text-emerald-300 font-semibold">HPMS &amp; MPLS Semester 1</div>
+              <div className="text-white font-bold mt-0.5">{jabarSummary.mpls}</div>
+            </div>
+            <div className="bg-emerald-900/50 border border-emerald-800/70 rounded-lg p-2">
+              <div className="text-emerald-300 font-semibold">PSAS &amp; Rapor Semester 1</div>
+              <div className="text-white font-bold mt-0.5">PSAS: {jabarSummary.psasGanjil}</div>
+              <div className="text-amber-300 text-[10px]">Rapor: {jabarSummary.raporGanjil}</div>
+            </div>
+            <div className="bg-emerald-900/50 border border-emerald-800/70 rounded-lg p-2">
+              <div className="text-emerald-300 font-semibold">SmartTren Ramadan &amp; UKK/PSAJ</div>
+              <div className="text-white font-bold mt-0.5">{jabarSummary.smartTrenRamadan}</div>
+              <div className="text-amber-300 text-[10px]">{jabarSummary.ukkPsaj}</div>
+            </div>
+            <div className="bg-emerald-900/50 border border-emerald-800/70 rounded-lg p-2">
+              <div className="text-emerald-300 font-semibold">PSAT &amp; Rapor Semester 2</div>
+              <div className="text-white font-bold mt-0.5">PSAT: {jabarSummary.psatGenap}</div>
+              <div className="text-amber-300 text-[10px]">Rapor: {jabarSummary.raporGenap}</div>
+            </div>
           </div>
         </div>
 
@@ -810,8 +864,8 @@ export const WaktuTab: React.FC<WaktuTabProps> = ({
   return (
     <div className="flex flex-col gap-6">
       <DocHeader
-        title="Kalender Pendidikan & Analisis Waktu"
-        lead="Kalender Pendidikan interaktif yang terintegrasi otomatis dengan perhitungan minggu efektif, JP semester, Program Tahunan, dan Program Semester."
+        title="Kalender Pendidikan Jawa Barat & Analisis Waktu"
+        lead="Kalender Pendidikan Provinsi Jawa Barat (Disdik Jabar) yang terintegrasi otomatis dengan perhitungan minggu efektif, JP semester, Program Tahunan, dan Program Semester."
         tab="waktu"
         isDocView={isDocView}
         onToggleView={onToggleView}

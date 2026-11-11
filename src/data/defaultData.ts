@@ -39,23 +39,23 @@ export const mon = (sem: Semester, nama: string, n: number, off: number[] = [], 
 
 export const getMonths = (withSampleOff: boolean): MonthItem[] => {
   const base = [
-    mon(1, 'Juli', 4, withSampleOff ? [0] : [], withSampleOff ? 'Masa Pengenalan Lingkungan Sekolah' : ''),
+    mon(1, 'Juli', 5),
     mon(1, 'Agustus', 4),
     mon(1, 'September', 4),
-    mon(1, 'Oktober', 5, withSampleOff ? [1] : [], withSampleOff ? 'Asesmen sumatif tengah semester' : ''),
+    mon(1, 'Oktober', 5),
     mon(1, 'November', 4),
-    mon(1, 'Desember', 4, withSampleOff ? [1, 3] : [], withSampleOff ? 'Asesmen sumatif akhir semester dan libur semester' : ''),
-    mon(2, 'Januari', 4, withSampleOff ? [0] : [], withSampleOff ? 'Libur semester' : ''),
+    mon(1, 'Desember', 4),
+    mon(2, 'Januari', 4),
     mon(2, 'Februari', 4),
-    mon(2, 'Maret', 4, withSampleOff ? [1, 2] : [], withSampleOff ? 'Libur hari raya dan cuti bersama' : ''),
+    mon(2, 'Maret', 4),
     mon(2, 'April', 5),
-    mon(2, 'Mei', 4, withSampleOff ? [1] : [], withSampleOff ? 'Asesmen sumatif tengah semester' : ''),
-    mon(2, 'Juni', 4, withSampleOff ? [1, 3] : [], withSampleOff ? 'Asesmen sumatif akhir tahun dan libur kenaikan kelas' : '')
+    mon(2, 'Mei', 4),
+    mon(2, 'Juni', 4)
   ];
   if (withSampleOff) {
     return syncCalendarToBulan(base, '2026/2027', getDefaultKaldikEvents('2026/2027'));
   }
-  return base;
+  return syncCalendarToBulan(base, '2026/2027', getDefaultKaldikEvents('2026/2027'));
 };
 
 export const blankState = (): AppState => ({
@@ -79,24 +79,24 @@ export const blankState = (): AppState => ({
     ta: '2026/2027',
     kepsek: '',
     nipKs: '',
-    kota: '',
-    tgl: '',
+    kota: 'Bandung',
+    tgl: '13 Juli 2026',
     jp: 4,
     menit: 45,
     b1: 60,
     b2: 75,
     b3: 90,
     pakaiKop: true,
-    kopBaris1: 'PEMERINTAH PROVINSI DAERAH KHUSUS',
+    kopBaris1: 'PEMERINTAH DAERAH PROVINSI JAWA BARAT',
     kopBaris2: 'DINAS PENDIDIKAN',
     kopBidang: 'BIDANG KEAHLIAN BISNIS DAN MANAJEMEN — PROGRAM KEAHLIAN AKUNTANSI DAN KEUANGAN LEMBAGA',
-    kopAlamat: 'Jl. Pendidikan Raya No. 10, Telp. (021) 5551234, Kode Pos 10110',
-    kopKontak: 'Laman: www.smkn1nusantara.sch.id | Pos-el: info@smkn1nusantara.sch.id | NPSN: 20100123',
+    kopAlamat: 'Jl. Pendidikan Raya No. 10, Kota Bandung, Provinsi Jawa Barat',
+    kopKontak: 'Laman: www.smkn1nusantara.sch.id | Pos-el: info@smkn1nusantara.sch.id | NPSN: 20219100',
     logoKiri: LOGO_PENDIDIKAN_SVG,
     logoKanan: '',
     ukuranLogo: 72,
   },
-  bulan: getMonths(false),
+  bulan: getMonths(true),
   kaldik: getDefaultKaldikEvents('2026/2027'),
   cetakKaldik: true,
   cp: [],

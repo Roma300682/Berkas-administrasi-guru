@@ -18,10 +18,50 @@ import { ModulTab } from './components/ModulTab';
 import { LkpdTab } from './components/LkpdTab';
 import { SoalTab } from './components/SoalTab';
 import { copyCleanDocToClipboard } from './utils/docExport';
-import { getDefaultKaldikEvents, syncCalendarToBulan } from './utils/kalenderPendidikan';
+import {
+  getDefaultKaldikEvents,
+  needsJabarKaldikAutoUpdate,
+  syncCalendarToBulan,
+} from './utils/kalenderPendidikan';
 import { generateContextualSoal } from './utils/soalGenerator';
 
 const KEY = 'berkas-ajar-guru-v1';
+
+function computePromesFromBulan(
+  bulan: AppState['bulan'],
+  unit: AppState['unit'],
+  tp: AppState['tp'],
+  jpPerWeek: number
+): Record<string, string[]> {
+  const newPromes: Record<string, string[]> = {};
+  ([1, 2] as Semester[]).forEach(sem => {
+    const bs = bulan.filter(b => b.sem === sem);
+    const sl: string[] = [];
+    bs.forEach(b => {
+      for (let w = 0; w < b.n; w++) {
+        if (!b.off.includes(w)) sl.push(`${b.id}:${w}`);
+      }
+    });
+    const jpWeek = Math.max(1, Number(jpPerWeek) || 1);
+    const uIds = unit.filter(u => u.sem === sem).map(u => u.id);
+    const tps = tp.filter(t => uIds.includes(t.unitId));
+    let cur = 0;
+    tps.forEach(t => {
+      const j = Number(t.jp) || 0;
+      const set: string[] = [];
+      if (j > 0) {
+        const a = Math.floor(cur / jpWeek);
+        const b = Math.ceil((cur + j) / jpWeek) - 1;
+        for (let i = a; i <= b; i++) {
+          if (sl[i]) set.push(sl[i]);
+        }
+      }
+      newPromes[t.id] = set;
+      cur += j;
+    });
+  });
+  return newPromes;
+}
 
 export default function App() {
   const [state, setState] = useState<AppState>(() => {
@@ -36,8 +76,16 @@ export default function App() {
             ...parsed.profil,
             sekolah: parsed.profil.sekolah || defProf.sekolah,
           };
-          if (!parsed.kaldik || !Array.isArray(parsed.kaldik)) {
-            parsed.kaldik = getDefaultKaldikEvents(parsed.profil.ta || '2026/2027');
+          const ta = parsed.profil.ta || '2026/2027';
+          if (needsJabarKaldikAutoUpdate(parsed.kaldik, ta)) {
+            parsed.kaldik = getDefaultKaldikEvents(ta);
+            parsed.bulan = syncCalendarToBulan(parsed.bulan, ta, parsed.kaldik);
+            parsed.promes = computePromesFromBulan(
+              parsed.bulan,
+              parsed.unit,
+              parsed.tp,
+              parsed.profil.jp
+            );
           }
           if (parsed.cetakKaldik === undefined) {
             parsed.cetakKaldik = true;
@@ -91,10 +139,34 @@ export default function App() {
   };
 
   const handleChangeProfile = (key: string, value: any) => {
-    setState(prev => ({
-      ...prev,
-      profil: { ...prev.profil, [key]: value }
-    }));
+    setState(prev => {
+      const nextProfil = { ...prev.profil, [key]: value };
+      // Automatically update Kalender Pendidikan Jawa Barat, Analisis Waktu & Promes when Tahun Pelajaran (ta) is valid
+      if (key === 'ta' && /(20\d{2})\s*[/\-]\s*(20\d{2})/.test(String(value))) {
+        const nextKaldik = getDefaultKaldikEvents(String(value));
+        const nextBulan = syncCalendarToBulan(prev.bulan, String(value), nextKaldik);
+        const nextPromes = computePromesFromBulan(nextBulan, prev.unit, prev.tp, nextProfil.jp);
+        return {
+          ...prev,
+          profil: nextProfil,
+          kaldik: nextKaldik,
+          bulan: nextBulan,
+          promes: nextPromes,
+        };
+      }
+      if (key === 'jp') {
+        const nextPromes = computePromesFromBulan(prev.bulan, prev.unit, prev.tp, Number(value) || 4);
+        return {
+          ...prev,
+          profil: nextProfil,
+          promes: nextPromes,
+        };
+      }
+      return {
+        ...prev,
+        profil: nextProfil,
+      };
+    });
   };
 
   const handleKeepSample = () => {
@@ -121,35 +193,43 @@ export default function App() {
     }
   };
 
-  // Analisis Waktu & Kalender Pendidikan handlers
+  // Analisis Waktu & Kalender Pendidikan handlers (Otomatis sinkron ke Analisis Waktu & Promes)
   const handleChangeMonth = (id: string, field: string, val: any) => {
-    setState(prev => ({
-      ...prev,
-      bulan: prev.bulan.map(b => {
+    setState(prev => {
+      const nextBulan = prev.bulan.map(b => {
         if (b.id !== id) return b;
-        let update = { ...b, [field]: val };
+        const update = { ...b, [field]: val };
         if (field === 'n') {
           const n = Math.max(1, Math.min(6, Math.round(Number(val) || 1)));
           update.n = n;
           update.off = update.off.filter(i => i < n);
         }
         return update;
-      })
-    }));
+      });
+      return {
+        ...prev,
+        bulan: nextBulan,
+        promes: computePromesFromBulan(nextBulan, prev.unit, prev.tp, prev.profil.jp),
+      };
+    });
   };
 
   const handleToggleWeekOff = (monthId: string, weekIdx: number) => {
-    setState(prev => ({
-      ...prev,
-      bulan: prev.bulan.map(b => {
+    setState(prev => {
+      const nextBulan = prev.bulan.map(b => {
         if (b.id !== monthId) return b;
         const off = [...b.off];
         const idx = off.indexOf(weekIdx);
         if (idx >= 0) off.splice(idx, 1);
         else off.push(weekIdx);
         return { ...b, off };
-      })
-    }));
+      });
+      return {
+        ...prev,
+        bulan: nextBulan,
+        promes: computePromesFromBulan(nextBulan, prev.unit, prev.tp, prev.profil.jp),
+      };
+    });
   };
 
   const handleAddMonth = (sem: Semester) => {
@@ -175,11 +255,13 @@ export default function App() {
         ? prev.kaldik
         : getDefaultKaldikEvents(targetTa);
       const syncedBulan = syncCalendarToBulan(prev.bulan, targetTa, events);
+      const syncedPromes = computePromesFromBulan(syncedBulan, prev.unit, prev.tp, prev.profil.jp);
       return {
         ...prev,
         profil: { ...prev.profil, ta: targetTa },
         kaldik: events,
         bulan: syncedBulan,
+        promes: syncedPromes,
       };
     });
   };
@@ -188,10 +270,12 @@ export default function App() {
     setState(prev => {
       const nextEvents = [...(prev.kaldik || []), { ...ev, id: uid() }];
       const syncedBulan = syncCalendarToBulan(prev.bulan, prev.profil.ta || '2026/2027', nextEvents);
+      const syncedPromes = computePromesFromBulan(syncedBulan, prev.unit, prev.tp, prev.profil.jp);
       return {
         ...prev,
         kaldik: nextEvents,
         bulan: syncedBulan,
+        promes: syncedPromes,
       };
     });
   };
@@ -200,10 +284,12 @@ export default function App() {
     setState(prev => {
       const nextEvents = (prev.kaldik || []).filter(e => e.id !== id);
       const syncedBulan = syncCalendarToBulan(prev.bulan, prev.profil.ta || '2026/2027', nextEvents);
+      const syncedPromes = computePromesFromBulan(syncedBulan, prev.unit, prev.tp, prev.profil.jp);
       return {
         ...prev,
         kaldik: nextEvents,
         bulan: syncedBulan,
+        promes: syncedPromes,
       };
     });
   };
@@ -214,10 +300,12 @@ export default function App() {
         e.id === id ? { ...e, markWeekOff: !e.markWeekOff } : e
       );
       const syncedBulan = syncCalendarToBulan(prev.bulan, prev.profil.ta || '2026/2027', nextEvents);
+      const syncedPromes = computePromesFromBulan(syncedBulan, prev.unit, prev.tp, prev.profil.jp);
       return {
         ...prev,
         kaldik: nextEvents,
         bulan: syncedBulan,
+        promes: syncedPromes,
       };
     });
   };
