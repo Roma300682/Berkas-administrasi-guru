@@ -259,23 +259,26 @@ export const BerandaTab: React.FC<BerandaTabProps> = ({
                 placeholder="mis. Akuntansi, Layanan Perbankan, Matematika, dll."
               />
 
-              {/* Katalog Mata Pelajaran Lengkap Akuntansi & Keuangan Lembaga (AKL) */}
-              <div className="mt-3 p-3 bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 rounded-xl flex flex-col gap-2.5 shadow-xs">
+              {/* Katalog Mata Pelajaran Lengkap Akuntansi & Keuangan Lembaga (AKL) - Inspirasi Ruang GTK */}
+              <div className="mt-3 p-3.5 bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 rounded-xl flex flex-col gap-2.5 shadow-xs">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                   <div>
-                    <span className="text-xs font-bold text-emerald-900 dark:text-emerald-200 flex items-center gap-1.5">
-                      <span>📚 Jurusan Akuntansi & Keuangan Lembaga (AKL) — BSKAP 046/H/KR/2025</span>
+                    <span className="text-xs font-bold text-emerald-900 dark:text-emerald-200 flex items-center gap-1.5 flex-wrap">
+                      <span>🌟 Pembaruan CP & ATP Akuntansi (AKL) — Inspirasi Ruang GTK Kemendikdasmen</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-700">
+                        BSKAP No. 046/H/KR/2025
+                      </span>
                     </span>
                     <span className="text-[11px] text-emerald-700 dark:text-emerald-400">
-                      Pilih mata pelajaran untuk otomatis menyetel Profil Mapel, Fase, dan Tingkat Kelas:
+                      Pilih dari 10 mata pelajaran AKL (SAK EP, Coretax DJP, TER PPh 21, SIPD RI, Siskeudes, PSAK Syariah 401–410):
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => onTabSelect('cpatp')}
-                    className="self-start sm:self-center text-[11px] font-bold text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 underline flex items-center gap-1 cursor-pointer"
+                    className="self-start sm:self-center text-[11px] font-bold text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 underline flex items-center gap-1 cursor-pointer shrink-0"
                   >
-                    <span>Buka tab CP-ATP ➔</span>
+                    <span>Buka & Generate di tab CP-ATP ➔</span>
                   </button>
                 </div>
 
@@ -290,7 +293,7 @@ export const BerandaTab: React.FC<BerandaTabProps> = ({
                           onChangeProfile('mapel', s.nama);
                           onChangeProfile('fase', s.fase);
                           onChangeProfile('kelas', s.kelas);
-                          showToast(`Mapel AKL: ${s.nama} (${s.fase} - ${s.kelas}) aktif! Buka tab CP-ATP untuk generate perangkat ajar.`);
+                          showToast(`Mapel AKL: ${s.nama} (${s.kodeAtp}) aktif! Buka tab CP-ATP untuk menerapkan Inspirasi Ruang GTK.`);
                         }}
                         className={`p-2.5 rounded-lg text-left transition-all border cursor-pointer flex flex-col justify-between gap-1.5 ${
                           isSelected
@@ -300,22 +303,33 @@ export const BerandaTab: React.FC<BerandaTabProps> = ({
                       >
                         <div className="flex items-start justify-between gap-1.5">
                           <span className="text-base">{s.icon}</span>
-                          <span
-                            className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
-                              isSelected
-                                ? 'bg-emerald-700 text-emerald-100'
-                                : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
-                            }`}
-                          >
-                            {s.tingkat}
-                          </span>
+                          <div className="flex items-center gap-1">
+                            <span
+                              className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ${
+                                isSelected
+                                  ? 'bg-emerald-800 text-emerald-100'
+                                  : 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+                              }`}
+                            >
+                              {s.kodeAtp}
+                            </span>
+                            <span
+                              className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                                isSelected
+                                  ? 'bg-emerald-700 text-emerald-100'
+                                  : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                              }`}
+                            >
+                              {s.tingkat}
+                            </span>
+                          </div>
                         </div>
                         <div>
                           <div className={`text-xs font-bold leading-tight ${isSelected ? 'text-white' : 'text-slate-900 dark:text-slate-100'}`}>
                             {s.shortName}
                           </div>
-                          <div className={`text-[10px] mt-0.5 line-clamp-1 ${isSelected ? 'text-emerald-100' : 'text-slate-500 dark:text-slate-400'}`}>
-                            {s.kategori}
+                          <div className={`text-[10px] mt-0.5 line-clamp-1 font-medium ${isSelected ? 'text-amber-200' : 'text-emerald-700 dark:text-emerald-400'}`}>
+                            {s.ruangGtkUpdate}
                           </div>
                         </div>
                       </button>

@@ -34,19 +34,27 @@ export function generateStandardCurriculum(
   const topik = (topikInput || '').trim();
   const lowerMapel = mapel.toLowerCase();
 
-  // 0. Akuntansi dan Keuangan Lembaga (AKL) - Semua Mata Pelajaran Resmi BSKAP No. 046/H/KR/2025
+  // 0. Akuntansi dan Keuangan Lembaga (AKL) - Semua 10 Mata Pelajaran Resmi Inspirasi Ruang GTK Kemendikdasmen & BSKAP No. 046/H/KR/2025
   const isAklRelated =
     lowerMapel.includes('akuntansi') ||
     lowerMapel.includes('keuangan') ||
     lowerMapel.includes('pajak') ||
+    lowerMapel.includes('perpajakan') ||
+    lowerMapel.includes('coretax') ||
     lowerMapel.includes('perbankan') ||
     lowerMapel.includes('syariah') ||
     lowerMapel.includes('manufaktur') ||
     lowerMapel.includes('jasa dagang') ||
     lowerMapel.includes('lembaga') ||
+    lowerMapel.includes('sipd') ||
+    lowerMapel.includes('siskeudes') ||
     lowerMapel.includes('komputer akuntansi') ||
+    lowerMapel.includes('spreadsheet') ||
     lowerMapel.includes('myob') ||
     lowerMapel.includes('accurate') ||
+    lowerMapel.includes('pkk') ||
+    lowerMapel.includes('kewirausahaan') ||
+    lowerMapel.includes('projek kreatif') ||
     lowerMapel.includes('akl');
 
   if (isAklRelated) {

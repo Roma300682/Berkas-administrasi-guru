@@ -1,76 +1,62 @@
-export interface CurriculumUnit {
-  nama: string;
-  sem: number;
-  elemen: string;
-  tps: Array<{
-    teks: string;
-    jp: number;
-    ind: string;
-    r1: string;
-    r2: string;
-    r3: string;
-    r4: string;
-    teknik: string;
-  }>;
-}
-
-export interface CurriculumResponse {
-  cp: Array<{ elemen: string; teks: string }>;
-  units: CurriculumUnit[];
-  isFallback?: boolean;
-}
+import { CurriculumResponse } from './serverCurriculum';
 
 export interface AklSubjectMeta {
   id: string;
   nama: string;
   shortName: string;
-  fase: string;
+  fase: 'E' | 'F';
   kelas: string;
-  tingkat: 'Kelas X' | 'Kelas XI' | 'Kelas XII' | 'Kelas XI & XII';
-  kategori: 'Fase E (Dasar Kejuruan)' | 'Fase F (Konsentrasi Keahlian)' | 'Fase F (Mata Pelajaran Pilihan)';
+  kategori: 'Dasar Program Keahlian (Kelas X)' | 'Konsentrasi Keahlian AKL (Kelas XI & XII)' | 'Mata Pelajaran Pilihan AKL (Kelas XI & XII)';
+  tingkat: 'Kelas X' | 'Kelas XI' | 'Kelas XII' | 'Kelas XI / XII';
   deskripsi: string;
+  elemenCount: number;
   icon: string;
-  tag: string;
+  kodeAtp: string;
+  ruangGtkUpdate: string;
 }
 
 export const AKL_SUBJECTS_CATALOG: AklSubjectMeta[] = [
-  // Fase E
   {
     id: 'dasar-akl',
     nama: 'Dasar-Dasar Akuntansi dan Keuangan Lembaga',
-    shortName: 'Dasar-Dasar AKL',
+    shortName: 'Dasar-Dasar AKL (Kelas X)',
     fase: 'E',
     kelas: 'X',
+    kategori: 'Dasar Program Keahlian (Kelas X)',
     tingkat: 'Kelas X',
-    kategori: 'Fase E (Dasar Kejuruan)',
-    deskripsi: 'Fondasi kejuruan AKL: Proses bisnis, perkembangan teknologi/fintech, profil profesi & technopreneur, K3LH, prinsip dasar akuntansi, dan spreadsheet keuangan (7 Elemen BSKAP 046/H/KR/2025).',
-    icon: '📊',
-    tag: 'Fase E · Dasar Kejuruan'
+    deskripsi: 'Proses bisnis AKL, teknologi fintech & cloud accounting, profil profesi & etika akuntan, K3LH 5R, siklus dasar akuntansi jasa, perbankan dasar, dan paket pengolah angka (spreadsheet).',
+    elemenCount: 7,
+    icon: '📘',
+    kodeAtp: 'ATP-E.AKL',
+    ruangGtkUpdate: 'Inspirasi Ruang GTK: 7 Elemen Terintegrasi Siklus Jasa, Fintech & Spreadsheet'
   },
-  // Fase F Konsentrasi Keahlian
   {
     id: 'konsentrasi-akl',
     nama: 'Konsentrasi Keahlian Akuntansi dan Keuangan Lembaga',
-    shortName: 'Konsentrasi AKL (Inti)',
+    shortName: 'Konsentrasi Keahlian AKL (Inti)',
     fase: 'F',
-    kelas: 'XI',
-    tingkat: 'Kelas XI & XII',
-    kategori: 'Fase F (Konsentrasi Keahlian)',
-    deskripsi: 'Paket keahlian inti komprehensif: Akuntansi Jasa Dagang Manufaktur, Akuntansi Keuangan, Akuntansi Lembaga Pemerintah, Komputer Akuntansi, dan Perpajakan.',
-    icon: '💼',
-    tag: 'Fase F · Konsentrasi Inti'
+    kelas: 'XI / XII',
+    kategori: 'Konsentrasi Keahlian AKL (Kelas XI & XII)',
+    tingkat: 'Kelas XI / XII',
+    deskripsi: 'Paket lengkap 5 elemen terpadu Fase F: Akuntansi Perusahaan Jasa/Dagang/Manufaktur, Akuntansi Keuangan, Akuntansi Lembaga/Instansi Pemerintah, Komputer Akuntansi, dan Perpajakan.',
+    elemenCount: 5,
+    icon: '🏛️',
+    kodeAtp: 'ATP-F.AKL',
+    ruangGtkUpdate: 'Inspirasi Ruang GTK: 5 Elemen Inti Konsentrasi AKL (BSKAP 046/H/KR/2025)'
   },
   {
-    id: 'praktikum-jasa-dagang-manufaktur',
+    id: 'praktikum-jdm',
     nama: 'Praktikum Akuntansi Perusahaan Jasa, Dagang, dan Manufaktur',
-    shortName: 'Praktikum Jasa, Dagang & Manufaktur',
+    shortName: 'Praktikum Akuntansi Jasa, Dagang & Manufaktur',
     fase: 'F',
     kelas: 'XI',
-    tingkat: 'Kelas XI & XII',
-    kategori: 'Fase F (Konsentrasi Keahlian)',
-    deskripsi: 'Siklus lengkap bukti transaksi, jurnal khusus, kartu persediaan, worksheet, laporan keuangan SAK EMKM/ETAP, hingga harga pokok pesanan dan proses manufaktur.',
+    kategori: 'Konsentrasi Keahlian AKL (Kelas XI & XII)',
+    tingkat: 'Kelas XI / XII',
+    deskripsi: 'Dokumen sumber, jurnal khusus, buku besar pembantu, harga pokok produksi (job order & process costing), neraca lajur, dan laporan keuangan berbasis SAK Entitas Privat (SAK EP) & SAK EMKM.',
+    elemenCount: 6,
     icon: '🏭',
-    tag: 'Fase F · Praktikum Akuntansi'
+    kodeAtp: 'ATP-F.PA',
+    ruangGtkUpdate: 'Pembaruan Ruang GTK: Standar SAK Entitas Privat (SAK EP) & SAK EMKM'
   },
   {
     id: 'akuntansi-keuangan',
@@ -78,1410 +64,100 @@ export const AKL_SUBJECTS_CATALOG: AklSubjectMeta[] = [
     shortName: 'Akuntansi Keuangan',
     fase: 'F',
     kelas: 'XI',
-    tingkat: 'Kelas XI & XII',
-    kategori: 'Fase F (Konsentrasi Keahlian)',
-    deskripsi: 'Pengelolaan pos-pos neraca: Kas kecil & bank, piutang & wesel, kartu persediaan (FIFO/Average), aset tetap & depresiasi, utang lancar/obligasi, serta ekuitas PT & Koperasi.',
-    icon: '💰',
-    tag: 'Fase F · Keuangan Lembaga'
+    kategori: 'Konsentrasi Keahlian AKL (Kelas XI & XII)',
+    tingkat: 'Kelas XI / XII',
+    deskripsi: 'Pengelolaan kas kecil & kas bank, rekonsiliasi bank, piutang & cadangan kerugian, piutang wesel, persediaan FIFO/Average, aset tetap & penyusutan, utang jangka panjang/obligasi, dan ekuitas berbasis SAK EP.',
+    elemenCount: 6,
+    icon: '💼',
+    kodeAtp: 'ATP-F.AK',
+    ruangGtkUpdate: 'Pembaruan Ruang GTK: Pengukuran Aset, Liabilitas & Ekuitas SAK EP'
   },
   {
-    id: 'akuntansi-lembaga-pemerintah',
+    id: 'akuntansi-lembaga',
     nama: 'Praktikum Akuntansi Lembaga / Instansi Pemerintah',
-    shortName: 'Akuntansi Lembaga / Pemda',
+    shortName: 'Akuntansi Lembaga / Instansi Pemerintah',
     fase: 'F',
-    kelas: 'XII',
-    tingkat: 'Kelas XI & XII',
-    kategori: 'Fase F (Konsentrasi Keahlian)',
-    deskripsi: 'Standar Akuntansi Pemerintahan (SAP Akrual PP 71/2010), tata kelola APBD & APBDes, jurnal finansial (LO), jurnal anggaran (LRA), dan laporan keuangan SKPD/PPKD.',
-    icon: '🏛️',
-    tag: 'Fase F · Sektor Publik & Pemda'
+    kelas: 'XI',
+    kategori: 'Konsentrasi Keahlian AKL (Kelas XI & XII)',
+    tingkat: 'Kelas XI / XII',
+    deskripsi: 'Standar Akuntansi Pemerintahan (SAP PP 71/2010 & Permendagri 77/2020), APBD/APBDes, akuntansi SKPD & PPKD, jurnal LRA & LO, neraca pemda, SIPD RI, dan aplikasi Siskeudes 2.0.',
+    elemenCount: 6,
+    icon: '🏢',
+    kodeAtp: 'ATP-F.AL',
+    ruangGtkUpdate: 'Pembaruan Ruang GTK: Integrasi SIPD RI Kemendagri & Siskeudes 2.0'
   },
   {
     id: 'komputer-akuntansi',
     nama: 'Komputer Akuntansi',
-    shortName: 'Komputer Akuntansi (MYOB/Accurate)',
+    shortName: 'Komputer Akuntansi (Cloud Accurate / MYOB)',
     fase: 'F',
     kelas: 'XI',
-    tingkat: 'Kelas XI & XII',
-    kategori: 'Fase F (Konsentrasi Keahlian)',
-    deskripsi: 'Pengoperasian software akuntansi industri: Setup bagan akun, master data mitra & inventori, pemrosesan transaksi terkomputerisasi, rekonsiliasi, hingga laporan keuangan digital.',
+    kategori: 'Konsentrasi Keahlian AKL (Kelas XI & XII)',
+    tingkat: 'Kelas XI / XII',
+    deskripsi: 'Instalasi dan setup database awal, bagan akun (COA), kartu piutang/utang/persediaan, entri transaksi jasa, dagang & manufaktur, rekonsiliasi bank, dan pelaporan di Cloud Accounting (Accurate Online / Jurnal) & MYOB.',
+    elemenCount: 6,
     icon: '💻',
-    tag: 'Fase F · Software Industri'
+    kodeAtp: 'ATP-F.KA',
+    ruangGtkUpdate: 'Pembaruan Ruang GTK: Cloud Accounting (Accurate Online) & Otomasi'
   },
   {
-    id: 'perpajakan',
+    id: 'administrasi-pajak',
     nama: 'Administrasi Perpajakan',
-    shortName: 'Perpajakan',
+    shortName: 'Administrasi Perpajakan (Coretax & TER)',
     fase: 'F',
-    kelas: 'XII',
-    tingkat: 'Kelas XI & XII',
-    kategori: 'Fase F (Konsentrasi Keahlian)',
-    deskripsi: 'Ketentuan Umum Perpajakan (KUP), PPh 21 tarif efektif (TER), PPh Badan, PPh Final PP 55, PPN 11%/12%, e-Faktur, e-Bupot Unifikasi, dan pelaporan SPT via DJP Online.',
+    kelas: 'XI',
+    kategori: 'Konsentrasi Keahlian AKL (Kelas XI & XII)',
+    tingkat: 'Kelas XI / XII',
+    deskripsi: 'KUP & NIK-NPWP 16 Digit, perhitungan PPh Pasal 21 metode Tarif Efektif Rata-rata (TER PP 58/2023), PPh Pasal 22/23/24/25, PPh Final UMKM 0,5%, rekonsiliasi fiskal PPh Badan, PPN, dan Coretax DJP.',
+    elemenCount: 6,
     icon: '🧾',
-    tag: 'Fase F · Perpajakan Indonesia'
+    kodeAtp: 'ATP-F.PJ',
+    ruangGtkUpdate: 'Pembaruan Ruang GTK: Coretax DJP (SIAP), PPh 21 TER & NIK-NPWP 16 Digit'
   },
-  // Fase F Mata Pelajaran Pilihan
+  {
+    id: 'pkk-akuntansi',
+    nama: 'Projek Kreatif dan Kewirausahaan (PKK) Akuntansi',
+    shortName: 'Projek Kreatif & Kewirausahaan (PKK) AKL',
+    fase: 'F',
+    kelas: 'XI / XII',
+    kategori: 'Konsentrasi Keahlian AKL (Kelas XI & XII)',
+    tingkat: 'Kelas XI / XII',
+    deskripsi: 'Peluang usaha jasa pembukuan digital & asistensi pajak UMKM (Teaching Factory / Tax Center SMK), penyusunan proposal bisnis & HPP, pemasaran digital, dan pelaporan keuangan usaha mandiri.',
+    elemenCount: 5,
+    icon: '🚀',
+    kodeAtp: 'ATP-F.PKK',
+    ruangGtkUpdate: 'Inspirasi Ruang GTK: Teaching Factory (TeFa) Jasa Akuntansi & Konsultan UMKM'
+  },
   {
     id: 'layanan-perbankan',
     nama: 'Layanan Perbankan',
-    shortName: 'Layanan Perbankan (Pilihan XI)',
+    shortName: 'Layanan Perbankan (Mapel Pilihan XI)',
     fase: 'F',
     kelas: 'XI',
+    kategori: 'Mata Pelajaran Pilihan AKL (Kelas XI & XII)',
     tingkat: 'Kelas XI',
-    kategori: 'Fase F (Mata Pelajaran Pilihan)',
-    deskripsi: 'Ekonomi bisnis, pengelolaan kas teller 3D, customer service & KYC, akuntansi simpanan/kredit/kliring, core banking, serta perpajakan bunga bank (BSKAP 046/H/KR/2025).',
+    deskripsi: 'Ekonomi bisnis & manajemen bank, pengelolaan kas kecil & teller 3D, Customer Service & KYC/APU-PPT, produk simpanan, BI-FAST/QRIS/RTGS, analisis kredit 5C & SLIK OJK, akuntansi bank, dan perpajakan bank.',
+    elemenCount: 6,
     icon: '🏦',
-    tag: 'Fase F · Mapel Pilihan XI'
+    kodeAtp: 'ATP-F.LP',
+    ruangGtkUpdate: 'Pembaruan Ruang GTK: Digital Banking, BI-FAST, QRIS & Analisis SLIK OJK'
   },
   {
-    id: 'layanan-perbankan-syariah',
+    id: 'perbankan-syariah',
     nama: 'Layanan Perbankan Syariah',
-    shortName: 'Layanan Perbankan Syariah (Pilihan XII)',
+    shortName: 'Layanan Perbankan Syariah (Mapel Pilihan XII)',
     fase: 'F',
     kelas: 'XII',
+    kategori: 'Mata Pelajaran Pilihan AKL (Kelas XI & XII)',
     tingkat: 'Kelas XII',
-    kategori: 'Fase F (Mata Pelajaran Pilihan)',
-    deskripsi: 'Fiqih muamalah, DPS & fatwa DSN-MUI, teller islami, penghimpunan Wadiah & Mudharabah, pembiayaan Murabahah/Musyarakah/Ijarah, PSAK Syariah 101-112, dan ZISWAF.',
-    icon: '🌙',
-    tag: 'Fase F · Mapel Pilihan XII'
+    deskripsi: 'Fiqih muamalah & fatwa DSN-MUI, operasional teller & CS Islami, penghimpunan dana Wadiah & Mudharabah (nisbah), pembiayaan Murabahah/Salam/Istishna/Musyarakah/Ijarah, PSAK Syariah 401–410, dan ZISWAF.',
+    elemenCount: 6,
+    icon: '🕌',
+    kodeAtp: 'ATP-F.LPS',
+    ruangGtkUpdate: 'Pembaruan Ruang GTK: Penomoran Baru PSAK Syariah (401–410) & Bank Syariah Digital'
   }
 ];
 
-// 1. Dasar-Dasar Akuntansi dan Keuangan Lembaga (Fase E - Kelas X SMK)
-export function generateDasarAklCurriculum(fase: string, kelas: string, topik: string): CurriculumResponse {
-  return {
-    isFallback: true,
-    cp: [
-      {
-        elemen: 'Proses Bisnis di Bidang Akuntansi dan Keuangan Lembaga',
-        teks: 'Pada akhir Fase E, peserta didik mampu memahami tahapan proses bisnis di bidang akuntansi dan keuangan lembaga secara menyeluruh pada perusahaan jasa, perusahaan dagang, dan perusahaan manufaktur.'
-      },
-      {
-        elemen: 'Perkembangan Teknologi dan Isu Global Finansial',
-        teks: 'Pada akhir Fase E, peserta didik mampu memahami perkembangan teknologi di industri dan dunia kerja serta isu-isu global di bidang akuntansi, digitalisasi keuangan (fintech), sistem pembayaran digital, dan artificial intelligence dalam akuntansi.'
-      },
-      {
-        elemen: 'Profil Entrepreneur dan Peluang Kerja (Job Profile)',
-        teks: 'Pada akhir Fase E, peserta didik mampu memahami profil pekerjaan/profesi (job profile) akuntan, jenjang karir teknisi akuntansi, peluang wirausaha (technopreneur) di bidang akuntansi, serta kesiapan memasuki dunia kerja.'
-      },
-      {
-        elemen: 'Lingkup Kerja, Etika Profesi, dan K3LH',
-        teks: 'Pada akhir Fase E, peserta didik mampu memahami lingkup kerja akuntansi, etika profesi Ikatan Akuntan Indonesia (IAI), integritas, serta penerapan Keselamatan dan Kesehatan Kerja Lingkungan Hidup (K3LH) dan budaya kerja industri 5S/5R.'
-      },
-      {
-        elemen: 'Prinsip Dasar Akuntansi dan Perbankan Dasar',
-        teks: 'Pada akhir Fase E, peserta didik mampu memahami prinsip-prinsip akuntansi, asumsi dasar akuntansi, persamaan dasar akuntansi, analisis bukti transaksi keuangan, konsep debit-kredit, serta prinsip-prinsip operasional perbankan dasar.'
-      },
-      {
-        elemen: 'Penggunaan Aplikasi Pengolah Angka (Spreadsheet)',
-        teks: 'Pada akhir Fase E, peserta didik mampu mengoperasikan aplikasi pengolah angka (spreadsheet), mengolah data menggunakan fungsi matematika, statistik, logika, dan finansial, serta membuat format tabel laporan keuangan terotomatisasi.'
-      }
-    ],
-    units: [
-      {
-        nama: topik ? `Proses Bisnis, K3LH, Etika & ${topik}` : 'Proses Bisnis, Etika Profesi, dan K3LH Bidang Akuntansi',
-        sem: 1,
-        elemen: 'Proses Bisnis di Bidang Akuntansi dan Keuangan Lembaga',
-        tps: [
-          {
-            teks: 'menjelaskan alur proses bisnis bidang akuntansi pada entitas perusahaan jasa, dagang, dan manufaktur',
-            jp: 8,
-            ind: 'Peserta didik dapat menguraikan siklus transaksi operasional dari pengadaan hingga pelaporan keuangan.',
-            r1: 'Belum mampu membedakan alur transaksi perusahaan dagang dan manufaktur.',
-            r2: 'Dapat menjelaskan alur bisnis dengan bantuan diagram alur siklus.',
-            r3: 'Mampu menjelaskan proses bisnis akuntansi secara runtut, logis, dan mandiri.',
-            r4: 'Mampu mengaitkan proses bisnis akuntansi dengan studi kasus nyata di dunia usaha dan dunia industri (DUDI).',
-            teknik: 'Tes tertulis dan presentasi kelompok'
-          },
-          {
-            teks: 'menerapkan prinsip etika profesi akuntan (integritas, objektivitas) dan SOP K3LH di tempat kerja',
-            jp: 8,
-            ind: 'Peserta didik dapat menerapkan prinsip kerahasiaan data, integritas kerja, serta ergonomi duduk di meja komputer.',
-            r1: 'Belum memahami prinsip kerahasiaan dan pentingnya integritas dalam pembukuan.',
-            r2: 'Dapat menyebutkan kode etik akuntan dengan panduan teks buku.',
-            r3: 'Mampu menunjukkan perilaku kerja beretika dan menerapkan standar K3LH secara mandiri dan disiplin.',
-            r4: 'Mampu menganalisis dilema etika profesi akuntansi (pencegahan manipulasi laporan keuangan).',
-            teknik: 'Observasi sikap dan studi kasus etika'
-          }
-        ]
-      },
-      {
-        nama: 'Perkembangan Fintech, Karir Akuntan, dan Spreadsheet',
-        sem: 1,
-        elemen: 'Penggunaan Aplikasi Pengolah Angka (Spreadsheet)',
-        tps: [
-          {
-            teks: 'menganalisis perkembangan teknologi finansial (Fintech), e-money, dan peluang karir teknisi akuntansi junior',
-            jp: 8,
-            ind: 'Peserta didik dapat menjelaskan evolusi pencatatan manual ke cloud accounting serta merancang profil karir masa depan.',
-            r1: 'Belum memahami peran teknologi digital dalam otomasi akuntansi.',
-            r2: 'Dapat menyebutkan jenis-jenis dompet digital dan software akuntansi.',
-            r3: 'Mampu menganalisis peluang karir dan transformasi digital akuntansi secara mandiri.',
-            r4: 'Mampu merumuskan rencana pengembangan diri (roadmap karir) sebagai calon teknisi akuntansi profesional.',
-            teknik: 'Portofolio karir dan diskusi'
-          },
-          {
-            teks: 'mengoperasikan aplikasi spreadsheet dengan rumus formula (SUM, AVERAGE, IF, VLOOKUP, HLOOKUP) untuk data keuangan',
-            jp: 16,
-            ind: 'Peserta didik dapat membuat tabel daftar gaji, rekapitulasi penjualan, dan laporan keuangan sederhana berbasis formula spreadsheet.',
-            r1: 'Sering keliru menuliskan sintaks formula logika IF bertingkat dan VLOOKUP.',
-            r2: 'Dapat menggunakan fungsi penjumlahan dan rata-rata dengan bantuan rumus acuan.',
-            r3: 'Mampu mengoperasikan formula spreadsheet secara tepat, rapi, dan mandiri.',
-            r4: 'Mampu merancang lembar kerja akuntansi interaktif dengan validasi data dan formula terotomatisasi penuh.',
-            teknik: 'Praktik komputer spreadsheet'
-          }
-        ]
-      },
-      {
-        nama: 'Persamaan Dasar Akuntansi dan Analisis Bukti Transaksi',
-        sem: 2,
-        elemen: 'Prinsip Dasar Akuntansi dan Perbankan Dasar',
-        tps: [
-          {
-            teks: 'menganalisis bukti transaksi keuangan (kuitansi, faktur, nota debit/kredit, cek) dan prinsip perbankan dasar',
-            jp: 12,
-            ind: 'Peserta didik dapat memverifikasi keabsahan dokumen transaksi dan mengidentifikasi rekening giro/tabungan perbankan dasar.',
-            r1: 'Belum mampu membedakan bukti transaksi penerimaan dan pengeluaran kas.',
-            r2: 'Dapat mengidentifikasi bukti transaksi dengan contoh dokumen acuan.',
-            r3: 'Mampu menganalisis bukti transaksi secara teliti, tepat akun, dan mandiri.',
-            r4: 'Mampu mendeteksi ketidaksesuaian nominal bukti transaksi dan merancang SOP verifikasi dokumen keuangan.',
-            teknik: 'Analisis dokumen transaksi'
-          },
-          {
-            teks: 'menerapkan persamaan dasar akuntansi (Aset = Liabilitas + Ekuitas) dan konsep mekanisme debit-kredit',
-            jp: 16,
-            ind: 'Peserta didik dapat mencatat transaksi keuangan ke dalam tabel persamaan dasar akuntansi secara seimbang.',
-            r1: 'Tabel persamaan belum balance; tertukar memposisikan akun penambah/pengurang modal.',
-            r2: 'Dapat menyusun persamaan akuntansi transaksi sederhana dengan bimbingan.',
-            r3: 'Mampu menyusun persamaan dasar akuntansi secara benar, seimbang, dan mandiri.',
-            r4: 'Mampu menyusun laporan keuangan sederhana (laba rugi dan neraca) langsung dari tabel persamaan dasar akuntansi.',
-            teknik: 'Latihan soal persamaan akuntansi'
-          }
-        ]
-      },
-      {
-        nama: 'Siklus Akuntansi Perusahaan Jasa (Jurnal, Buku Besar, Neraca Saldo)',
-        sem: 2,
-        elemen: 'Prinsip Dasar Akuntansi dan Perbankan Dasar',
-        tps: [
-          {
-            teks: 'mencatat transaksi ke jurnal umum perusahaan jasa secara kronologis dan sesuai standar akuntansi',
-            jp: 16,
-            ind: 'Peserta didik dapat membuat jurnal umum yang balance dengan penempatan nama akun yang tepat.',
-            r1: 'Posisi akun debit dan kredit masih sering terbalik.',
-            r2: 'Dapat mencatat transaksi rutin dengan bantuan bagan akun standar.',
-            r3: 'Mampu menyusun jurnal umum secara kronologis, rapi, balance, dan mandiri.',
-            r4: 'Mampu menjurnal transaksi kompleks (pembelian aset sebagian tunai dan kredit) tanpa kesalahan.',
-            teknik: 'Praktik jurnal umum jasa'
-          },
-          {
-            teks: 'melakukan posting ke buku besar bentuk 4 kolom dan menyusun neraca saldo perusahaan jasa',
-            jp: 16,
-            ind: 'Peserta didik dapat memindahkan mutasi jurnal ke akun buku besar yang bersangkutan dan membuat neraca saldo.',
-            r1: 'Posting buku besar belum lengkap dan neraca saldo tidak seimbang.',
-            r2: 'Dapat melakukan posting dengan bantuan panduan nomor referensi akun.',
-            r3: 'Mampu menyelesaikan posting buku besar dan menyusun neraca saldo dengan benar dan mandiri.',
-            r4: 'Mampu merekonsiliasi selisih neraca saldo dan menyajikan dasar laporan keuangan secara profesional.',
-            teknik: 'Uji kompetensi posting dan neraca saldo'
-          }
-        ]
-      }
-    ]
-  };
-}
-
-// 2. Layanan Perbankan Syariah (Fase F - Kelas XII SMK)
-export function generateLayananPerbankanSyariah(fase: string, kelas: string, topik: string): CurriculumResponse {
-  const f = fase === 'E' ? 'F' : fase;
-  return {
-    isFallback: true,
-    cp: [
-      {
-        elemen: 'Fiqih Muamalah dan Regulasi Bank Syariah',
-        teks: `Pada akhir Fase ${f}, peserta didik mampu memahami landasan hukum fiqih muamalah perbankan syariah, larangan riba, gharar, maysir, tadlis, dan risywah, fatwa Dewan Syariah Nasional MUI (DSN-MUI), tata kelola dan peran Dewan Pengawas Syariah (DPS), serta regulasi perbankan syariah oleh Otoritas Jasa Keuangan (OJK).`
-      },
-      {
-        elemen: 'Pengelolaan Kas Teller dan Customer Service Syariah',
-        teks: `Pada akhir Fase ${f}, peserta didik mampu menerapkan SOP kas teller syariah, verifikasi uang rupiah dan valas, rekonsiliasi kas harian, Islamic Service Excellence, prosedur KYC/CDD pembukaan rekening syariah, penanganan komplain nasabah, serta pengelolaan dana kebajikan sosial (Qardhul Hasan) dan ZISWAF.`
-      },
-      {
-        elemen: 'Penghimpunan Dana Syariah (Wadiah dan Mudharabah)',
-        teks: `Pada akhir Fase ${f}, peserta didik mampu memproses pembukaan, mutasi, dan penutupan rekening tabungan dan giro syariah dengan akad Wadiah Yad Dhamanah, penempatan deposito syariah akad Mudharabah Mutlaqah dan Muqayyadah, serta perhitungan distribusi bagi hasil berbasis nisbah (revenue sharing).`
-      },
-      {
-        elemen: 'Pembiayaan Syariah (Murabahah, Salam, Istishna, Musyarakah, Ijarah)',
-        teks: `Pada akhir Fase ${f}, peserta didik mampu menganalisis analisis kelayakan pembiayaan syariah, simulasi pembiayaan jual beli (Murabahah, Salam, Istishna'), pembiayaan kemitraan bagi hasil (Mudharabah dan Musyarakah), pembiayaan sewa beli (Ijarah dan IMBT), penjaminan (Rahn/Kafalah), dan administrasi akad pembiayaan.`
-      },
-      {
-        elemen: 'Akuntansi Perbankan Syariah (PSAK 101–112)',
-        teks: `Pada akhir Fase ${f}, peserta didik mampu mencatat transaksi perbankan syariah ke dalam jurnal umum dan buku besar syariah berbasis standar PSAK 101–112, mencatat transaksi dana syirkah temporer, margin murabahah tangguhan, amortisasi, serta menyusun laporan keuangan bank syariah.`
-      },
-      {
-        elemen: 'Komputer Akuntansi dan Pelaporan Keuangan Syariah',
-        teks: `Pada akhir Fase ${f}, peserta didik mampu mengoperasikan aplikasi spreadsheet dan software komputer akuntansi/core banking syariah untuk pemrosesan transaksi harian, neraca saldo, rekonsiliasi, serta penyajian laporan posisi keuangan dan laporan sumber & penyaluran dana kebajikan.`
-      }
-    ],
-    units: [
-      {
-        nama: topik ? `Fiqih Muamalah, Tata Kelola Syariah & ${topik}` : 'Prinsip Fiqih Muamalah dan Regulasi Perbankan Syariah',
-        sem: 1,
-        elemen: 'Fiqih Muamalah dan Regulasi Bank Syariah',
-        tps: [
-          {
-            teks: 'membedakan konsep bunga bank konvensional dengan prinsip bagi hasil syariah serta larangan riba, maysir, dan gharar',
-            jp: 6,
-            ind: 'Peserta didik dapat menjelaskan perbedaan fundamental sistem bunga dan bagi hasil serta dalil larangan transaksi ribawi.',
-            r1: 'Belum memahami perbedaan mendasar antara bunga dan bagi hasil dalam transaksi perbankan.',
-            r2: 'Dapat menyebutkan larangan riba dan gharar dengan bimbingan dalil acuan.',
-            r3: 'Mampu menganalisis perbedaan sistem bunga dan nisbah bagi hasil secara mandiri, logis, dan tepat.',
-            r4: 'Mampu menyusun perbandingan komparatif keadilan ekonomi sistem bagi hasil syariah terhadap stabilitas moneter.',
-            teknik: 'Tes tertulis dan diskusi komparasi'
-          },
-          {
-            teks: 'menganalisis peran Dewan Pengawas Syariah (DPS) dan kepatuhan syariah (sharia compliance) dalam operasional bank syariah',
-            jp: 8,
-            ind: 'Peserta didik dapat menguraikan fungsi pengawasan DPS dan fatwa DSN-MUI dalam keabsahan produk bank syariah.',
-            r1: 'Belum memahami fungsi pengawasan DPS pada produk bank syariah.',
-            r2: 'Dapat menyebutkan peran DPS dengan bantuan teks peraturan OJK.',
-            r3: 'Mampu menjelaskan mekanisme audit kepatuhan syariah dan implementasi fatwa DSN-MUI secara mandiri.',
-            r4: 'Mampu menganalisis studi kasus ketidakpatuhan syariah (sharia non-compliance risk) dan dampaknya bagi reputasi bank.',
-            teknik: 'Studi kasus tata kelola syariah'
-          }
-        ]
-      },
-      {
-        nama: 'Produk Penghimpunan Dana Wadiah dan Deposito Mudharabah',
-        sem: 1,
-        elemen: 'Penghimpunan Dana Syariah (Wadiah dan Mudharabah)',
-        tps: [
-          {
-            teks: 'menerapkan administrasi pembukaan rekening tabungan dan giro syariah dengan akad Wadiah Yad Dhamanah',
-            jp: 8,
-            ind: 'Peserta didik dapat mengisi slip pembukaan rekening, verifikasi data nasabah (KYC), dan menjelaskan akad titipan bergaransi.',
-            r1: 'Belum menguasai rukun dan ketentuan akad Wadiah Yad Dhamanah.',
-            r2: 'Dapat memproses berkas pembukaan tabungan syariah dengan template panduan.',
-            r3: 'Mampu melayani pembukaan rekening tabungan dan giro wadiah secara mandiri, santun, dan sesuai SOP bank syariah.',
-            r4: 'Mampu mengedukasi nasabah mengenai fitur kartu debit syariah, bebas biaya riba, dan pemberian bonus (athaya) sukarela.',
-            teknik: 'Simulasi CS pembukaan rekening syariah'
-          },
-          {
-            teks: 'mengelola penempatan deposito syariah akad Mudharabah serta menghitung nisbah bagi hasil (revenue sharing)',
-            jp: 8,
-            ind: 'Peserta didik dapat menghitung bagi hasil deposito syariah berdasarkan saldo rata-rata, persentase nisbah, dan pendapatan bank.',
-            r1: 'Keliru menghitung pembagian nisbah dan salah memasukkan angka pendapatan bank.',
-            r2: 'Mampu menghitung bagi hasil nasabah dengan rumus panduan acuan guru.',
-            r3: 'Mampu menghitung distribusi bagi hasil deposito syariah dengan tepat, teliti, dan mandiri.',
-            r4: 'Mampu membandingkan simulasi return investasi bagi hasil deposito syariah berbagai tenor (1, 3, 6, 12 bulan).',
-            teknik: 'Perhitungan nisbah dan tes tertulis'
-          }
-        ]
-      },
-      {
-        nama: 'Skema Pembiayaan Jual Beli: Murabahah, Salam, dan Istishna',
-        sem: 1,
-        elemen: 'Pembiayaan Syariah (Murabahah, Salam, Istishna, Musyarakah, Ijarah)',
-        tps: [
-          {
-            teks: 'menyusun simulasi akad pembiayaan Murabahah, menghitung harga pokok barang, margin keuntungan, dan angsuran bulanan',
-            jp: 10,
-            ind: 'Peserta didik dapat membuat tabel angsuran Murabahah dengan transparansi harga beli dan margin keuntungan yang disepakati.',
-            r1: 'Belum memahami prinsip transparansi harga beli dan margin dalam jual beli Murabahah.',
-            r2: 'Dapat menghitung margin pembiayaan dengan rumus bantuan bertahap.',
-            r3: 'Mampu menyusun simulasi pembiayaan Murabahah lengkap dengan jadwal angsuran secara tepat dan mandiri.',
-            r4: 'Mampu merancang draf perjanjian akad Murabahah bil Wakalah untuk pembiayaan konsumtif/modal kerja mikro.',
-            teknik: 'Simulasi akad murabahah dan uji hitung'
-          },
-          {
-            teks: 'menganalisis skema dan alur pembiayaan pesanan pertanian (Salam) dan konstruksi/manufaktur (Istishna)',
-            jp: 8,
-            ind: 'Peserta didik dapat membedakan spesifikasi barang pesanan, alur pembayaran di muka (Salam), dan pembayaran bertahap (Istishna).',
-            r1: 'Sering tertukar antara karakteristik akad Salam dan Istishna.',
-            r2: 'Dapat menjelaskan skema akad Salam dengan bantuan diagram alur transaksi.',
-            r3: 'Mampu menganalisis alur pembiayaan Salam dan Istishna paralel secara mandiri dan akurat.',
-            r4: 'Mampu menyusun skema solusi pembiayaan rantai pasok pertanian dan perumahan berbasis akad pesanan syariah.',
-            teknik: 'Analisis skema pembiayaan dan portofolio'
-          }
-        ]
-      },
-      {
-        nama: 'Pembiayaan Bagi Hasil (Mudharabah, Musyarakah) dan Sewa (Ijarah)',
-        sem: 2,
-        elemen: 'Pembiayaan Syariah (Murabahah, Salam, Istishna, Musyarakah, Ijarah)',
-        tps: [
-          {
-            teks: 'menganalisis skema pembiayaan kemitraan Musyarakah dan Mudharabah serta perhitungan bagi hasil untung-rugi',
-            jp: 8,
-            ind: 'Peserta didik dapat membedakan peran shahibul maal dan mudharib serta menghitung rasio laba usaha mitra.',
-            r1: 'Belum memahami pembagian risiko kerugian (loss sharing) dalam akad kemitraan syariah.',
-            r2: 'Dapat menghitung bagi hasil kemitraan sederhana dengan panduan rasio modal.',
-            r3: 'Mampu menganalisis kelayakan usaha mitra dan menyusun pembagian bagi hasil Musyarakah secara adil dan mandiri.',
-            r4: 'Mampu mengevaluasi mitigasi risiko moral hazard dalam pembiayaan bagi hasil sektor UMKM.',
-            teknik: 'Studi kasus bagi hasil dan tes tertulis'
-          },
-          {
-            teks: 'memproses simulasi akad sewa beli Ijarah Muntahiya Bittamlik (IMBT) dan pembiayaan multijasa syariah',
-            jp: 8,
-            ind: 'Peserta didik dapat menguraikan manfaat sewa guna usaha syariah dan perpindahan kepemilikan aset di akhir periode sewa.',
-            r1: 'Belum memahami mekanisme pengalihan kepemilikan pada akad IMBT (hibah atau jual).',
-            r2: 'Dapat menjelaskan alur sewa Ijarah dengan bantuan bagan skema.',
-            r3: 'Mampu menyusun perhitungan ujrah (biaya sewa) dan jadwal pembayaran IMBT secara mandiri dan teliti.',
-            r4: 'Mampu merancang skema pembiayaan sewa multijasa syariah untuk biaya pendidikan atau porsi ibadah haji.',
-            teknik: 'Praktik simulasi akad sewa'
-          }
-        ]
-      },
-      {
-        nama: 'Operasional Pelayanan Prima Islami dan Kas Teller Syariah',
-        sem: 2,
-        elemen: 'Pengelolaan Kas Teller dan Customer Service Syariah',
-        tps: [
-          {
-            teks: 'mempraktikkan Islamic Service Excellence, etika muamalah perbankan, dan prosedur KYC pembukaan rekening syariah',
-            jp: 6,
-            ind: 'Peserta didik dapat menunjukkan salam pembuka islami, mendengarkan aktif, dan menjelaskan akad syariah secara ramah.',
-            r1: 'Gaya komunikasi masih kaku dan belum menguasai penjelasan akad syariah secara lugas.',
-            r2: 'Dapat melayani nasabah sesuai skenario dialog standar yang disediakan.',
-            r3: 'Mampu mempraktikkan pelayanan nasabah beretika islami (shiddiq, amanah, fathanah, tabligh) secara luwes dan mandiri.',
-            r4: 'Mampu menangani komplain nasabah secara tenang, amanah, dan memberikan solusi syariah yang memuaskan.',
-            teknik: 'Role play pelayanan prima islami'
-          },
-          {
-            teks: 'melaksanakan transaksi kas teller syariah, transfer kliring syariah, dan penghimpunan dana ZISWAF/Qardh',
-            jp: 8,
-            ind: 'Peserta didik dapat melayani setoran tunai, penarikan, transfer antar-bank syariah, dan penerimaan titipan zakat/infaq.',
-            r1: 'Masih lambat dalam penghitungan uang fisik dan penginputan nominal slip setoran teller.',
-            r2: 'Dapat menyelesaikan transaksi kas teller dengan bimbingan kepala kasir.',
-            r3: 'Mampu melaksanakan transaksi kas teller syariah secara cepat, teliti, zero error, dan mandiri.',
-            r4: 'Mampu mengelola pelaporan dana kebajikan sosial (Qardhul Hasan) dan penyaluran dana ZISWAF secara transparan.',
-            teknik: 'Simulasi transaksi teller syariah'
-          }
-        ]
-      },
-      {
-        nama: 'Akuntansi Transaksi Syariah (PSAK 101–112) dan Komputerisasi Laporan Keuangan',
-        sem: 2,
-        elemen: 'Akuntansi Perbankan Syariah (PSAK 101–112)',
-        tps: [
-          {
-            teks: 'menjurnal transaksi penghimpunan dana Wadiah/Mudharabah dan penyaluran pembiayaan Murabahah sesuai standar PSAK Syariah',
-            jp: 10,
-            ind: 'Peserta didik dapat mencatat mutasi rekening dana syariah dan piutang murabahah ke dalam jurnal umum perbankan syariah.',
-            r1: 'Masih keliru menempatkan akun dana syirkah temporer dan pendapatan margin ditangguhkan.',
-            r2: 'Dapat menjurnal transaksi simpanan wadiah dengan bantuan daftar akun bank syariah.',
-            r3: 'Mampu menjurnal transaksi penghimpunan dan pembiayaan syariah secara tepat akun, balance, dan mandiri.',
-            r4: 'Mampu mengoreksi jurnal penyesuaian amortisasi margin dan rekonsiliasi bagi hasil bulanan.',
-            teknik: 'Praktik pembukuan akuntansi syariah'
-          },
-          {
-            teks: 'mengoperasikan aplikasi spreadsheet/komputer akuntansi untuk menyusun laporan posisi keuangan dan dana kebajikan bank syariah',
-            jp: 8,
-            ind: 'Peserta didik dapat menyajikan komponen neraca syariah (aset, liabilitas, dana syirkah temporer, ekuitas) dan laporan dana kebajikan.',
-            r1: 'Komponen dana syirkah temporer belum dipisahkan dari liabilitas murni.',
-            r2: 'Dapat menyusun neraca bank syariah dengan template laporan keuangan PSAK 101.',
-            r3: 'Mampu menyajikan laporan keuangan bank syariah lengkap dan seimbang secara mandiri.',
-            r4: 'Mampu menganalisis rasio keuangan bank syariah (NPF, FDR, CAR, ROA) dan tingkat kesehatan bank syariah.',
-            teknik: 'Penyusunan laporan keuangan syariah terkomputerisasi'
-          }
-        ]
-      }
-    ]
-  };
-}
-
-// 3. Layanan Perbankan (Fase F - Kelas XI SMK)
-export function generateLayananPerbankan(fase: string, kelas: string, topik: string): CurriculumResponse {
-  const f = fase === 'E' ? 'F' : fase;
-  return {
-    isFallback: true,
-    cp: [
-      {
-        elemen: 'Ekonomi Bisnis dan Administrasi Umum',
-        teks: `Pada akhir Fase ${f}, peserta didik mampu memahami masalah-masalah ekonomi, model dan pelaku ekonomi, perilaku konsumen dan produsen, pasar dan terbentuknya harga pasar, penerapan ilmu ekonomi dalam kegiatan usaha, serta administrasi dan fungsi-fungsi manajemen operasional perbankan.`
-      },
-      {
-        elemen: 'Pengelolaan Kas Perbankan',
-        teks: `Pada akhir Fase ${f}, peserta didik mampu memahami dan mengelola kas kecil (petty cash), kas bank, operasional penerimaan dan pengeluaran kas teller, pemeriksaan keaslian fisik uang rupiah dan valuta asing (3D), transaksi warkat kliring (cek dan bilyet giro), serta rekonsiliasi kas bank harian.`
-      },
-      {
-        elemen: 'Layanan Lembaga Perbankan dan Keuangan Mikro',
-        teks: `Pada akhir Fase ${f}, peserta didik mampu memahami sistem perbankan di Indonesia, jenis lembaga keuangan bank dan bukan bank, pemasaran produk simpanan (tabungan, giro, deposito), pelayanan nasabah (Customer Service dan KYC/CDD), penggunaan instrumen perbankan digital (ATM, mobile/internet banking, QRIS), analisis kredit perbankan prinsip 5C, pengikatan agunan, serta jasa safe deposit box.`
-      },
-      {
-        elemen: 'Akuntansi Perbankan',
-        teks: `Pada akhir Fase ${f}, peserta didik mampu memahami siklus akuntansi perbankan, melakukan pencatatan transaksi produk simpanan dana masyarakat, penyaluran kredit, kliring, transaksi antar-kantor, neraca saldo, jurnal penyesuaian, hingga penyusunan laporan keuangan perbankan.`
-      },
-      {
-        elemen: 'Komputer Akuntansi Layanan Perbankan',
-        teks: `Pada akhir Fase ${f}, peserta didik mampu mengoperasikan program spreadsheet dan aplikasi komputer akuntansi/core banking layanan perbankan untuk mengentri data nasabah, memproses transaksi keuangan simpanan dan pinjaman, serta menyajikan laporan keuangan perbankan secara terkomputerisasi.`
-      },
-      {
-        elemen: 'Perpajakan Perbankan',
-        teks: `Pada akhir Fase ${f}, peserta didik mampu memahami ketentuan umum dan tata cara perpajakan (KUP), jenis-jenis pajak terkait transaksi perbankan (PPh Pasal 4 ayat 2 atas bunga simpanan dan diskonto, PPh Pasal 21, PPh Pasal 23, PPN), perhitungan pajak terutang, pemotongan, penyetoran, serta penyusunan laporan SPT masa pajak perbankan.`
-      }
-    ],
-    units: [
-      {
-        nama: topik ? `Ekonomi Bisnis, Administrasi Bank & ${topik}` : 'Ekonomi Bisnis dan Prinsip Manajemen Lembaga Perbankan',
-        sem: 1,
-        elemen: 'Ekonomi Bisnis dan Administrasi Umum',
-        tps: [
-          {
-            teks: 'menganalisis masalah ekonomi, peran bank sebagai lembaga intermediasi keuangan, dan fungsi manajemen bank',
-            jp: 6,
-            ind: 'Peserta didik dapat menguraikan fungsi intermediasi perbankan dalam memobilisasi dana masyarakat serta struktur organisasi bank.',
-            r1: 'Belum mampu menjelaskan fungsi intermediasi perbankan.',
-            r2: 'Dapat menyebutkan fungsi bank dengan bantuan diagram alur perbankan.',
-            r3: 'Mampu menganalisis peran bank dalam stabilitas moneter dan fungsi manajemen operasional bank secara mandiri.',
-            r4: 'Mampu mengevaluasi dampak suku bunga acuan Bank Indonesia (BI-Rate) terhadap likuiditas perbankan nasional.',
-            teknik: 'Tes tertulis dan diskusi kelas'
-          },
-          {
-            teks: 'menerapkan tata kelola administrasi perbankan dan kearsipan dokumen transaksi nasabah',
-            jp: 6,
-            ind: 'Peserta didik dapat mengelola warkat arsip nasabah, pembukuan agenda, dan prosedur retensi dokumen bank.',
-            r1: 'Pengarsipan dokumen nasabah masih belum teratur sesuai nomor rekening.',
-            r2: 'Dapat menyusun arsip dokumen nasabah dengan panduan buku agenda.',
-            r3: 'Mampu mengelola tata naskah administrasi perbankan dan filling arsip secara rapi, aman, dan mandiri.',
-            r4: 'Mampu merancang prosedur digitalisasi arsip dokumen perbankan dan mitigasi risiko kehilangan data nasabah.',
-            teknik: 'Praktik kearsipan dokumen bank'
-          }
-        ]
-      },
-      {
-        nama: 'Pengelolaan Kas Kecil (Petty Cash) dan Kas Operasional Teller',
-        sem: 1,
-        elemen: 'Pengelolaan Kas Perbankan',
-        tps: [
-          {
-            teks: 'menerapkan pengelolaan dana kas kecil bank dengan sistem dana tetap (imprest fund system) dan dana berfluktuasi',
-            jp: 8,
-            ind: 'Peserta didik dapat membuat bukti pengeluaran kas kecil, mutasi pengisian kembali kas kecil, dan jurnal penyesuaian.',
-            r1: 'Belum menguasai pencatatan jurnal pembentukan dan pengisian kas kecil.',
-            r2: 'Dapat mencatat mutasi kas kecil sistem imprest dengan panduan tabel bantuan.',
-            r3: 'Mampu mengelola kas kecil bank secara mandiri, balance, dan menyajikan berita acara penghitungan fisik kas.',
-            r4: 'Mampu menganalisis selisih kas (cash shortage/overage) dan merumuskan SOP pengendalian internal kas bank.',
-            teknik: 'Praktik pembukuan kas kecil'
-          },
-          {
-            teks: 'memverifikasi keaslian uang rupiah dan valas dengan teknik 3D (Dilihat, Diraba, Diterawang) dan lampu ultraviolet',
-            jp: 8,
-            ind: 'Peserta didik dapat mendeteksi fitur pengaman uang kertas rupiah tahun emisi terbaru (benang pengaman, watermark, rectoverso).',
-            r1: 'Kesulitan mengenali unsur pengaman uang rupiah cetak asli dan palsu.',
-            r2: 'Dapat mengidentifikasi uang palsu menggunakan lampu UV dengan bantuan poster pedoman BI.',
-            r3: 'Mampu memverifikasi keaslian uang tunai secara cepat, presisi, dan mandiri.',
-            r4: 'Mampu membuat berita acara temuan uang palsu sesuai regulasi Bank Indonesia dan SOP teller perbankan.',
-            teknik: 'Uji praktik verifikasi fisik uang'
-          }
-        ]
-      },
-      {
-        nama: 'Layanan Nasabah (Customer Service), KYC, dan Produk Simpanan',
-        sem: 1,
-        elemen: 'Layanan Lembaga Perbankan dan Keuangan Mikro',
-        tps: [
-          {
-            teks: 'mempraktikkan standar pelayanan prima (Service Excellence) dan prosedur Know Your Customer (KYC/CDD) perbankan',
-            jp: 8,
-            ind: 'Peserta didik dapat melakukan greeting, verifikasi identitas nasabah, serta pengisian formulir pembukaan rekening tabungan/giro.',
-            r1: 'Komunikasi dan etiket pelayanan nasabah masih kaku dan belum runut.',
-            r2: 'Dapat melayani nasabah sesuai skrip dialog standar yang diberikan.',
-            r3: 'Mampu mempraktikkan service excellence dan prosedur verifikasi KYC secara luwes, santun, dan mandiri.',
-            r4: 'Mampu menangani komplain nasabah secara tenang, solutif, serta menerapkan prinsip antipencucian uang (APU-PPT).',
-            teknik: 'Role play simulasi customer service'
-          },
-          {
-            teks: 'mengelola administrasi produk simpanan tabungan, giro warkat kliring, dan sertifikat deposito berjangka',
-            jp: 8,
-            ind: 'Peserta didik dapat menghitung bunga tabungan (saldo rata-rata/terendah), diskonto deposito, dan penatausahaan warkat cek/bilyet giro.',
-            r1: 'Keliru menghitung bunga tabungan dan pemotongan pajak bunga simpanan.',
-            r2: 'Dapat menghitung bunga deposito dengan rumus bantuan acuan.',
-            r3: 'Mampu menghitung bunga simpanan, pajak PPh Final 20%, dan mengadministrasikan mutasi rekening nasabah secara mandiri.',
-            r4: 'Mampu membandingkan karakteristik dan yield berbagai produk penghimpunan dana bank untuk segmen ritel vs korporasi.',
-            teknik: 'Uji hitung finansial dan studi kasus'
-          }
-        ]
-      },
-      {
-        nama: 'Siklus Akuntansi Transaksi Perbankan dan Analisis Kredit 5C',
-        sem: 2,
-        elemen: 'Akuntansi Perbankan',
-        tps: [
-          {
-            teks: 'mencatat transaksi operasional penghimpunan dana dan penyaluran kredit ke sistem akuntansi perbankan',
-            jp: 10,
-            ind: 'Peserta didik dapat menjurnal transaksi setoran, penarikan, transfer kliring BI-FAST/RTGS, dan realisasi pinjaman kredit.',
-            r1: 'Penempatan debit/kredit akun perbankan (kewajiban vs aset bank) masih terbalik.',
-            r2: 'Dapat mencatat transaksi kas perbankan dengan daftar bagan akun bank yang disediakan.',
-            r3: 'Mampu menjurnal transaksi perbankan harian secara tepat, sistematis, balance, dan mandiri.',
-            r4: 'Mampu menyusun neraca percobaan (trial balance) perbankan dan jurnal penyesuaian bunga accrual akhir bulan.',
-            teknik: 'Praktik siklus akuntansi perbankan'
-          },
-          {
-            teks: 'menganalisis kelayakan kredit nasabah dengan prinsip 5C (Character, Capacity, Capital, Collateral, Condition)',
-            jp: 8,
-            ind: 'Peserta didik dapat menyusun laporan analisis kredit, memeriksa riwayat SLIK OJK, dan menaksir nilai agunan/jaminan.',
-            r1: 'Belum memahami indikator penilaian kelayakan kredit prinsip 5C.',
-            r2: 'Dapat mengisi formulir analisis kredit dengan panduan lembar kerja.',
-            r3: 'Mampu menganalisis kelayakan kredit nasabah dan menghitung Debt Service Ratio (DSR) secara objektif dan mandiri.',
-            r4: 'Mampu merumuskan keputusan persetujuan kredit mikro beserta skema mitigasi risiko kredit macet (NPL).',
-            teknik: 'Analisis studi kasus kredit perbankan'
-          }
-        ]
-      },
-      {
-        nama: 'Komputer Akuntansi Layanan Perbankan dan Ketentuan Perpajakan Bank',
-        sem: 2,
-        elemen: 'Komputer Akuntansi Layanan Perbankan',
-        tps: [
-          {
-            teks: 'mengoperasikan program spreadsheet dan aplikasi komputer akuntansi untuk pemrosesan data transaksi bank terkomputerisasi',
-            jp: 10,
-            ind: 'Peserta didik dapat mengentri master data nasabah, memproses transaksi simpanan/pinjaman, dan mencetak rekening koran pada aplikasi.',
-            r1: 'Masih canggung mengoperasikan menu entri transaksi pada aplikasi komputer akuntansi perbankan.',
-            r2: 'Dapat mengentri data nasabah dan mutasi dengan panduan SOP komputer perbankan.',
-            r3: 'Mampu mengoperasikan software perbankan untuk membukukan transaksi harian hingga menghasilkan neraca bank secara mandiri.',
-            r4: 'Mampu merekonsiliasi transaksi antar-kantor dan menyelesaikan troubleshooting ketidaksesuaian saldo sistem.',
-            teknik: 'Praktik komputer akuntansi perbankan'
-          },
-          {
-            teks: 'menghitung dan menyusun laporan pemotongan PPh Pasal 4 ayat (2) atas bunga simpanan dan perpajakan perbankan',
-            jp: 8,
-            ind: 'Peserta didik dapat menghitung PPh final 20% bunga tabungan/deposito nasabah dan mengisi formulir SPT Masa PPh terkait.',
-            r1: 'Belum menguasai ketentuan batasan saldo kena pajak bunga simpanan perbankan.',
-            r2: 'Dapat menghitung potongan pajak bunga tabungan dengan rumus acuan.',
-            r3: 'Mampu menghitung pajak bunga bank, menyusun daftar bukti potong, dan mengisi SPT Masa PPh secara mandiri dan akurat.',
-            r4: 'Mampu menganalisis kewajiban perpajakan perbankan sebagai pemungut/pemotong pajak (withholding tax agent).',
-            teknik: 'Praktik pengisian SPT dan penugasan'
-          }
-        ]
-      }
-    ]
-  };
-}
-
-// 4. Praktikum Akuntansi Lembaga / Instansi Pemerintah (Fase F - XI/XII SMK)
-export function generateAkuntansiLembagaPemerintah(fase: string, kelas: string, topik: string): CurriculumResponse {
-  return {
-    isFallback: true,
-    cp: [
-      {
-        elemen: 'Tata Kelola dan Regulasi Keuangan Sektor Publik',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu memahami tata kelola keuangan negara dan daerah, asas pengelolaan APBD dan APBDes, struktur kelembagaan pengelola keuangan daerah (PPKD dan SKPD), serta kode etik dan akuntabilitas bendahara instansi pemerintah.`
-      },
-      {
-        elemen: 'Standar Akuntansi Pemerintahan (SAP Berbasis Akrual)',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu memahami konsep dan kerangka konseptual Standar Akuntansi Pemerintahan (SAP) berbasis akrual sesuai Peraturan Pemerintah Nomor 71 Tahun 2010, struktur bagan akun standar (BAS) pemerintah daerah, serta persamaan dasar akuntansi pemerintahan.`
-      },
-      {
-        elemen: 'Pencatatan Transaksi Finansial dan Transaksi Anggaran',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu melakukan pencatatan transaksi keuangan daerah dengan sistem pembukuan berpasangan (double entry), membedakan jurnal finansial (Laporan Operasional) dan jurnal anggaran (Laporan Realisasi Anggaran), transaksi kas dan non-kas, serta mekanisme uang persediaan (SP2D UP, GU, TU, LS).`
-      },
-      {
-        elemen: 'Penyusunan Laporan Keuangan Pemerintah Daerah dan Akuntansi Desa',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu menyusun laporan keuangan pemerintah daerah (LRA, LP-SAL, LO, LPE, Neraca, LAK, dan CaLK) serta menyelenggarakan penatausahaan dan pembukuan keuangan desa berbasis aplikasi Sistem Keuangan Desa (Siskeudes).`
-      }
-    ],
-    units: [
-      {
-        nama: topik ? `Regulasi, SAP Akrual & ${topik}` : 'Regulasi Keuangan Daerah dan Standar Akuntansi Pemerintahan',
-        sem: 1,
-        elemen: 'Standar Akuntansi Pemerintahan (SAP Berbasis Akrual)',
-        tps: [
-          {
-            teks: 'menganalisis struktur APBD, siklus pengelolaan keuangan daerah, dan kerangka konseptual SAP Akrual PP 71/2010',
-            jp: 8,
-            ind: 'Peserta didik dapat menguraikan komponen pendapatan daerah, belanja daerah, dan pembiayaan daerah serta fungsi SKPD dan BUD.',
-            r1: 'Belum memahami perbedaan belanja daerah dan pembiayaan daerah.',
-            r2: 'Dapat mengidentifikasi struktur APBD dengan bagan alur keuangan daerah.',
-            r3: 'Mampu menganalisis alur penyusunan APBD dan penerapan SAP akrual di lingkungan pemerintah daerah secara mandiri.',
-            r4: 'Mampu mengevaluasi prinsip transparansi fiskal dan pencegahan korupsi dalam pengelolaan keuangan daerah.',
-            teknik: 'Tes tertulis dan analisis dokumen APBD'
-          },
-          {
-            teks: 'menerapkan persamaan dasar akuntansi pemerintah (Aset = Kewajiban + Ekuitas + Pendapatan LO - Beban)',
-            jp: 10,
-            ind: 'Peserta didik dapat memetakan transaksi keuangan daerah ke dalam persamaan akuntansi pemerintah dan bagan akun standar.',
-            r1: 'Persamaan akuntansi pemerintah belum seimbang; tertukar antara beban LO dan belanja LRA.',
-            r2: 'Dapat memasukkan transaksi sederhana ke tabel persamaan dengan asistensi guru.',
-            r3: 'Mampu menyusun tabel persamaan akuntansi SKPD dan PPKD secara seimbang, teliti, dan mandiri.',
-            r4: 'Mampu menghubungkan transaksi timbal balik (rekening koran PPKD/SKPD) pada struktur Home Office - Branch Office pemerintah daerah.',
-            teknik: 'Lembar kerja persamaan akuntansi pemda'
-          }
-        ]
-      },
-      {
-        nama: 'Pencatatan Transaksi Pendapatan, Belanja, dan Mekanisme SP2D',
-        sem: 1,
-        elemen: 'Pencatatan Transaksi Finansial dan Transaksi Anggaran',
-        tps: [
-          {
-            teks: 'menjurnal transaksi pengeluaran kas dengan mekanisme Uang Persediaan (UP), Ganti Uang (GU), Tambah Uang (TU), dan Langsung (LS)',
-            jp: 14,
-            ind: 'Peserta didik dapat membuat jurnal finansial dan jurnal anggaran saat penerbitan SP2D UP/GU/TU/LS pada SKPD.',
-            r1: 'Masih keliru kapan harus membuat jurnal anggaran (LRA) dan kapan hanya jurnal finansial (LO).',
-            r2: 'Dapat mencatat jurnal SP2D LS gaji dengan bantuan format akun.',
-            r3: 'Mampu menjurnal transaksi UP, GU, TU, dan LS dengan tepat kode rekening, debit-kredit, dan mandiri.',
-            r4: 'Mampu menyusun Surat Pertanggungjawaban (SPJ) fungsional dan administratif bendahara pengeluaran SKPD.',
-            teknik: 'Praktik pembukuan bendahara SKPD'
-          },
-          {
-            teks: 'menjurnal transaksi penerimaan pendapatan daerah (PAD, transfer pusat, dan lain-lain pendapatan sah)',
-            jp: 12,
-            ind: 'Peserta didik dapat mencatat Surat Ketetapan Pajak Daerah (SKP-Daerah), penyetoran kas ke Kas Daerah, dan pengakuan pendapatan LO vs LRA.',
-            r1: 'Belum memahami pengakuan pendapatan berbasis akrual (LO) saat penetapan vs saat penerimaan kas (LRA).',
-            r2: 'Dapat mencatat penyetoran retribusi daerah dengan format jurnal acuan.',
-            r3: 'Mampu membuat jurnal pendapatan LO dan pendapatan LRA secara tepat dan mandiri.',
-            r4: 'Mampu mengoreksi jurnal penyesuaian pendapatan diterima di muka dan piutang pajak daerah akhir tahun anggaran.',
-            teknik: 'Simulasi pembukuan bendahara penerimaan'
-          }
-        ]
-      },
-      {
-        nama: 'Penyusunan Laporan Keuangan Pemerintah Daerah (LRA, LO, Neraca)',
-        sem: 2,
-        elemen: 'Penyusunan Laporan Keuangan Pemerintah Daerah dan Akuntansi Desa',
-        tps: [
-          {
-            teks: 'menyusun Laporan Realisasi Anggaran (LRA) dan Laporan Operasional (LO) SKPD pemerintah daerah',
-            jp: 14,
-            ind: 'Peserta didik dapat menghitung surplus/defisit LRA, SiLPA, serta surplus/defisit operasional LO.',
-            r1: 'Masih mencampuradukkan pos belanja modal di LRA ke dalam laporan beban LO.',
-            r2: 'Dapat menyusun format LRA SKPD dengan template standar SAP.',
-            r3: 'Mampu menyusun LRA dan LO SKPD secara tepat, teliti, balance, dan mandiri.',
-            r4: 'Mampu menyusun Laporan Perubahan Ekuitas (LPE) dan menghubungkan surplus/defisit LO ke ekuitas akhir neraca.',
-            teknik: 'Portofolio laporan keuangan pemda'
-          },
-          {
-            teks: 'menyusun Neraca Pemerintah Daerah dan Catatan atas Laporan Keuangan (CaLK)',
-            jp: 12,
-            ind: 'Peserta didik dapat mengelompokkan aset lancar, aset tetap pemerintah, dana cadangan, kewajiban jangka pendek, dan ekuitas pemda.',
-            r1: 'Saldo aset dan total pasiva pemerintah daerah belum seimbang.',
-            r2: 'Dapat mengisi neraca pemda dengan neraca lajur bantuan.',
-            r3: 'Mampu menyusun Neraca Pemerintah Daerah dan membuat deskripsi pengungkapan CaLK secara mandiri.',
-            r4: 'Mampu menganalisis kemandirian keuangan daerah dan rasio efisiensi belanja APBD dari laporan keuangan audited.',
-            teknik: 'Uji kompetensi neraca daerah'
-          }
-        ]
-      },
-      {
-        nama: 'Akuntansi Keuangan Desa Berbasis Siskeudes',
-        sem: 2,
-        elemen: 'Penyusunan Laporan Keuangan Pemerintah Daerah dan Akuntansi Desa',
-        tps: [
-          {
-            teks: 'menerapkan pembukuan keuangan desa (Buku Kas Umum, Buku Pembantu Bank, Buku Pembantu Pajak) dan aplikasi Siskeudes',
-            jp: 12,
-            ind: 'Peserta didik dapat mencatat mutasi penerimaan Dana Desa (DD), Alokasi Dana Desa (ADD), dan pengeluaran kegiatan desa.',
-            r1: 'Pencatatan kas desa belum sinkron antara Buku Kas Umum dan Buku Bank.',
-            r2: 'Dapat mencatat transaksi kas desa dengan formulir manual Permendagri 20/2018.',
-            r3: 'Mampu membukukan seluruh transaksi desa dan mengoperasikan modul penatausahaan Siskeudes secara mandiri.',
-            r4: 'Mampu menyusun Laporan Pertanggungjawaban Realisasi APBDes akhir tahun dan laporan kekayaan milik desa.',
-            teknik: 'Praktik komputer akuntansi desa (Siskeudes)'
-          }
-        ]
-      }
-    ]
-  };
-}
-
-// 5. Praktikum Akuntansi Perusahaan Jasa, Dagang, dan Manufaktur (Fase F - XI/XII SMK)
-export function generatePraktikumJasaDagangManufaktur(fase: string, kelas: string, topik: string): CurriculumResponse {
-  return {
-    isFallback: true,
-    cp: [
-      {
-        elemen: 'Akuntansi Perusahaan Jasa',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu menganalisis dokumen transaksi keuangan, melakukan pencatatan transaksi ke dalam jurnal umum, posting ke buku besar, menyusun neraca saldo, membuat jurnal penyesuaian, menyusun kertas kerja (worksheet), menyusun laporan keuangan (Laba Rugi, Perubahan Ekuitas, Neraca, Arus Kas), serta membuat jurnal penutup dan neraca saldo setelah penutupan pada perusahaan jasa.`
-      },
-      {
-        elemen: 'Akuntansi Perusahaan Dagang',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu menganalisis dokumen transaksi perdagangan, mencatat ke dalam jurnal khusus (pembelian, penjualan, penerimaan kas, pengeluaran kas) dan jurnal umum, mengelola buku besar pembantu piutang dan utang, mencatat kartu persediaan barang dagang (FIFO, LIFO, Moving Average), menyusun neraca lajur, dan menyajikan laporan keuangan perusahaan dagang sesuai standar SAK EMKM / SAK ETAP.`
-      },
-      {
-        elemen: 'Akuntansi Perusahaan Manufaktur',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu memahami karakteristik dan siklus akuntansi perusahaan industri manufaktur, mengklasifikasi biaya produksi (biaya bahan baku langsung, tenaga kerja langsung, dan overhead pabrik), menghitung harga pokok produksi dengan metode harga pokok pesanan (job order costing) dan metode harga pokok proses (process costing), serta menyusun laporan harga pokok produksi dan laporan keuangan perusahaan manufaktur.`
-      }
-    ],
-    units: [
-      {
-        nama: topik ? `Siklus Akuntansi Perusahaan Jasa & ${topik}` : 'Siklus Lengkap Akuntansi Perusahaan Jasa',
-        sem: 1,
-        elemen: 'Akuntansi Perusahaan Jasa',
-        tps: [
-          {
-            teks: 'menganalisis dokumen sumber dan dokumen pendukung transaksi keuangan pada perusahaan jasa',
-            jp: 8,
-            ind: 'Peserta didik dapat mengidentifikasi keabsahan kuitansi, nota kontan, bukti kas masuk, bukti kas keluar, dan memo internal.',
-            r1: 'Belum mampu membedakan dokumen transaksi internal dan eksternal.',
-            r2: 'Dapat mengidentifikasi bukti transaksi jasa dengan panduan lembar kerja.',
-            r3: 'Mampu menganalisis pengaruh bukti transaksi terhadap akun riil dan nominal secara mandiri dan akurat.',
-            r4: 'Mampu memvalidasi keabsahan dokumen transaksi kompleks serta mendeteksi anomali pada berkas transaksi jasa.',
-            teknik: 'Analisis dokumen transaksi dan tes tertulis'
-          },
-          {
-            teks: 'mencatat transaksi ke jurnal umum, posting buku besar, dan menyusun neraca saldo perusahaan jasa',
-            jp: 12,
-            ind: 'Peserta didik dapat menyusun jurnal umum yang balance, memindahkan mutasi ke buku besar bentuk 4 kolom, dan membuat neraca saldo.',
-            r1: 'Jurnal umum belum balance dan terjadi kesalahan penempatan debit kredit akun.',
-            r2: 'Dapat mencatat jurnal dan posting dengan bantuan format buku besar.',
-            r3: 'Mampu menjurnal secara kronologis, posting buku besar, dan menyusun neraca saldo dengan teliti dan mandiri.',
-            r4: 'Mampu menganalisis selisih neraca saldo dan melakukan koreksi jurnal penyesuaian secara sistematis.',
-            teknik: 'Praktik siklus akuntansi jasa'
-          },
-          {
-            teks: 'menyusun jurnal penyesuaian, kertas kerja (worksheet), dan laporan keuangan perusahaan jasa',
-            jp: 12,
-            ind: 'Peserta didik dapat menghitung beban perlengkapan, penyusutan aset tetap, beban terutang, pendapatan diterima di muka, dan menyajikan laporan laba rugi serta neraca.',
-            r1: 'Kesulitan menghitung penyesuaian pos akrual dan deferral.',
-            r2: 'Dapat menyusun kertas kerja 10 kolom dengan pendampingan formula saldo.',
-            r3: 'Mampu menyusun kertas kerja lengkap dan laporan keuangan perusahaan jasa yang seimbang secara mandiri.',
-            r4: 'Mampu mengevaluasi kinerja keuangan perusahaan jasa berdasarkan laporan keuangan yang disusun.',
-            teknik: 'Portofolio laporan keuangan jasa'
-          }
-        ]
-      },
-      {
-        nama: 'Siklus Akuntansi Perusahaan Dagang dengan Jurnal Khusus',
-        sem: 1,
-        elemen: 'Akuntansi Perusahaan Dagang',
-        tps: [
-          {
-            teks: 'mencatat transaksi pembelian, penjualan, penerimaan kas, dan pengeluaran kas ke dalam jurnal khusus perusahaan dagang',
-            jp: 14,
-            ind: 'Peserta didik dapat mengidentifikasi syarat pembayaran (2/10, n/30), syarat penyerahan (FOB shipping point/destination), dan merekapitulasi jurnal khusus.',
-            r1: 'Sering tertukar mencatat transaksi kredit ke jurnal kas atau sebaliknya.',
-            r2: 'Dapat mengelompokkan transaksi ke 4 jurnal khusus dengan bantuan daftar akun.',
-            r3: 'Mampu mencatat seluruh transaksi dagang ke jurnal khusus dan merekapitulasinya secara tepat, rapi, dan mandiri.',
-            r4: 'Mampu merancang format jurnal khusus terintegrasi yang mempercepat proses rekapitulasi buku besar.',
-            teknik: 'Praktik jurnal khusus dagang'
-          },
-          {
-            teks: 'mengelola buku besar pembantu piutang dan utang serta menyusun daftar saldo piutang dan utang',
-            jp: 10,
-            ind: 'Peserta didik dapat memposting mutasi faktur dan pelunasan ke kartu piutang/utang pelanggan dan pemasok.',
-            r1: 'Saldo buku pembantu tidak cocok dengan akun kontrol di buku besar umum.',
-            r2: 'Dapat memposting ke buku pembantu dengan bimbingan pencocokan faktur.',
-            r3: 'Mampu memutakhirkan buku besar pembantu dan menyusun daftar saldo yang sesuai akun kontrol secara mandiri.',
-            r4: 'Mampu menyusun analisis umur piutang (aging schedule of accounts receivable) untuk mengukur likuiditas tagihan.',
-            teknik: 'Penyusunan kartu pembantu dan daftar saldo'
-          }
-        ]
-      },
-      {
-        nama: 'Kartu Persediaan Barang Dagang dan Laporan Keuangan Dagang',
-        sem: 2,
-        elemen: 'Akuntansi Perusahaan Dagang',
-        tps: [
-          {
-            teks: 'mengelola kartu persediaan barang dagang metode perpetual (FIFO dan Moving Average)',
-            jp: 12,
-            ind: 'Peserta didik dapat menghitung harga pokok penjualan (HPP) dan nilai persediaan akhir pada setiap transaksi mutasi barang.',
-            r1: 'Masih keliru menghitung harga pokok keluar pada metode rata-rata bergerak.',
-            r2: 'Dapat menghitung nilai persediaan metode FIFO dengan tabel kartu stok bantuan.',
-            r3: 'Mampu mengelola kartu persediaan sistem perpetual FIFO dan Moving Average secara akurat dan mandiri.',
-            r4: 'Mampu membandingkan dampak metode persediaan FIFO vs Average terhadap besaran laba kotor perusahaan.',
-            teknik: 'Uji praktik kartu persediaan'
-          },
-          {
-            teks: 'menyusun jurnal penyesuaian persediaan, kertas kerja, dan laporan keuangan perusahaan dagang',
-            jp: 14,
-            ind: 'Peserta didik dapat membuat penyesuaian persediaan pendekatan Ikhtisar Laba/Rugi dan pendekatan HPP, serta menyusun laporan keuangan lengkap.',
-            r1: 'Kesulitan menutup saldo persediaan awal dan mengakui persediaan akhir.',
-            r2: 'Dapat menyusun neraca lajur dagang dengan template formula.',
-            r3: 'Mampu menyusun neraca lajur dan laporan keuangan perusahaan dagang (Laba Rugi bertahap, Neraca, Arus Kas) secara mandiri.',
-            r4: 'Mampu menyusun jurnal penutup, jurnal pembalik, dan neraca saldo setelah penutupan perusahaan dagang secara sempurna.',
-            teknik: 'Portofolio siklus dagang lengkap'
-          }
-        ]
-      },
-      {
-        nama: 'Akuntansi Biaya dan Harga Pokok Produksi Manufaktur',
-        sem: 2,
-        elemen: 'Akuntansi Perusahaan Manufaktur',
-        tps: [
-          {
-            teks: 'mengklasifikasi biaya produksi (BBB, BTKL, BOP) dan mencatat transaksi pemakaian bahan baku serta biaya tenaga kerja',
-            jp: 12,
-            ind: 'Peserta didik dapat membedakan biaya utama (prime cost), biaya konversi, dan biaya periodik pada proses industri pabrik.',
-            r1: 'Masih tertukar antara biaya overhead pabrik dan beban operasional administrasi.',
-            r2: 'Dapat mengelompokkan elemen biaya manufaktur dengan panduan daftar akun biaya.',
-            r3: 'Mampu mencatat perolehan bahan baku, bukti permintaan bahan, dan daftar upah pabrik secara tepat dan mandiri.',
-            r4: 'Mampu menghitung tarif BOP yang ditentukan di muka dan menganalisis selisih pembebanan BOP (over/underapplied).',
-            teknik: 'Praktik akuntansi biaya manufaktur'
-          },
-          {
-            teks: 'menghitung harga pokok produksi metode harga pokok pesanan (Job Order Costing) dan metode harga pokok proses (Process Costing)',
-            jp: 14,
-            ind: 'Peserta didik dapat mengisi kartu harga pokok pesanan dan menyusun laporan biaya produksi per departemen dengan unit ekuivalen.',
-            r1: 'Kesulitan menghitung unit ekuivalen pada barang dalam proses akhir.',
-            r2: 'Dapat menghitung harga pokok pesanan sederhana dengan rumus panduan.',
-            r3: 'Mampu menyusun kartu harga pokok pesanan dan laporan biaya produksi metode proses secara tepat dan mandiri.',
-            r4: 'Mampu menyajikan laporan harga pokok produksi manufaktur dan menganalisis efisiensi biaya produksi antar-periode.',
-            teknik: 'Studi kasus manufaktur dan tes tertulis'
-          }
-        ]
-      }
-    ]
-  };
-}
-
-// 6. Komputer Akuntansi (Fase F - XI/XII SMK)
-export function generateKomputerAkuntansi(fase: string, kelas: string, topik: string): CurriculumResponse {
-  return {
-    isFallback: true,
-    cp: [
-      {
-        elemen: 'Setup Data Awal Perusahaan dan Bagan Akun',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu membuat data file baru perusahaan, mengatur periode akuntansi, mengimpor/membuat daftar akun (chart of accounts), menetapkan tipe akun, dan mengatur akun-akun penghubung (linked accounts) pada aplikasi komputer akuntansi (seperti MYOB, Accurate, atau spreadsheet akuntansi).`
-      },
-      {
-        elemen: 'Pengaturan Pajak dan Data Master Kartu Pembantu',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu mengatur kode pajak (PPN/VAT), termin dan syarat pembayaran, serta membuat kartu pembantu piutang (customer card), kartu pembantu utang (supplier card), dan kartu persediaan barang dagang (item card).`
-      },
-      {
-        elemen: 'Entri Saldo Awal Neraca dan Kartu Pembantu',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu mengentri saldo awal neraca (opening balance) hingga historical balancing bernilai nol (0), mengentri saldo awal piutang dagang, saldo awal utang dagang, serta saldo awal dan kuantitas persediaan barang dagang.`
-      },
-      {
-        elemen: 'Pemrosesan Transaksi Pembelian, Penjualan, dan Kas',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu mengentri transaksi pembelian tunai/kredit, retur pembelian, pembayaran utang dengan diskon, transaksi penjualan tunai/kredit, retur penjualan, penerimaan piutang dagang, serta penerimaan dan pengeluaran kas/bank/kas kecil secara terkomputerisasi.`
-      },
-      {
-        elemen: 'Pemrosesan Penyesuaian, Audit Laporan Keuangan, dan Backup File',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu mengentri transaksi jurnal penyesuaian akhir periode, melakukan rekonsiliasi akun kas bank, memeriksa kebenaran laporan audit trail, mencetak laporan keuangan digital (Laba Rugi, Neraca, Arus Kas), serta melakukan backup data perusahaan secara aman.`
-      }
-    ],
-    units: [
-      {
-        nama: topik ? `Setup Data Perusahaan & ${topik}` : 'Setup Data Awal dan Bagan Akun Komputer Akuntansi',
-        sem: 1,
-        elemen: 'Setup Data Awal Perusahaan dan Bagan Akun',
-        tps: [
-          {
-            teks: 'membuat file data perusahaan baru, mengatur periode akuntansi, dan mengkonfigurasi linked accounts',
-            jp: 8,
-            ind: 'Peserta didik dapat memasukkan profil entitas, menentukan 12/13 bulan periode fiskal, dan menghubungkan akun buku besar secara tepat.',
-            r1: 'Masih keliru mengatur bulan konversi dan periode akuntansi sehingga tahun transaksi terkunci salah.',
-            r2: 'Dapat membuat file baru dengan panduan modul step-by-step.',
-            r3: 'Mampu membuat file perusahaan baru dan mengatur linked accounts secara tepat, cepat, dan mandiri.',
-            r4: 'Mampu mengoreksi struktur klasifikasi akun header-detail dan memodifikasi bagan akun sesuai karakteristik entitas.',
-            teknik: 'Uji praktik komputer akuntansi'
-          },
-          {
-            teks: 'mengimpor dan mengedit daftar bagan akun (Chart of Accounts) dari lembar kerja spreadsheet',
-            jp: 8,
-            ind: 'Peserta didik dapat membuat format file teks/CSV impor akun, mencocokkan field akun, dan mengeliminasi duplikasi akun.',
-            r1: 'Gagal mengimpor daftar akun karena format kolom tidak sesuai spesifikasi software.',
-            r2: 'Dapat mengimpor akun dengan file template siap pakai dari guru.',
-            r3: 'Mampu menyiapkan data impor akun, memvalidasi tipe akun, dan menghapus akun default yang tidak terpakai secara mandiri.',
-            r4: 'Mampu merancang bagan akun komprehensif untuk perusahaan dagang multi-cabang.',
-            teknik: 'Praktik impor data akun'
-          }
-        ]
-      },
-      {
-        nama: 'Setup Pajak, Kartu Pelanggan, Pemasok, dan Saldo Awal',
-        sem: 1,
-        elemen: 'Pengaturan Pajak dan Data Master Kartu Pembantu',
-        tps: [
-          {
-            teks: 'mengatur tarif pajak PPN/VAT, termin pembayaran, serta membuat kartu pembantu customer dan supplier',
-            jp: 10,
-            ind: 'Peserta didik dapat mengatur kode pajak Masukan/Keluaran, batas kredit, syarat diskon pembayaran, dan kontak mitra bisnis.',
-            r1: 'Tarif pajak belum terhubung ke akun PPN Masukan dan PPN Keluaran yang tepat.',
-            r2: 'Dapat membuat kartu pelanggan dengan data acuan soal.',
-            r3: 'Mampu mengatur kode pajak dan kartu pembantu relasi bisnis secara akurat dan mandiri.',
-            r4: 'Mampu mengonfigurasi klasifikasi termin pembayaran kompleks (COD, EOM, n/30, 2/10 n/30) dan denda keterlambatan.',
-            teknik: 'Unjuk kerja setup master data'
-          },
-          {
-            teks: 'mengentri saldo awal neraca (historical balancing = 0), saldo piutang, utang, dan kartu persediaan barang',
-            jp: 10,
-            ind: 'Peserta didik dapat memasukkan neraca saldo awal sampai selisih nol dan memasukkan saldo pembantu sampai out of balance nol.',
-            r1: 'Historical balancing masih menunjukkan angka selisih (belum nol).',
-            r2: 'Dapat menyelesaikan entri saldo awal dengan bantuan bimbingan letak akun kontra.',
-            r3: 'Mampu mengentri seluruh saldo awal akun dan saldo pembantu secara presisi hingga nol secara mandiri.',
-            r4: 'Mampu mendeteksi dan memperbaiki kekeliruan input saldo awal debit-kredit tanpa mengulang pembuatan file.',
-            teknik: 'Verifikasi saldo nol dan unjuk kerja'
-          }
-        ]
-      },
-      {
-        nama: 'Pemrosesan Transaksi Pembelian, Penjualan, dan Kas Bank',
-        sem: 2,
-        elemen: 'Pemrosesan Transaksi Pembelian, Penjualan, dan Kas',
-        tps: [
-          {
-            teks: 'memproses transaksi pembelian barang dagang, biaya angkut, retur pembelian, dan pembayaran utang',
-            jp: 14,
-            ind: 'Peserta didik dapat mengentri Purchase Order, Bill, Debit Note retur, dan Pay Bills pada modul software akuntansi.',
-            r1: 'Salah memilih layout modul pembelian dan keliru menerapkan akun retur.',
-            r2: 'Dapat mengentri faktur pembelian dengan bimbingan menu transaksi.',
-            r3: 'Mampu memproses siklus transaksi pembelian dan pembayaran utang secara tepat waktu, tepat akun, dan mandiri.',
-            r4: 'Mampu menangani transaksi diskon pelunasan lebih awal dan potongan utang dengan denda.',
-            teknik: 'Praktik transaksi komputer pembelian'
-          },
-          {
-            teks: 'memproses transaksi penjualan barang dagang, retur penjualan, dan penerimaan pelunasan piutang pelanggan',
-            jp: 14,
-            ind: 'Peserta didik dapat mengentri Sales Invoice, Credit Note retur penjualan, dan Receive Payments pada modul software akuntansi.',
-            r1: 'Retur penjualan belum dialokasikan ke faktur asal (apply to sale).',
-            r2: 'Dapat mengentri faktur penjualan tunai dan kredit dengan panduan modul.',
-            r3: 'Mampu memproses seluruh transaksi penjualan dan penerimaan piutang secara teliti, balance, dan mandiri.',
-            r4: 'Mampu menganalisis batas limit kredit pelanggan dan menolak transaksi penjualan jika melebihi plafon piutang.',
-            teknik: 'Praktik transaksi komputer penjualan'
-          }
-        ]
-      },
-      {
-        nama: 'Transaksi Penyesuaian, Pelaporan Keuangan, dan Backup File',
-        sem: 2,
-        elemen: 'Pemrosesan Penyesuaian, Audit Laporan Keuangan, dan Backup File',
-        tps: [
-          {
-            teks: 'mengentri transaksi jurnal penyesuaian akhir periode dan merekonsiliasi saldo rekening kas bank',
-            jp: 10,
-            ind: 'Peserta didik dapat mengentri Record Journal Entry untuk penyusutan, beban dibayar di muka, dan rekonsiliasi bank otomatis.',
-            r1: 'Masih keliru menjurnal akun penyesuaian penyusutan aset tetap.',
-            r2: 'Dapat melakukan rekonsiliasi kas bank dengan panduan rekening koran di layar.',
-            r3: 'Mampu menyelesaikan entri penyesuaian dan rekonsiliasi bank sampai status reconciled secara mandiri.',
-            r4: 'Mampu melakukan closing period dan menganalisis audit trail report untuk menjamin integritas data akuntansi.',
-            teknik: 'Uji kompetensi penyesuaian & rekonsiliasi'
-          },
-          {
-            teks: 'menyajikan, mengekspor laporan keuangan digital (Neraca, Laba Rugi, Arus Kas) dan membuat backup data',
-            jp: 8,
-            ind: 'Peserta didik dapat mencetak laporan keuangan ke format PDF/Excel, memeriksa balance neraca, dan membuat file backup (.myo / .gbk).',
-            r1: 'Belum menguasai prosedur backup dan penyimpanan file arsip terkompresi.',
-            r2: 'Dapat mengekspor laporan laba rugi dengan bimbingan menu report.',
-            r3: 'Mampu menyajikan laporan keuangan lengkap dan membuat backup data secara mandiri dan aman.',
-            r4: 'Mampu menyajikan visualisasi ringkasan rasio profitabilitas dan likuiditas dari dashboard komputer akuntansi.',
-            teknik: 'Portofolio laporan digital dan backup data'
-          }
-        ]
-      }
-    ]
-  };
-}
-
-// 7. Administrasi Perpajakan (Fase F - XI/XII SMK)
-export function generateAdministrasiPerpajakan(fase: string, kelas: string, topik: string): CurriculumResponse {
-  return {
-    isFallback: true,
-    cp: [
-      {
-        elemen: 'Ketentuan Umum dan Tata Cara Perpajakan (KUP)',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu memahami konsep dasar perpajakan di Indonesia, fungsi dan asas pemungutan pajak, hak dan kewajiban wajib pajak, tata cara pendaftaran NPWP (termasuk integrasi NIK sebagai NPWP), pengukuhan Pengusaha Kena Pajak (PKP), sistem pemungutan pajak (Official, Self, Withholding), serta sanksi administrasi dan pidana perpajakan.`
-      },
-      {
-        elemen: 'Pajak Penghasilan (PPh) Orang Pribadi dan PPh Pasal 21',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu memahami subjek dan objek PPh, menghitung Penghasilan Tidak Kena Pajak (PTKP), tarif progresif PPh Pasal 17, skema Tarif Efektif Rata-Rata (TER) PPh Pasal 21 bulanan dan tahunan bagi pegawai tetap, pegawai tidak tetap, dan bukan pegawai, serta penyusunan bukti pemotongan PPh Pasal 21.`
-      },
-      {
-        elemen: 'Pajak Penghasilan Badan dan Pemotongan/Pemungutan (PPh 22, 23, 24, 25, 4(2))',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu menghitung PPh Pasal 22 transaksi instansi/impor, PPh Pasal 23 atas dividen/bunga/royalti/jasa, PPh Pasal 24 kredit pajak luar negeri, angsuran PPh Pasal 25, PPh Final Pasal 4 ayat (2) atas sewa tanah/bangunan dan UMKM PP 55/2022, serta rekonsiliasi fiskal positif dan negatif dalam penghitungan PPh Badan terutang.`
-      },
-      {
-        elemen: 'Pajak Pertambahan Nilai (PPN) dan PPnBM',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu memahami mekanisme PPN di Indonesia, penyerahan Barang/Jasa Kena Pajak (BKP/JKP), Dasar Pengenaan Pajak (DPP), penghitungan Pajak Masukan dan Pajak Keluaran dengan tarif PPN 11%/12%, serta pemungutan Pajak Penjualan atas Barang Mewah (PPnBM).`
-      },
-      {
-        elemen: 'Aplikasi Perpajakan Elektronik dan Pelaporan SPT',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu mengoperasikan aplikasi perpajakan digital Ditjen Pajak (e-Faktur, e-Bupot Unifikasi, e-Billing, e-Filing / DJP Online) untuk pembuatan faktur pajak elektronik, pembuatan kode billing pembayaran pajak, serta pengisian dan pelaporan SPT Masa dan SPT Tahunan PPh Orang Pribadi (1770/1770S) dan Badan (1771).`
-      }
-    ],
-    units: [
-      {
-        nama: topik ? `KUP, Pendaftaran Pajak & ${topik}` : 'Ketentuan Umum Perpajakan dan Nomor Pokok Wajib Pajak',
-        sem: 1,
-        elemen: 'Ketentuan Umum dan Tata Cara Perpajakan (KUP)',
-        tps: [
-          {
-            teks: 'menganalisis hak dan kewajiban Wajib Pajak, tata cara integrasi NIK menjadi NPWP, dan pengukuhan PKP',
-            jp: 8,
-            ind: 'Peserta didik dapat menguraikan syarat pendaftaran NPWP orang pribadi dan badan serta hak keberatan/banding pajak.',
-            r1: 'Belum memahami sanksi keterlambatan pelaporan SPT dan pembayaran pajak.',
-            r2: 'Dapat mengisi formulir pendaftaran NPWP secara manual dengan contoh panduan.',
-            r3: 'Mampu menganalisis hak kewajiban wajib pajak dan menyimulasikan pendaftaran NPWP online secara mandiri.',
-            r4: 'Mampu mengevaluasi pentingnya kepatuhan pajak sukarela (tax compliance) bagi pembiayaan APBN pembangunan nasional.',
-            teknik: 'Studi kasus perpajakan dan tes tertulis'
-          },
-          {
-            teks: 'menghitung sanksi administrasi bunga, denda, dan kenaikan berdasarkan Undang-Undang Harmonisasi Peraturan Perpajakan (UU HPP)',
-            jp: 8,
-            ind: 'Peserta didik dapat menghitung sanksi bunga pasal 19 KUP berdasarkan suku bunga acuan per bulan.',
-            r1: 'Sering keliru menerapkan tarif bunga sanksi KUP yang dinamis.',
-            r2: 'Dapat menghitung denda keterlambatan SPT Masa dengan tabel bantuan.',
-            r3: 'Mampu menghitung besaran sanksi administrasi pajak secara akurat, teliti, dan mandiri.',
-            r4: 'Mampu menyusun surat permohonan pengurangan atau penghapusan sanksi administrasi perpajakan.',
-            teknik: 'Latihan hitung sanksi pajak'
-          }
-        ]
-      },
-      {
-        nama: 'Penghitungan dan Pemotongan PPh Pasal 21 (Skema TER)',
-        sem: 1,
-        elemen: 'Pajak Penghasilan (PPh) Orang Pribadi dan PPh Pasal 21',
-        tps: [
-          {
-            teks: 'menghitung pemotongan PPh Pasal 21 bulanan bagi pegawai tetap menggunakan Tarif Efektif Rata-Rata (TER Kategori A, B, C)',
-            jp: 12,
-            ind: 'Peserta didik dapat menentukan PTKP berdasarkan status tanggungan (TK/0 s.d K/3), menentukan tabel TER, dan menghitung potongan PPh 21 Masa.',
-            r1: 'Salah menentukan kategori TER (A/B/C) berdasarkan status PTKP pegawai.',
-            r2: 'Dapat menghitung PPh 21 masa bulanan dengan tabel TER yang disediakan.',
-            r3: 'Mampu menghitung potongan PPh 21 bulanan seluruh kategori pegawai secara tepat, cepat, dan mandiri.',
-            r4: 'Mampu menghitung rekonsiliasi PPh Pasal 21 Masa Desember (tarif Pasal 17 dikurangi akumulasi potongan bulanan).',
-            teknik: 'Praktik hitung PPh 21 dan lembar kerja'
-          },
-          {
-            teks: 'menghitung PPh Pasal 21 pegawai tidak tetap, tenaga ahli, dan membuat Bukti Pemotongan 1721-A1',
-            jp: 10,
-            ind: 'Peserta didik dapat menghitung PPh 21 upah harian/borongan, honorarium dokter/pengacara, dan mengisi formulir 1721-A1.',
-            r1: 'Belum memahami batas upah harian tidak kena potong pajak.',
-            r2: 'Dapat mengisi formulir bukti potong 1721-A1 dengan bantuan data gaji.',
-            r3: 'Mampu menghitung PPh 21 bukan pegawai dan menyusun bukti potong resmi secara mandiri.',
-            r4: 'Mampu menganalisis efisiensi tax planning pemberian tunjangan PPh 21 vs metode gross-up bagi perusahaan.',
-            teknik: 'Penyusunan bukti potong 1721-A1'
-          }
-        ]
-      },
-      {
-        nama: 'Pemotongan PPh Pasal 22, 23, 24, 4(2) dan PPN 11%/12%',
-        sem: 2,
-        elemen: 'Pajak Penghasilan Badan dan Pemotongan/Pemungutan (PPh 22, 23, 24, 25, 4(2))',
-        tps: [
-          {
-            teks: 'menghitung pemotongan PPh Pasal 22, Pasal 23, dan PPh Final Pasal 4 ayat (2) atas transaksi bisnis',
-            jp: 12,
-            ind: 'Peserta didik dapat menghitung PPh 22 pengadaan barang instansi pemerintah, PPh 23 sewa aset dan jasa teknik (2%), serta PPh final sewa gedung (10%).',
-            r1: 'Masih tertukar tarif PPh 23 bagi wajib pajak yang memiliki NPWP dan tidak memiliki NPWP (100% lebih tinggi).',
-            r2: 'Dapat menghitung potongan PPh 23 jasa dengan rumus acuan.',
-            r3: 'Mampu menghitung seluruh pemotongan PPh withholding tax secara tepat, teliti, dan mandiri.',
-            r4: 'Mampu menyusun daftar bukti potong e-Bupot Unifikasi dan membuat kode billing setor pajak.',
-            teknik: 'Uji praktik pemotongan pajak'
-          },
-          {
-            teks: 'menghitung PPN Masukan, PPN Keluaran, dan PPN Terutang (Kurang/Lebih Bayar)',
-            jp: 12,
-            ind: 'Peserta didik dapat menghitung DPP, PPN 11%/12%, mengkreditkan Pajak Masukan, dan menentukan status lebih/kurang bayar pada SPT Masa PPN 1111.',
-            r1: 'Keliru membedakan Pajak Masukan yang dapat dikreditkan dan yang tidak dapat dikreditkan.',
-            r2: 'Dapat menghitung PPN keluaran transaksi penjualan barang kena pajak.',
-            r3: 'Mampu menghitung kompensasi PPN lebih bayar dan PPN terutang secara tepat dan mandiri.',
-            r4: 'Mampu menganalisis mekanisme pengembalian kelebihan pembayaran pajak (restitusi PPN) bagi eksportir.',
-            teknik: 'Penyelesaian kasus PPN'
-          }
-        ]
-      },
-      {
-        nama: 'Rekonsiliasi Fiskal, e-Faktur, dan Pelaporan SPT Tahunan',
-        sem: 2,
-        elemen: 'Aplikasi Perpajakan Elektronik dan Pelaporan SPT',
-        tps: [
-          {
-            teks: 'melakukan rekonsiliasi fiskal positif dan negatif serta menghitung PPh Terutang Badan (Fasilitas Pasal 31E)',
-            jp: 14,
-            ind: 'Peserta didik dapat mengoreksi beban natura, sumbangan, sanksi pajak, pendapatan bunga bank, dan menghitung laba fiskal.',
-            r1: 'Masih tertukar pengaruh koreksi fiskal positif vs negatif terhadap laba kena pajak.',
-            r2: 'Dapat mengidentifikasi pos beda tetap dan beda waktu dengan bimbingan pedoman UU PPh.',
-            r3: 'Mampu menyusun kertas kerja rekonsiliasi fiskal dan menghitung PPh Badan terutang secara mandiri dan akurat.',
-            r4: 'Mampu mengisi formulir Lampiran Khusus dan Formulir Induk SPT Tahunan PPh Badan 1771.',
-            teknik: 'Studi kasus rekonsiliasi fiskal badan'
-          },
-          {
-            teks: 'mengoperasikan aplikasi e-Faktur, e-Billing, dan pelaporan SPT via DJP Online',
-            jp: 10,
-            ind: 'Peserta didik dapat mengunggah faktur pajak elektronik, mendapatkan approval DJP, membuat kode billing, dan submit SPT di e-Filing.',
-            r1: 'Masih kesulitan memahami kode status approval faktur pajak elektronik.',
-            r2: 'Dapat membuat kode billing setoran pajak pada menu DJP Online.',
-            r3: 'Mampu menyelesaikan alur administrasi perpajakan digital dari faktur sampai Bukti Penerimaan Elektronik (BPE) secara mandiri.',
-            r4: 'Mampu menyusun portofolio kepatuhan pajak perusahaan dagang tahunan secara utuh dan siap audit.',
-            teknik: 'Simulasi aplikasi e-Faktur dan e-Filing'
-          }
-        ]
-      }
-    ]
-  };
-}
-
-// 8. Akuntansi Keuangan (Fase F - XI/XII SMK)
-export function generateAkuntansiKeuangan(fase: string, kelas: string, topik: string): CurriculumResponse {
-  return {
-    isFallback: true,
-    cp: [
-      {
-        elemen: 'Pengelolaan Kas Kecil dan Kas Bank',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu mengelola dana kas kecil dengan sistem dana tetap (imprest fund system) dan dana tidak tetap (fluktuasi), melakukan pemeriksaan fisik kas (cash opname), serta menyusun rekonsiliasi bank (bentuk 2 kolom, 4 kolom, dan 8 kolom) beserta jurnal penyesuaiannya.`
-      },
-      {
-        elemen: 'Pengelolaan Piutang dan Wesel Tagih',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu mengelola kartu piutang dagang, melakukan konfirmasi saldo piutang, menaksir kerugian piutang tak tertagih dengan metode langsung (direct write-off) dan metode cadangan (allowance method), serta mencatat transaksi penarikan, pendiskontoan, dan pelunasan wesel tagih (notes receivable).`
-      },
-      {
-        elemen: 'Pengelolaan Persediaan Barang Dagang',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu menerapkan metode pencatatan persediaan sistem fisik dan perpetual, metode penilaian persediaan (FIFO, LIFO, Moving Average), penaksiran nilai persediaan metode laba kotor dan metode harga eceran, serta penilaian persediaan berdasarkan nilai terendah antara harga pokok dan nilai realisasi bersih (LCNRV).`
-      },
-      {
-        elemen: 'Pengelolaan Aset Tetap dan Aset Tak Berwujud',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu menentukan harga perolehan aset tetap, menghitung penyusutan aset tetap dengan berbagai metode (garis lurus, saldo menurun ganda, jumlah angka tahun, satuan jam kerja/hasil produksi), mencatat pengeluaran modal dan pendapatan, mencatat pelepasan/pertukaran aset tetap, serta amortisasi aset tak berwujud.`
-      },
-      {
-        elemen: 'Pengelolaan Utang dan Ekuitas Badan Usaha',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu mencatat utang lancar (utang dagang, utang wesel, utang beban), utang jangka panjang (penerbitan obligasi, amortisasi agio/disagio obligasi, utang hipotek), serta pencatatan ekuitas perusahaan perseorangan, firma, CV, perseroan terbatas (PT mencakup modal saham dan dividen), serta sisa hasil usaha (SHU) koperasi.`
-      }
-    ],
-    units: [
-      {
-        nama: topik ? `Pengelolaan Kas Kecil, Bank & ${topik}` : 'Pengelolaan Kas Kecil dan Rekonsiliasi Bank',
-        sem: 1,
-        elemen: 'Pengelolaan Kas Kecil dan Kas Bank',
-        tps: [
-          {
-            teks: 'menerapkan pengelolaan dana kas kecil sistem dana tetap (imprest) dan sistem fluktuasi serta pencatatan selisih kas',
-            jp: 10,
-            ind: 'Peserta didik dapat membuat bukti pengeluaran, mencatat jurnal pembentukan, pengisian kembali, dan jurnal selisih kas kecil.',
-            r1: 'Masih keliru menjurnal pengeluaran kas kecil pada sistem dana tetap.',
-            r2: 'Dapat mencatat mutasi kas kecil sistem imprest dengan bantuan format tabel.',
-            r3: 'Mampu mencatat transaksi kas kecil kedua sistem secara mandiri, rapi, dan seimbang.',
-            r4: 'Mampu menganalisis efektivitas pengendalian internal kas kecil dan merancang formulir pengawasan kas.',
-            teknik: 'Praktik pencatatan kas kecil'
-          },
-          {
-            teks: 'menyusun rekonsiliasi bank dan membuat jurnal penyesuaian yang diperlukan',
-            jp: 12,
-            ind: 'Peserta didik dapat mengidentifikasi deposit in transit, outstanding check, jasa giro, biaya administrasi bank, notifikasi inkaso, dan koreksi kesalahan.',
-            r1: 'Kesulitan membedakan pos yang menambah/mengurangi saldo kas perusahaan vs saldo rekening koran bank.',
-            r2: 'Dapat menyusun rekonsiliasi bank 2 kolom dengan bimbingan pos penyesuaian.',
-            r3: 'Mampu menyusun rekonsiliasi bank hingga saldo kas yang benar dan mencatat jurnal penyesuaian secara mandiri.',
-            r4: 'Mampu menyusun rekonsiliasi bank bentuk 4 kolom (rekonsiliasi penerimaan dan pengeluaran kas).',
-            teknik: 'Uji praktik rekonsiliasi bank'
-          }
-        ]
-      },
-      {
-        nama: 'Pengelolaan Piutang Dagang dan Wesel Tagih',
-        sem: 1,
-        elemen: 'Pengelolaan Piutang dan Wesel Tagih',
-        tps: [
-          {
-            teks: 'menaksir dan mencatat beban kerugian piutang tak tertagih dengan metode cadangan dan metode penghapusan langsung',
-            jp: 10,
-            ind: 'Peserta didik dapat menghitung cadangan piutang berdasarkan persentase penjualan dan analisis umur piutang (aging schedule).',
-            r1: 'Belum memahami penyesuaian saldo cadangan piutang yang sudah ada sebelumnya.',
-            r2: 'Dapat menghitung beban piutang metode persentase piutang dengan rumus acuan.',
-            r3: 'Mampu menyusun tabel umur piutang, menghitung taksiran kerugian, dan menjurnal secara tepat dan mandiri.',
-            r4: 'Mampu mencatat penerimaan kembali piutang yang telah dihapuskan pada periode berjalan dan periode berikutnya.',
-            teknik: 'Studi kasus piutang tak tertagih'
-          },
-          {
-            teks: 'mencatat transaksi penarikan, pendiskontoan, dan pelunasan wesel tagih berbunga dan tidak berbunga',
-            jp: 10,
-            ind: 'Peserta didik dapat menentukan tanggal jatuh tempo wesel, menghitung nilai jatuh tempo, dan menghitung diskonto wesel.',
-            r1: 'Sering keliru menghitung hari diskonto dan bunga wesel berjangka.',
-            r2: 'Dapat menghitung nilai jatuh tempo wesel berbunga dengan rumus bantuan.',
-            r3: 'Mampu menghitung uang yang diterima saat pendiskontoan wesel dan mencatat jurnalnya secara mandiri.',
-            r4: 'Mampu mencatat jurnal saat wesel tagih didiskontokan ditolak pembayarannya oleh pembuat wesel (dishonored notes).',
-            teknik: 'Tes tertulis dan penyelesaian soal'
-          }
-        ]
-      },
-      {
-        nama: 'Penilaian Persediaan Barang Dagang dan Aset Tetap',
-        sem: 2,
-        elemen: 'Pengelolaan Persediaan Barang Dagang',
-        tps: [
-          {
-            teks: 'menerapkan penilaian persediaan barang dagang metode laba kotor, metode eceran, dan konsep LCNRV',
-            jp: 12,
-            ind: 'Peserta didik dapat menaksir nilai persediaan barang yang hilang/rusak dan menerapkan prinsip Lower of Cost or Net Realizable Value.',
-            r1: 'Belum memahami hubungan persentase laba kotor atas penjualan vs atas harga pokok.',
-            r2: 'Dapat menaksir persediaan dengan rumus laba kotor sederhana.',
-            r3: 'Mampu menghitung estimasi persediaan dan penurunan nilai persediaan (impairment) secara tepat dan mandiri.',
-            r4: 'Mampu mengevaluasi dampak pemilihan metode penilaian persediaan terhadap nilai aset lancar di laporan neraca.',
-            teknik: 'Uji kompetensi perhitungan persediaan'
-          },
-          {
-            teks: 'menghitung penyusutan aset tetap dengan berbagai metode dan mencatat penghentian/pertukaran aset tetap',
-            jp: 14,
-            ind: 'Peserta didik dapat menghitung beban depresiasi metode garis lurus, saldo menurun ganda, jumlah angka tahun, dan unit produksi serta laba/rugi pelepasan aset.',
-            r1: 'Sering keliru menghitung tarif saldo menurun ganda dan penyusutan untuk periode fraksional/tahunan berjalan.',
-            r2: 'Dapat menghitung beban penyusutan metode garis lurus dengan rumus standar.',
-            r3: 'Mampu menghitung penyusutan ke-4 metode dan mencatat pertukaran aset tetap sejenis/tidak sejenis secara mandiri.',
-            r4: 'Mampu membedakan pengeluaran modal (capital expenditure) dan pendapatan (revenue expenditure) serta implikasi perpajakannya.',
-            teknik: 'Portofolio aset tetap dan tes tertulis'
-          }
-        ]
-      },
-      {
-        nama: 'Utang Jangka Panjang, Obligasi, dan Ekuitas Perusahaan',
-        sem: 2,
-        elemen: 'Pengelolaan Utang dan Ekuitas Badan Usaha',
-        tps: [
-          {
-            teks: 'mencatat penerbitan utang obligasi, amortisasi agio/disagio obligasi, dan pelunasan obligasi sebelum jatuh tempo',
-            jp: 12,
-            ind: 'Peserta didik dapat menghitung harga jual obligasi (nilai sekarang pokok dan bunga), amortisasi metode garis lurus, dan bunga berjalan.',
-            r1: 'Belum memahami konsep agio dan disagio obligasi terkait suku bunga nominal vs pasar.',
-            r2: 'Dapat mencatat penerbitan obligasi pada nilai nominal dengan bantuan panduan akun.',
-            r3: 'Mampu menghitung amortisasi agio/disagio dan menjurnal pembayaran bunga berkala secara tepat dan mandiri.',
-            r4: 'Mampu menghitung laba/rugi pelunasan obligasi sebelum jatuh tempo dan menyajikan utang obligasi di neraca.',
-            teknik: 'Studi kasus obligasi dan tes'
-          },
-          {
-            teks: 'mencatat transaksi ekuitas perseroan terbatas (modal saham, agio, dividen) dan pembagian SHU koperasi',
-            jp: 12,
-            ind: 'Peserta didik dapat menjurnal penerbitan saham di atas nilai pari, pembagian dividen kas dan saham, serta alokasi SHU anggota koperasi.',
-            r1: 'Masih tertukar antara tanggal deklarasi, tanggal pencatatan, dan tanggal pembayaran dividen.',
-            r2: 'Dapat mencatat penerbitan saham biasa secara tunai dengan bantuan format jurnal.',
-            r3: 'Mampu mencatat siklus dividen PT dan menghitung pembagian SHU jasa modal dan jasa usaha koperasi secara mandiri.',
-            r4: 'Mampu menyajikan struktur ekuitas perseroan terbatas (laba ditahan, saham treasuri, cadangan) pada laporan posisi keuangan.',
-            teknik: 'Penyusunan laporan ekuitas dan tes'
-          }
-        ]
-      }
-    ]
-  };
-}
-
-// 9. Konsentrasi Keahlian Akuntansi dan Keuangan Lembaga (Fase F - XI/XII SMK) - Paket Inti
-export function generateKonsentrasiAkl(fase: string, kelas: string, topik: string): CurriculumResponse {
-  return {
-    isFallback: true,
-    cp: [
-      {
-        elemen: 'Akuntansi Perusahaan Jasa, Dagang, dan Manufaktur',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu memahami siklus akuntansi perusahaan jasa, dagang, dan manufaktur, menganalisis dokumen transaksi, menyusun jurnal khusus dan umum, mengelola kartu persediaan (FIFO, LIFO, Moving Average), menyusun kertas kerja, serta menyajikan laporan keuangan lengkap sesuai standar SAK EMKM / SAK ETAP.`
-      },
-      {
-        elemen: 'Akuntansi Keuangan',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu mengelola dana kas kecil dan kas bank (rekonsiliasi bank), mengelola kartu piutang dan wesel tagih, menilai persediaan barang dagang, mengelola aset tetap dan depresiasi, mencatat utang lancar dan utang jangka panjang (obligasi), serta mencatat ekuitas berbagai bentuk badan usaha (PT, CV, Koperasi).`
-      },
-      {
-        elemen: 'Akuntansi Lembaga / Instansi Pemerintah',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu memahami standar akuntansi pemerintahan (SAP Akrual PP 71/2010), tata kelola keuangan daerah dan desa, melakukan pencatatan transaksi finansial (LO) dan transaksi anggaran (LRA), serta menyusun laporan keuangan pemerintah daerah (LRA, LO, Neraca, LPE, CaLK).`
-      },
-      {
-        elemen: 'Komputer Akuntansi',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu mengoperasikan aplikasi komputer akuntansi (seperti MYOB, Accurate, atau spreadsheet) untuk membuat file perusahaan baru, setup bagan akun, kartu pembantu, mengentri transaksi pembelian, penjualan, penerimaan/pengeluaran kas, jurnal penyesuaian, serta menghasilkan laporan keuangan digital.`
-      },
-      {
-        elemen: 'Perpajakan',
-        teks: `Pada akhir Fase ${fase}, peserta didik mampu memahami ketentuan umum perpajakan (KUP), menghitung PPh Pasal 21 skema TER, PPh Badan, PPh Final PP 55, PPN 11%/12%, mengoperasikan aplikasi e-Faktur dan e-Bupot Unifikasi, serta menyusun dan melaporkan SPT Masa dan SPT Tahunan via DJP Online.`
-      }
-    ],
-    units: [
-      {
-        nama: topik ? `Siklus Akuntansi Dagang, Kas, Bank & ${topik}` : 'Siklus Akuntansi Perusahaan Dagang dan Pengelolaan Kas',
-        sem: 1,
-        elemen: 'Akuntansi Perusahaan Jasa, Dagang, dan Manufaktur',
-        tps: [
-          {
-            teks: 'mencatat transaksi perdagangan ke dalam jurnal khusus, buku pembantu, dan kartu persediaan perpetual',
-            jp: 14,
-            ind: 'Peserta didik dapat menyusun jurnal khusus dagang, kartu stok FIFO/Average, dan merekapitulasi buku besar.',
-            r1: 'Masih keliru mencatat mutasi kartu stok dan rekapitulasi jurnal khusus.',
-            r2: 'Dapat mencatat transaksi dagang rutin dengan panduan daftar akun.',
-            r3: 'Mampu menyelesaikan siklus jurnal khusus dan kartu persediaan secara tepat dan mandiri.',
-            r4: 'Mampu menyusun neraca lajur dan laporan keuangan perusahaan dagang secara komprehensif.',
-            teknik: 'Praktik siklus akuntansi dagang'
-          },
-          {
-            teks: 'mengelola kas kecil (imprest/fluktuasi) dan menyusun rekonsiliasi kas bank beserta jurnal penyesuaian',
-            jp: 10,
-            ind: 'Peserta didik dapat menyelesaikan rekonsiliasi bank 2 kolom dan membuat jurnal penyesuaian rekening koran.',
-            r1: 'Kesulitan menentukan pos penyesuaian kas perusahaan vs saldo bank.',
-            r2: 'Dapat menyusun rekonsiliasi bank sederhana dengan template panduan.',
-            r3: 'Mampu menyusun rekonsiliasi bank hingga saldo benar dan mencatat jurnal penyesuaian secara mandiri.',
-            r4: 'Mampu menganalisis selisih kas dan merancang SOP verifikasi kas bank.',
-            teknik: 'Praktik rekonsiliasi kas bank'
-          }
-        ]
-      },
-      {
-        nama: 'Komputer Akuntansi Perusahaan Dagang dan PPh Pasal 21',
-        sem: 1,
-        elemen: 'Komputer Akuntansi',
-        tps: [
-          {
-            teks: 'mengoperasikan software komputer akuntansi untuk setup data awal, master data kartu, dan entri transaksi dagang',
-            jp: 14,
-            ind: 'Peserta didik dapat membuat file baru, mengentri saldo awal neraca (balance nol), dan memproses faktur pembelian/penjualan.',
-            r1: 'Saldo awal neraca pada komputer akuntansi masih belum seimbang.',
-            r2: 'Dapat mengentri transaksi pembelian dan penjualan dengan petunjuk modul.',
-            r3: 'Mampu memproses transaksi dagang terkomputerisasi sampai laporan laba rugi dan neraca secara mandiri.',
-            r4: 'Mampu menyelesaikan audit trail report dan backup data perusahaan secara aman.',
-            teknik: 'Unjuk kerja komputer akuntansi'
-          },
-          {
-            teks: 'menghitung pemotongan PPh Pasal 21 skema Tarif Efektif Rata-Rata (TER) dan administrasi bukti potong pajak',
-            jp: 10,
-            ind: 'Peserta didik dapat menentukan kategori TER berdasarkan status PTKP dan menghitung PPh 21 bulanan karyawan.',
-            r1: 'Salah menentukan kategori tarif TER (A, B, C) untuk wajib pajak kawin/tidak kawin.',
-            r2: 'Dapat menghitung potongan PPh 21 dengan tabel acuan TER.',
-            r3: 'Mampu menghitung PPh 21 dan mengisi bukti potong 1721-A1 secara mandiri dan akurat.',
-            r4: 'Mampu menganalisis kewajiban pelaporan SPT Masa PPh 21 via e-Bupot unifikasi DJP Online.',
-            teknik: 'Tes tertulis dan penyusunan bukti potong'
-          }
-        ]
-      },
-      {
-        nama: 'Akuntansi Manufaktur, HPP, dan Aset Tetap',
-        sem: 2,
-        elemen: 'Akuntansi Perusahaan Jasa, Dagang, dan Manufaktur',
-        tps: [
-          {
-            teks: 'menghitung harga pokok produksi (HPP) manufaktur metode pesanan dan proses serta menyusun laporan biaya produksi',
-            jp: 14,
-            ind: 'Peserta didik dapat menghitung biaya bahan baku, biaya tenaga kerja, alokasi BOP, dan menyusun laporan harga pokok produksi.',
-            r1: 'Kesulitan menghitung alokasi BOP dan unit ekuivalen barang dalam proses.',
-            r2: 'Dapat menyusun kartu harga pokok pesanan dengan template panduan.',
-            r3: 'Mampu menghitung HPP manufaktur dan menyajikan laporan biaya produksi secara tepat dan mandiri.',
-            r4: 'Mampu menganalisis efisiensi biaya produksi standar terhadap biaya produksi riil.',
-            teknik: 'Praktik akuntansi biaya manufaktur'
-          },
-          {
-            teks: 'menghitung penyusutan aset tetap (garis lurus, saldo menurun ganda) dan mencatat pelepasan aset tetap',
-            jp: 10,
-            ind: 'Peserta didik dapat menghitung beban depresiasi tahunan dan mencatat laba/rugi penjualan aset tetap.',
-            r1: 'Sering keliru menghitung penyusutan periode pecahan bulan berjalan.',
-            r2: 'Dapat menghitung depresiasi garis lurus dengan rumus dasar.',
-            r3: 'Mampu menghitung depresiasi multi-metode dan mencatat pelepasan aset tetap secara mandiri.',
-            r4: 'Mampu membedakan pengeluaran modal dan pendapatan serta dampak pajaknya.',
-            teknik: 'Studi kasus aset tetap'
-          }
-        ]
-      },
-      {
-        nama: 'Akuntansi Lembaga Pemerintah dan Administrasi PPh Badan / PPN',
-        sem: 2,
-        elemen: 'Akuntansi Lembaga / Instansi Pemerintah',
-        tps: [
-          {
-            teks: 'menerapkan pencatatan transaksi keuangan pemerintah daerah dengan jurnal finansial (LO) dan jurnal anggaran (LRA)',
-            jp: 12,
-            ind: 'Peserta didik dapat mencatat transaksi SP2D UP/GU/TU/LS pada SKPD dan menyusun format LRA pemerintah daerah.',
-            r1: 'Masih tertukar antara pengakuan beban pada jurnal finansial dan belanja pada jurnal anggaran.',
-            r2: 'Dapat mencatat jurnal SP2D belanja barang dengan bantuan format kode rekening.',
-            r3: 'Mampu menyusun jurnal finansial dan anggaran SKPD pemda secara tepat dan mandiri.',
-            r4: 'Mampu menyajikan Laporan Realisasi Anggaran (LRA) dan Neraca Daerah sesuai SAP PP 71/2010.',
-            teknik: 'Praktik akuntansi instansi pemerintah'
-          },
-          {
-            teks: 'melakukan rekonsiliasi fiskal positif/negatif, menghitung PPh Badan terutang, dan pelaporan SPT via DJP Online',
-            jp: 12,
-            ind: 'Peserta didik dapat mengoreksi pos beda tetap/waktu, menghitung PPh Badan fasilitas pasal 31E, dan menyusun faktur PPN 11%/12%.',
-            r1: 'Koreksi fiskal positif dan negatif masih terbalik penempatannya.',
-            r2: 'Dapat mengidentifikasi beban non-deductible dengan bantuan UU PPh.',
-            r3: 'Mampu menyusun kertas kerja rekonsiliasi fiskal dan menghitung PPh Badan terutang secara mandiri dan akurat.',
-            r4: 'Mampu menyimulasikan pembuatan faktur pajak e-Faktur dan pengisian SPT Tahunan 1771.',
-            teknik: 'Portofolio rekonsiliasi fiskal dan SPT'
-          }
-        ]
-      }
-    ]
-  };
-}
-
-// Router function that correctly prioritizes all subjects in AKL
 export function getAklCurriculum(
   mapelInput: string,
   faseInput: string,
@@ -1489,90 +165,1538 @@ export function getAklCurriculum(
   topikInput: string
 ): CurriculumResponse | null {
   const mapel = (mapelInput || '').trim();
+  const lower = mapel.toLowerCase();
   const fase = (faseInput || 'F').trim().toUpperCase();
   const kelas = (kelasInput || 'XI').trim().toUpperCase();
   const topik = (topikInput || '').trim();
-  const lm = mapel.toLowerCase();
 
-  // 1. Dasar-Dasar Akuntansi dan Keuangan Lembaga (Fase E - Kelas X SMK)
+  // 1. Layanan Perbankan Syariah
   if (
-    lm.includes('dasar') ||
-    fase === 'E' ||
-    kelas === 'X' ||
-    kelas === '10' ||
-    kelas.startsWith('X ') ||
-    kelas.startsWith('10 ') ||
-    kelas === 'KELAS X'
+    lower.includes('syariah') ||
+    (lower.includes('perbankan') && (lower.includes('syariah') || kelas.includes('XII') || kelas.includes('12')))
   ) {
-    return generateDasarAklCurriculum(fase, kelas, topik);
+    return generatePerbankanSyariah(fase, topik);
   }
 
-  // 2. Layanan Perbankan Syariah (Fase F - Kelas XII SMK)
-  if (lm.includes('syariah')) {
-    return generateLayananPerbankanSyariah(fase, kelas, topik);
-  }
-
-  // 3. Layanan Perbankan (Fase F - Kelas XI SMK)
+  // 2. Layanan Perbankan (Konvensional)
   if (
-    lm.includes('layanan perbankan') ||
-    lm.includes('perbankan') ||
-    (lm.includes('bank') && !lm.includes('darah') && !lm.includes('soal'))
+    lower.includes('layanan perbankan') ||
+    lower.includes('perbankan') ||
+    (lower.includes('bank') && !lower.includes('darah') && !lower.includes('rekonsiliasi'))
   ) {
-    return generateLayananPerbankan(fase, kelas, topik);
+    return generateLayananPerbankan(fase, topik);
   }
 
-  // 4. Praktikum Akuntansi Lembaga / Instansi Pemerintah (Fase F - XI/XII SMK)
+  // 3. Administrasi Perpajakan
+  if (lower.includes('pajak') || lower.includes('perpajakan') || lower.includes('coretax')) {
+    return generateAdministrasiPerpajakan(fase, topik);
+  }
+
+  // 4. Komputer Akuntansi (MYOB / Accurate / Spreadsheet)
   if (
-    lm.includes('pemerintah') ||
-    lm.includes('pemda') ||
-    lm.includes('desa') ||
-    lm.includes('sektor publik') ||
-    lm.includes('skpd') ||
-    (lm.includes('lembaga') && (lm.includes('praktikum') || lm.includes('instansi')))
+    lower.includes('komputer akuntansi') ||
+    lower.includes('myob') ||
+    lower.includes('accurate') ||
+    lower.includes('aplikasi pengolah angka') ||
+    lower.includes('spreadsheet')
   ) {
-    return generateAkuntansiLembagaPemerintah(fase, kelas, topik);
+    return generateKomputerAkuntansi(fase, topik);
   }
 
-  // 5. Praktikum Akuntansi Perusahaan Jasa, Dagang, dan Manufaktur (Fase F - XI/XII SMK)
+  // 5. Praktikum Akuntansi Lembaga / Instansi Pemerintah
   if (
-    lm.includes('manufaktur') ||
-    lm.includes('jasa dagang') ||
-    lm.includes('jasa, dagang') ||
-    lm.includes('perusahaan jasa') ||
-    lm.includes('praktikum akuntansi perusahaan')
+    lower.includes('lembaga') && (lower.includes('pemerintah') || lower.includes('instansi') || lower.includes('desa') || lower.includes('praktikum')) ||
+    lower.includes('instansi pemerintah') ||
+    lower.includes('akuntansi pemerintah') ||
+    lower.includes('akuntansi desa') ||
+    lower.includes('siskeudes') ||
+    lower.includes('sipd')
   ) {
-    return generatePraktikumJasaDagangManufaktur(fase, kelas, topik);
+    return generateAkuntansiLembagaPemerintah(fase, topik);
   }
 
-  // 6. Komputer Akuntansi (Fase F - XI/XII SMK)
+  // 6. Praktikum Akuntansi Perusahaan Jasa, Dagang, dan Manufaktur
   if (
-    lm.includes('komputer akuntansi') ||
-    lm.includes('myob') ||
-    lm.includes('accurate') ||
-    lm.includes('spreadsheet akuntansi')
+    lower.includes('praktikum akuntansi perusahaan') ||
+    lower.includes('jasa, dagang') ||
+    lower.includes('jasa dagang') ||
+    lower.includes('manufaktur')
   ) {
-    return generateKomputerAkuntansi(fase, kelas, topik);
+    return generatePraktikumJasaDagangManufaktur(fase, topik);
   }
 
-  // 7. Administrasi Perpajakan (Fase F - XI/XII SMK)
+  // 7. Akuntansi Keuangan
+  if (lower.includes('akuntansi keuangan') && !lower.includes('lembaga')) {
+    return generateAkuntansiKeuangan(fase, topik);
+  }
+
+  // 8. Projek Kreatif dan Kewirausahaan (PKK) Akuntansi
   if (
-    lm.includes('pajak') ||
-    lm.includes('perpajakan') ||
-    lm.includes('pph') ||
-    lm.includes('ppn') ||
-    lm.includes('faktur pajak')
+    lower.includes('pkk') ||
+    lower.includes('kewirausahaan') ||
+    lower.includes('projek kreatif') ||
+    lower.includes('produk kreatif')
   ) {
-    return generateAdministrasiPerpajakan(fase, kelas, topik);
+    return generatePkkAkuntansi(fase, topik);
   }
 
-  // 8. Akuntansi Keuangan (Fase F - XI/XII SMK)
+  // 9. Dasar-Dasar Akuntansi dan Keuangan Lembaga (Fase E / Kelas X)
   if (
-    lm === 'akuntansi keuangan' ||
-    (lm.includes('akuntansi keuangan') && !lm.includes('konsentrasi') && !lm.includes('lembaga'))
+    lower.includes('dasar-dasar') ||
+    lower.includes('dasar akuntansi') ||
+    ((lower.includes('akuntansi') || lower.includes('akl')) && (fase === 'E' || kelas === 'X' || kelas === '10'))
   ) {
-    return generateAkuntansiKeuangan(fase, kelas, topik);
+    return generateDasarAkl(topik);
   }
 
-  // 9. Konsentrasi Keahlian Akuntansi dan Keuangan Lembaga (Fase F - XI/XII SMK)
-  return generateKonsentrasiAkl(fase, kelas, topik);
+  // 10. Konsentrasi Keahlian Akuntansi dan Keuangan Lembaga (Fase F / Kelas XI & XII)
+  if (lower.includes('akuntansi') || lower.includes('akl') || lower.includes('keuangan lembaga')) {
+    return generateKonsentrasiAkl(fase, topik);
+  }
+
+  return null;
+}
+
+// ============================================================================
+// 1. DASAR-DASAR AKUNTANSI DAN KEUANGAN LEMBAGA (FASE E - KELAS X)
+// Inspirasi Ruang GTK Kemendikdasmen & Keputusan Kepala BSKAP No. 046/H/KR/2025
+// ============================================================================
+function generateDasarAkl(topik: string): CurriculumResponse {
+  return {
+    isFallback: true,
+    cp: [
+      {
+        elemen: 'Proses Bisnis di Bidang Akuntansi dan Keuangan Lembaga',
+        teks: 'Pada akhir Fase E, peserta didik mampu memahami tahapan proses akuntansi secara menyeluruh baik akuntansi pada perusahaan jasa, perusahaan dagang, dan perusahaan manufaktur antara lain menerapkan prinsip praktik profesional dalam bekerja, menerapkan praktik-praktik kesehatan dan keselamatan di tempat kerja, memproses entry jurnal, memproses buku besar, menyusun laporan keuangan, serta mengoperasikan paket program pengolah angka/spreadsheet.'
+      },
+      {
+        elemen: 'Perkembangan Teknologi di Industri dan Dunia Kerja serta Isu-Isu Global di Bidang Akuntansi dan Keuangan Lembaga',
+        teks: 'Pada akhir Fase E, peserta didik mampu memahami perkembangan standar akuntansi mulai dari pembukuan secara manual sampai kepada penggunaan teknologi sebagai alat bantu, serta mengikuti perkembangan aplikasi komputer akuntansi yang banyak digunakan di dunia industri dan dunia kerja (cloud accounting, fintech, e-commerce, dan keamanan data finansial).'
+      },
+      {
+        elemen: 'Profil Pekerjaan/Profesi (Job Profile) dan Peluang Usaha di Bidang Akuntansi dan Keuangan Lembaga',
+        teks: 'Pada akhir Fase E, peserta didik mampu memahami profesi akuntansi lulusan SMK untuk mendapatkan gambaran pekerjaan pada Tingkat Kualifikasi II KKNI Teknisi Akuntansi Yunior serta meningkat menjadi Tingkat Kualifikasi IV KKNI Teknisi Akuntansi Madya sehingga terinspirasi untuk membangun visi dan passion, serta melakukan pembelajaran berbasis projek nyata sebagai simulasi projek kewirausahaan.'
+      },
+      {
+        elemen: 'Lingkup Kerja pada Bidang Akuntansi dan Keuangan Lembaga serta Etika Profesi',
+        teks: 'Pada akhir Fase E, peserta didik mampu memahami siklus akuntansi pada perusahaan jasa, dagang, dan manufaktur secara mendasar, serta menerapkan pedoman, prosedur, dan aturan berkaitan dengan industri jasa keuangan dan profesi-profesi yang ada dalam industri jasa keuangan beserta kode etik profesi akuntan Indonesia.'
+      },
+      {
+        elemen: 'Keselamatan dan Kesehatan Kerja Lingkungan Hidup (K3LH) dan Budaya Kerja Industri',
+        teks: 'Pada akhir Fase E, peserta didik mampu menerapkan merawat peralatan kerja, menerapkan perilaku kerja aman di area kerja, mengidentifikasi bahaya dan keadaan darurat, serta menerapkan budaya kerja industri (Ringkas, Rapi, Resik, Rawat, Rajin / 5R) dan ergonomi kerja perkantoran akuntansi.'
+      },
+      {
+        elemen: 'Prinsip-Prinsip dan Konsep Akuntansi Dasar dan Perbankan Dasar',
+        teks: 'Pada akhir Fase E, peserta didik mampu memahami pengertian akuntansi, tujuan pencatatan akuntansi, pihak-pihak yang membutuhkan informasi akuntansi, prinsip-prinsip akuntansi, serta konsep akuntansi dasar dan perbankan dasar (sejarah uang, fungsi bank, simpanan tabungan, giro, dan deposito).'
+      },
+      {
+        elemen: 'Penggunaan Aplikasi Pengolah Angka (Spreadsheet)',
+        teks: 'Pada akhir Fase E, peserta didik mampu mengoperasikan paket program pengolah angka (spreadsheet), mengolah data berdasarkan karakter, mengolah data berdasarkan rumus umum, rumus statistik, rumus finansial, fungsi logika, fungsi pembacaan tabel (VLOOKUP/HLOOKUP/XLOOKUP), serta menyusun siklus laporan keuangan otomatis pada spreadsheet.'
+      }
+    ],
+    units: [
+      {
+        nama: topik ? `Proses Bisnis, K3LH 5R & ${topik}` : 'Proses Bisnis dan Budaya Kerja Industri (K3LH & 5R) Akuntansi',
+        sem: 1,
+        elemen: 'Proses Bisnis di Bidang Akuntansi dan Keuangan Lembaga',
+        tps: [
+          {
+            teks: '[TP E.1.1] menganalisis karakteristik proses bisnis perusahaan jasa, dagang, dan manufaktur serta alur siklus akuntansi secara menyeluruh',
+            jp: 12,
+            ind: 'Peserta didik dapat membedakan karakteristik operasional dan alur transaksi pada perusahaan jasa, dagang, dan manufaktur sesuai Inspirasi ATP Ruang GTK.',
+            r1: 'Belum mampu membedakan proses bisnis perusahaan jasa, dagang, dan manufaktur.',
+            r2: 'Dapat menyebutkan ciri perusahaan jasa dan dagang dengan bantuan bagan alur.',
+            r3: 'Mampu menganalisis proses bisnis dan karakteristik ketiga jenis perusahaan secara mandiri dan tepat.',
+            r4: 'Mampu memetakan alur dokumen bisnis riil UMKM di lingkungan sekitar ke dalam klasifikasi usaha jasa, dagang, dan manufaktur.',
+            teknik: 'Observasi, tes tertulis, dan studi kasus UMKM'
+          },
+          {
+            teks: '[TP E.5.1] menerapkan prosedur K3LH perkantoran, ergonomi kerja komputer, dan budaya kerja industri 5R (Ringkas, Rapi, Resik, Rawat, Rajin)',
+            jp: 8,
+            ind: 'Peserta didik dapat mempraktikkan posisi duduk ergonomis, penataan meja kerja 5R, dan pencegahan bahaya kelistrikan/kelelahan mata.',
+            r1: 'Belum memahami prinsip ergonomi kerja dan penataan berkas keuangan 5R.',
+            r2: 'Dapat menerapkan sebagian prinsip 5R di meja praktik dengan pengingat guru.',
+            r3: 'Mampu menerapkan K3LH perkantoran dan budaya kerja 5R secara konsisten, tertib, dan mandiri.',
+            r4: 'Mampu menyusun daftar periksa (audit checklist) K3LH dan 5R untuk laboratorium akuntansi sekolah.',
+            teknik: 'Observasi unjuk kerja dan daftar periksa K3LH'
+          }
+        ]
+      },
+      {
+        nama: 'Perkembangan Teknologi Finansial (Fintech), Profesi Teknisi Akuntansi KKNI, dan Etika Profesi',
+        sem: 1,
+        elemen: 'Perkembangan Teknologi di Industri dan Dunia Kerja serta Isu-Isu Global di Bidang Akuntansi dan Keuangan Lembaga',
+        tps: [
+          {
+            teks: '[TP E.2.1] menganalisis perkembangan teknologi akuntansi dari manual menuju Cloud Accounting, Fintech, QRIS, dan keamanan data siber finansial',
+            jp: 10,
+            ind: 'Peserta didik dapat mengidentifikasi pemanfaatan aplikasi cloud accounting, pembayaran digital, dan otomasi pembukuan di dunia kerja.',
+            r1: 'Belum memahami perbedaan pembukuan manual dan sistem akuntansi berbasis cloud.',
+            r2: 'Dapat menyebutkan contoh aplikasi akuntansi dan fintech dengan bantuan materi ajar.',
+            r3: 'Mampu menganalisis dampak transformasi digital, cloud accounting, dan keamanan siber pada profesi akuntansi secara mandiri.',
+            r4: 'Mampu mengevaluasi studi kasus ancaman kebocoran data finansial dan merumuskan langkah proteksi keamanan informasi.',
+            teknik: 'Penugasan riset digital dan presentasi kelompok'
+          },
+          {
+            teks: '[TP E.3.1] memetakan profil profesi Teknisi Akuntansi Yunior (KKNI Level II), peluang wirausaha jasa pembukuan, dan menerapkan kode etik profesi akuntan',
+            jp: 10,
+            ind: 'Peserta didik dapat menguraikan unit kompetensi KKNI Level II serta menerapkan prinsip integritas, objektivitas, dan kerahasiaan akuntan.',
+            r1: 'Belum memahami standar kompetensi KKNI Level II dan prinsip dasar etika profesi akuntan.',
+            r2: 'Dapat menyebutkan jenis-jenis profesi akuntan dan kode etik dasar dengan panduan modul.',
+            r3: 'Mampu menganalisis peluang karir akuntansi dan memecahkan dilema etika profesi akuntan secara mandiri.',
+            r4: 'Mampu menyusun rencana pengembangan diri (career roadmap) menuju sertifikasi kompetensi Teknisi Akuntansi Yunior.',
+            teknik: 'Studi kasus dilema etika dan portofolio karir'
+          }
+        ]
+      },
+      {
+        nama: 'Prinsip Dasar Akuntansi, Persamaan Dasar Akuntansi, dan Siklus Akuntansi Perusahaan Jasa',
+        sem: 1,
+        elemen: 'Prinsip-Prinsip dan Konsep Akuntansi Dasar dan Perbankan Dasar',
+        tps: [
+          {
+            teks: '[TP E.6.1] menerapkan konsep persamaan dasar akuntansi (Aset = Liabilitas + Ekuitas) dan mekanisme debit-kredit dari bukti transaksi',
+            jp: 16,
+            ind: 'Peserta didik dapat menganalisis bukti transaksi (kuitansi, nota, faktur, memo) dan mencatatnya ke dalam tabel persamaan dasar akuntansi.',
+            r1: 'Masih keliru menentukan saldo normal akun dan keseimbangan persamaan dasar akuntansi.',
+            r2: 'Dapat mencatat transaksi ke tabel persamaan dasar akuntansi dengan bimbingan guru.',
+            r3: 'Mampu menganalisis bukti transaksi dan menyusun persamaan dasar akuntansi secara tepat, seimbang (balance), dan mandiri.',
+            r4: 'Mampu menyusun draf laporan laba rugi, perubahan ekuitas, dan posisi keuangan langsung dari tabel persamaan dasar akuntansi.',
+            teknik: 'Tes praktik lembar kerja dan unjuk kerja'
+          },
+          {
+            teks: '[TP E.4.1] memproses siklus akuntansi perusahaan jasa mulai dari jurnal umum, posting buku besar, neraca saldo, jurnal penyesuaian, neraca lajur, hingga laporan keuangan',
+            jp: 24,
+            ind: 'Peserta didik dapat menyusun siklus akuntansi lengkap perusahaan jasa hingga laporan keuangan dan jurnal penutup sesuai SAK EMKM.',
+            r1: 'Kesulitan menyusun ayat jurnal penyesuaian dan memindahkan saldo ke neraca lajur 10 kolom.',
+            r2: 'Dapat menyelesaikan jurnal umum dan buku besar dengan panduan bagan akun (Chart of Accounts).',
+            r3: 'Mampu menyelesaikan seluruh tahapan siklus akuntansi perusahaan jasa hingga laporan keuangan secara akurat dan mandiri.',
+            r4: 'Mampu mengaudit ketidaksesuaian neraca saldo dan menyusun jurnal koreksi secara sistematis.',
+            teknik: 'Uji kompetensi praktik siklus akuntansi jasa'
+          }
+        ]
+      },
+      {
+        nama: 'Perbankan Dasar: Sejarah Uang, Fungsi Bank, dan Produk Simpanan & Pinjaman',
+        sem: 2,
+        elemen: 'Prinsip-Prinsip dan Konsep Akuntansi Dasar dan Perbankan Dasar',
+        tps: [
+          {
+            teks: '[TP E.6.2] menganalisis sejarah uang, jenis lembaga keuangan bank & non-bank, serta prosedur layanan simpanan (tabungan, giro, deposito) dan kredit dasar',
+            jp: 16,
+            ind: 'Peserta didik dapat membedakan fungsi Bank Sentral, Bank Umum, dan BPR serta menghitung bunga tabungan dan deposito sederhana.',
+            r1: 'Belum memahami perbedaan mekanisme giro, tabungan, dan deposito berjangka.',
+            r2: 'Dapat menjelaskan jenis-jenis bank dan menghitung bunga tunggal dengan rumus panduan.',
+            r3: 'Mampu menganalisis produk perbankan dasar dan menghitung bunga simpanan/pinjaman secara mandiri dan tepat.',
+            r4: 'Mampu mensimulasikan pengisian formulir pembukaan rekening, slip setoran, bilyet giro, dan cek sesuai standar perbankan.',
+            teknik: 'Simulasi dokumen perbankan dan tes tertulis'
+          }
+        ]
+      },
+      {
+        nama: 'Aplikasi Pengolah Angka (Spreadsheet) untuk Otomasi Siklus Akuntansi',
+        sem: 2,
+        elemen: 'Penggunaan Aplikasi Pengolah Angka (Spreadsheet)',
+        tps: [
+          {
+            teks: '[TP E.7.1] mengoperasikan rumus matematika, statistik (SUM, AVERAGE, COUNTIF, SUMIF), fungsi logika (IF bertingkat, AND, OR), dan pembacaan tabel (VLOOKUP, HLOOKUP, XLOOKUP)',
+            jp: 20,
+            ind: 'Peserta didik dapat menerapkan formula SUMIF, IF, dan VLOOKUP/XLOOKUP untuk pengolahan data tabel keuangan pada spreadsheet.',
+            r1: 'Masih mengalami error (#N/A, #VALUE!, #REF!) saat menuliskan sintaks rumus VLOOKUP dan IF.',
+            r2: 'Dapat menuliskan rumus fungsi logika dan lookup dengan panduan modul langkah demi langkah.',
+            r3: 'Mampu mengolah data tabel keuangan menggunakan kombinasi rumus IF, SUMIF, dan VLOOKUP secara tepat dan mandiri.',
+            r4: 'Mampu mengoptimalkan rumus dinamis dan validasi data (Data Validation) untuk mencegah kesalahan input pengguna.',
+            teknik: 'Praktik laboratorium komputer (Spreadsheet)'
+          },
+          {
+            teks: '[TP E.7.2] merancang aplikasi siklus akuntansi perusahaan jasa terotomatisasi (Daftar Akun, Jurnal Umum, Buku Besar, Neraca Lajur, dan Laporan Keuangan) di Spreadsheet',
+            jp: 20,
+            ind: 'Peserta didik dapat membangun workbook spreadsheet yang saling terhubung dari jurnal umum hingga laporan laba rugi dan neraca otomatis.',
+            r1: 'Belum mampu menghubungkan rumus antar-sheet dari Jurnal Umum ke Buku Besar dan Neraca Lajur.',
+            r2: 'Dapat membuat format tabel jurnal dan neraca lajur dengan template rumus terbimbing.',
+            r3: 'Mampu membangun sistem siklus akuntansi otomatis di spreadsheet hingga menghasilkan laporan keuangan yang balance secara mandiri.',
+            r4: 'Mampu menambahkan fitur dashboard grafik kinerja keuangan dan rumus penyusutan aset tetap (SLN, SYD, DB).',
+            teknik: 'Penilaian proyek aplikasi akuntansi spreadsheet'
+          }
+        ]
+      }
+    ]
+  };
+}
+
+// ============================================================================
+// 2. KONSENTRASI KEAHLIAN AKUNTANSI DAN KEUANGAN LEMBAGA (FASE F - XI & XII)
+// Paket Inti 5 Elemen Terpadu sesuai Keputusan Kepala BSKAP No. 046/H/KR/2025
+// ============================================================================
+function generateKonsentrasiAkl(fase: string, topik: string): CurriculumResponse {
+  const f = fase === 'E' ? 'F' : fase;
+  return {
+    isFallback: true,
+    cp: [
+      {
+        elemen: 'Akuntansi Perusahaan Jasa, Dagang, dan Manufaktur',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menganalisis dokumen sumber dan dokumen pendukung pada perusahaan (entitas) Wajib Pajak Orang Pribadi dan Badan, baik yang telah menjadi Pengusaha Kena Pajak (PKP) maupun non-PKP, serta menerapkan proses pencatatan transaksi ke dalam jurnal umum atau khusus, pencatatan ke dalam buku pembantu piutang, buku pembantu utang, dan buku pembantu persediaan, posting ke dalam buku besar, penyusunan neraca saldo, pencatatan jurnal penyesuaian, penyusunan neraca lajur (worksheet), penyusunan laporan laba/rugi, laporan perubahan ekuitas, laporan posisi keuangan, laporan arus kas, dan catatan atas laporan keuangan berdasarkan SAK Entitas Privat (SAK EP) & SAK EMKM, serta penyusunan jurnal penutup dan neraca saldo setelah penutupan untuk perusahaan jasa, dagang, dan manufaktur (harga pokok pesanan dan proses).`
+      },
+      {
+        elemen: 'Akuntansi Keuangan',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu mengelola kartu piutang, kartu utang, dan kartu persediaan, serta memproses dokumen dana kas kecil dan dokumen dana kas di bank, rekonsiliasi bank, mengelola kartu aset tetap, menyajikan laporan harga pokok produk, menerapkan pencatatan utang wesel jangka panjang, penerbitan utang obligasi, serta menganalisis berbagai jenis modal perusahaan (Perseorangan, Persekutuan, CV, PT, dan Koperasi) sesuai SAK Entitas Privat (SAK EP).`
+      },
+      {
+        elemen: 'Akuntansi Lembaga / Instansi Pemerintah',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menerapkan standar akuntansi yang digunakan lembaga atau instansi pemerintah (PP Nomor 71 Tahun 2010 & Permendagri Nomor 77 Tahun 2020) meliputi struktur APBD/APBDes, klasifikasi akun, pencatatan komitmen anggaran (LRA) dan basis akrual (LO), jurnal penyesuaian, laporan keuangan pemerintah daerah (SKPD & PPKD) melalui SIPD RI, serta pengelolaan keuangan desa dengan Siskeudes 2.0.`
+      },
+      {
+        elemen: 'Komputer Akuntansi',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu mengoperasikan program komputer akuntansi (Cloud Accounting Accurate Online / Jurnal / MYOB) untuk mendukung pekerjaannya, meliputi penginstalasian dan setup database awal, penyusunan daftar akun (Chart of Accounts), pengentrian saldo awal, kartu piutang, utang, persediaan, dan aset tetap, pencatatan transaksi pembelian, penjualan, kas/bank, dan penyesuaian, serta pencetakan laporan keuangan dan backup data.`
+      },
+      {
+        elemen: 'Perpajakan',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu memahami ketentuan umum dan tata cara perpajakan (KUP) termasuk integrasi NIK sebagai NPWP 16 digit, jenis-jenis pajak, menghitung PPh Orang Pribadi (metode Tarif Efektif Rata-rata / TER PPh Pasal 21), PPh Badan, PPh Pasal 22/23/24/25, PPh Final UMKM, PPN dan PPnBM, serta menerapkan pengisian e-Bupot, e-Faktur, dan pelaporan SPT Masa/Tahunan melalui sistem Coretax DJP (SIAP).`
+      }
+    ],
+    units: [
+      {
+        nama: topik ? `Siklus Akuntansi Jasa, Dagang & ${topik}` : 'Siklus Akuntansi Perusahaan Jasa dan Dagang (SAK EP & SAK EMKM)',
+        sem: 1,
+        elemen: 'Akuntansi Perusahaan Jasa, Dagang, dan Manufaktur',
+        tps: [
+          {
+            teks: '[TP F.AKL.1.1] menganalisis dokumen sumber dan mencatat transaksi perusahaan dagang PKP/non-PKP ke dalam jurnal khusus serta buku besar pembantu piutang, utang, dan persediaan',
+            jp: 16,
+            ind: 'Peserta didik dapat memverifikasi faktur pajak/komersial dan mengentri transaksi ke jurnal penerimaan kas, pengeluaran kas, pembelian, penjualan, dan jurnal umum.',
+            r1: 'Masih keliru membedakan transaksi yang masuk ke jurnal khusus dan buku besar pembantu.',
+            r2: 'Dapat mencatat transaksi ke jurnal khusus dengan bantuan tabel rekapitulasi.',
+            r3: 'Mampu mencatat transaksi perusahaan dagang ke jurnal khusus dan buku pembantu secara tepat dan mandiri.',
+            r4: 'Mampu merekonsiliasi kesesuaian saldo buku besar utama dengan daftar saldo buku besar pembantu piutang dan utang.',
+            teknik: 'Unjuk kerja praktik pembukuan dan tes tertulis'
+          },
+          {
+            teks: '[TP F.AKL.1.2] menyusun neraca lajur (worksheet), laporan keuangan lengkap (Laba Rugi, Perubahan Ekuitas, Posisi Keuangan, Arus Kas) berbasis SAK EP / SAK EMKM, dan jurnal penutup',
+            jp: 16,
+            ind: 'Peserta didik dapat menghitung HPP dagang, menyusun jurnal penyesuaian, dan menyajikan laporan keuangan yang seimbang.',
+            r1: 'Belum tepat menghitung HPP dan penyesuaian persediaan barang dagang.',
+            r2: 'Dapat menyusun laporan laba rugi dan neraca dengan panduan format laporan.',
+            r3: 'Mampu menyusun laporan keuangan perusahaan dagang lengkap beserta arus kas dan jurnal penutup secara mandiri.',
+            r4: 'Mampu menganalisis rasio likuiditas dan profitabilitas dari laporan keuangan yang telah disusun.',
+            teknik: 'Uji kompetensi laporan keuangan'
+          }
+        ]
+      },
+      {
+        nama: 'Akuntansi Keuangan: Pengelolaan Kas, Piutang, Persediaan, dan Aset Tetap (SAK EP)',
+        sem: 1,
+        elemen: 'Akuntansi Keuangan',
+        tps: [
+          {
+            teks: '[TP F.AKL.2.1] mengelola dana kas kecil (imprest & fluktuasi), menyusun laporan rekonsiliasi bank, serta menghitung cadangan kerugian piutang dan wesel',
+            jp: 14,
+            ind: 'Peserta didik dapat menyusun rekonsiliasi bank 2 kolom/4 kolom, membuat jurnal penyesuaian kas bank, dan menghitung penghapusan piutang.',
+            r1: 'Sering terbalik menempatkan deposit in transit dan outstanding check pada rekonsiliasi bank.',
+            r2: 'Dapat menyusun rekonsiliasi bank dengan lembar kerja terstruktur.',
+            r3: 'Mampu mengelola kas kecil, rekonsiliasi bank, dan administrasi kartu piutang secara akurat dan mandiri.',
+            r4: 'Mampu menganalisis umur piutang (aging schedule) untuk menentukan taksiran cadangan kerugian piutang.',
+            teknik: 'Praktik lembar kerja akuntansi keuangan'
+          },
+          {
+            teks: '[TP F.AKL.2.2] mengelola kartu persediaan (FIFO & Average) serta menghitung harga perolehan, penyusutan, dan penghentian aset tetap berwujud',
+            jp: 14,
+            ind: 'Peserta didik dapat mengisi kartu persediaan perpetual/periodik dan menyusun tabel depresiasi aset tetap.',
+            r1: 'Masih keliru menghitung HPP pada metode rata-rata bergerak (moving average).',
+            r2: 'Dapat mengisi kartu persediaan FIFO dengan bimbingan guru.',
+            r3: 'Mampu mengelola kartu persediaan dan kartu aset tetap beserta jurnal penyusutannya secara mandiri.',
+            r4: 'Mampu menganalisis dampak pemilihan metode penilaian persediaan dan penyusutan terhadap laba bersih perusahaan.',
+            teknik: 'Tes tertulis dan unjuk kerja kartu aset/persediaan'
+          }
+        ]
+      },
+      {
+        nama: 'Akuntansi Perusahaan Manufaktur: Biaya Produksi dan Harga Pokok Pesanan/Proses',
+        sem: 2,
+        elemen: 'Akuntansi Perusahaan Jasa, Dagang, dan Manufaktur',
+        tps: [
+          {
+            teks: '[TP F.AKL.1.3] menghitung biaya bahan baku, biaya tenaga kerja langsung, dan BOP serta menyusun Laporan Harga Pokok Produksi (Cost of Goods Manufactured)',
+            jp: 16,
+            ind: 'Peserta didik dapat menjurnal pemakaian bahan baku, distribusi gaji/upah pabrik, pembebanan BOP, dan menyusun laporan HPP manufaktur.',
+            r1: 'Belum dapat memisahkan biaya produksi langsung dan biaya overhead pabrik (BOP).',
+            r2: 'Dapat menyusun laporan harga pokok produksi dengan format tabel terbimbing.',
+            r3: 'Mampu mencatat siklus akuntansi biaya manufaktur dan menyusun laporan harga pokok produksi secara tepat dan mandiri.',
+            r4: 'Mampu menghitung harga pokok per unit dengan metode Job Order Costing dan Process Costing.',
+            teknik: 'Praktik studi kasus perusahaan manufaktur'
+          }
+        ]
+      },
+      {
+        nama: 'Akuntansi Instansi Pemerintah (SAP, SIPD RI & Siskeudes) dan Komputer Akuntansi',
+        sem: 2,
+        elemen: 'Akuntansi Lembaga / Instansi Pemerintah',
+        tps: [
+          {
+            teks: '[TP F.AKL.3.1] mencatat transaksi anggaran (LRA) dan finansial akrual (LO) pada SKPD/PPKD serta menyusun laporan keuangan pemerintah daerah dan desa (SIPD RI & Siskeudes)',
+            jp: 14,
+            ind: 'Peserta didik dapat membuat jurnal pasangan (jurnal LO/Neraca dan jurnal LRA) serta menyusun LRA, LO, LPE, dan Neraca Pemda.',
+            r1: 'Masih bingung membedakan kapan transaksi memerlukan jurnal LRA dan jurnal LO.',
+            r2: 'Dapat mencatat transaksi UP, GU, TU, dan LS dengan tabel panduan akun SAP.',
+            r3: 'Mampu menjurnal transaksi akuntansi pemerintah daerah/desa dan menyusun laporan keuangan SKPD secara mandiri.',
+            r4: 'Mampu mensimulasikan penginputan APBDes dan penatausahaan keuangan desa menggunakan struktur Siskeudes.',
+            teknik: 'Praktik pembukuan pemda/desa'
+          },
+          {
+            teks: '[TP F.AKL.4.1] mengoperasikan aplikasi Komputer Akuntansi (Accurate Online / MYOB) untuk menyelesaikan siklus akuntansi perusahaan dagang/jasa hingga laporan keuangan',
+            jp: 16,
+            ind: 'Peserta didik dapat membuat database baru, impor daftar akun, entri saldo awal, input transaksi pembelian/penjualan/kas, dan mencetak laporan.',
+            r1: 'Kesulitan melakukan setup linked accounts dan kode pajak PPN pada aplikasi.',
+            r2: 'Dapat mengentri transaksi dengan panduan modul praktikum komputer akuntansi.',
+            r3: 'Mampu mengoperasikan aplikasi komputer akuntansi dari setup awal hingga pelaporan keuangan secara cepat, tepat, dan mandiri.',
+            r4: 'Mampu mengekspor laporan keuangan ke PDF/Excel serta melakukan audit trail atas kesalahan input transaksi.',
+            teknik: 'Uji praktik laboratorium komputer akuntansi'
+          }
+        ]
+      },
+      {
+        nama: 'Administrasi Perpajakan: PPh Pasal 21 TER, PPh Badan, PPN, dan Coretax DJP',
+        sem: 2,
+        elemen: 'Perpajakan',
+        tps: [
+          {
+            teks: '[TP F.AKL.5.1] menghitung PPh Pasal 21 menggunakan Tarif Efektif Rata-rata (TER PP 58/2023), PPh Pasal 22/23/4 ayat (2), PPN, dan menyusun SPT melalui Coretax DJP',
+            jp: 14,
+            ind: 'Peserta didik dapat menentukan kategori TER (A/B/C), menghitung potongan PPh 21 masa dan masa pajak terakhir, serta mengisi bukti potong dan SPT.',
+            r1: 'Belum tepat menentukan status PTKP dan kategori tabel Tarif Efektif Rata-rata (TER).',
+            r2: 'Dapat menghitung PPh 21 bulanan dengan melihat tabel referensi TER.',
+            r3: 'Mampu menghitung PPh 21 TER, PPh unifikasi, PPN, dan menyusun SPT perpajakan secara akurat dan mandiri.',
+            r4: 'Mampu menyusun rekonsiliasi fiskal laporan keuangan komersial menjadi laba fiskal untuk perhitungan PPh Badan.',
+            teknik: 'Praktik perhitungan pajak dan simulasi Coretax DJP'
+          }
+        ]
+      }
+    ]
+  };
+}
+
+// ============================================================================
+// 3. PRAKTIKUM AKUNTANSI PERUSAHAAN JASA, DAGANG, DAN MANUFAKTUR (FASE F)
+// Pembaruan Inspirasi Ruang GTK: SAK Entitas Privat (SAK EP) & SAK EMKM
+// ============================================================================
+function generatePraktikumJasaDagangManufaktur(fase: string, topik: string): CurriculumResponse {
+  const f = fase === 'E' ? 'F' : fase;
+  return {
+    isFallback: true,
+    cp: [
+      {
+        elemen: 'Dokumen Sumber dan Siklus Akuntansi Perusahaan Jasa',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menganalisis dokumen sumber dan dokumen pendukung perusahaan jasa, mencatat ke jurnal umum, memposting ke buku besar, menyusun neraca saldo, jurnal penyesuaian, neraca lajur, serta menyajikan laporan keuangan perusahaan jasa sesuai SAK EMKM dan SAK Entitas Privat (SAK EP).`
+      },
+      {
+        elemen: 'Pencatatan Transaksi Perusahaan Dagang (Jurnal Khusus & Buku Pembantu)',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menganalisis transaksi pembelian dan penjualan barang dagang (tunai dan kredit, PKP dan non-PKP), mencatat ke dalam Jurnal Khusus (Pembelian, Pengeluaran Kas, Penjualan, Penerimaan Kas, dan Jurnal Umum), serta mengelola Buku Besar Pembantu Piutang, Buku Besar Pembantu Utang, dan Kartu Persediaan.`
+      },
+      {
+        elemen: 'Pengikhtisaran dan Pelaporan Keuangan Perusahaan Dagang (SAK EP & SAK EMKM)',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu memposting rekapitulasi jurnal khusus ke buku besar utama, menyusun daftar saldo piutang/utang, mencatat jurnal penyesuaian (metode ikhtisar laba rugi dan HPP), menyusun neraca lajur, laporan laba rugi, laporan perubahan ekuitas, laporan posisi keuangan, laporan arus kas, dan jurnal penutup perusahaan dagang.`
+      },
+      {
+        elemen: 'Akuntansi Biaya dan Dokumen Transaksi Perusahaan Manufaktur',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu mengklasifikasikan biaya produksi (Biaya Bahan Baku, Biaya Tenaga Kerja Langsung, dan Biaya Overhead Pabrik), menganalisis dokumen permintaan dan pemakaian bahan baku, kartu jam kerja pabrik, serta mencatat transaksi ke jurnal khusus perusahaan manufaktur.`
+      },
+      {
+        elemen: 'Perhitungan Harga Pokok Pesanan (Job Order Costing) dan Harga Pokok Proses (Process Costing)',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menghitung dan membebankan biaya produksi berdasarkan metode Harga Pokok Pesanan (Job Order Cost Sheet) dan metode Harga Pokok Proses (Laporan Biaya Produksi departemen), termasuk perlakuan selisih BOP dan produk dalam proses.`
+      },
+      {
+        elemen: 'Laporan Harga Pokok Produksi dan Laporan Keuangan Perusahaan Manufaktur',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menyusun jurnal penyesuaian persediaan bahan baku, barang dalam proses (WIP), dan barang jadi, menyelesaikan neraca lajur manufaktur, serta menyajikan Laporan Harga Pokok Produksi, Laporan Laba Rugi, dan Laporan Posisi Keuangan perusahaan manufaktur berbasis SAK EP.`
+      }
+    ],
+    units: [
+      {
+        nama: topik ? `Praktikum Siklus Lengkap Perusahaan Jasa & ${topik}` : 'Praktikum Siklus Akuntansi Lengkap Perusahaan Jasa',
+        sem: 1,
+        elemen: 'Dokumen Sumber dan Siklus Akuntansi Perusahaan Jasa',
+        tps: [
+          {
+            teks: '[TP F.PA.1.1] memverifikasi bukti transaksi perusahaan jasa dan memproses jurnal umum, buku besar, hingga neraca saldo',
+            jp: 12,
+            ind: 'Peserta didik dapat mengidentifikasi keabsahan bukti kas masuk/keluar, faktur jasa, dan memo, lalu menjurnal dan memposting dengan tepat.',
+            r1: 'Masih keliru mengidentifikasi akun yang didebit dan dikredit dari bukti transaksi.',
+            r2: 'Dapat menjurnal transaksi rutin dengan panduan daftar akun (COA).',
+            r3: 'Mampu memproses bukti transaksi perusahaan jasa ke jurnal umum dan buku besar secara teliti dan mandiri.',
+            r4: 'Mampu menemukan dan mengoreksi kesalahan pencatatan (error of commission/omission) sebelum penyusunan neraca saldo.',
+            teknik: 'Praktik dokumen sumber dan buku jurnal'
+          },
+          {
+            teks: '[TP F.PA.1.2] menyusun jurnal penyesuaian, neraca lajur, laporan keuangan perusahaan jasa (SAK EMKM/SAK EP), jurnal penutup, dan neraca saldo setelah penutupan',
+            jp: 14,
+            ind: 'Peserta didik dapat menyelesaikan kertas kerja 10 kolom dan menyajikan laporan keuangan perusahaan jasa secara lengkap.',
+            r1: 'Kesulitan menghitung penyesuaian beban dibayar di muka dan pendapatan diterima di muka (pendekatan neraca vs laba rugi).',
+            r2: 'Dapat menyusun ayat jurnal penyesuaian dengan panduan rumus perhitungan.',
+            r3: 'Mampu menyusun laporan keuangan perusahaan jasa, jurnal penutup, dan jurnal pembalik secara akurat dan mandiri.',
+            r4: 'Mampu memberikan interpretasi tertulis atas kinerja laba bersih dan posisi likuiditas perusahaan jasa.',
+            teknik: 'Uji praktik komprehensif siklus jasa'
+          }
+        ]
+      },
+      {
+        nama: 'Praktikum Pencatatan Perusahaan Dagang: Jurnal Khusus dan Buku Besar Pembantu',
+        sem: 1,
+        elemen: 'Pencatatan Transaksi Perusahaan Dagang (Jurnal Khusus & Buku Pembantu)',
+        tps: [
+          {
+            teks: '[TP F.PA.2.1] mencatat transaksi perusahaan dagang ber-PKP ke dalam 5 Jurnal Khusus (Pembelian, Pengeluaran Kas, Penjualan, Penerimaan Kas, Umum)',
+            jp: 16,
+            ind: 'Peserta didik dapat menganalisis syarat pembayaran (2/10, n/30), potongan pembelian/penjualan, retur, dan PPN Keluaran/Masukan pada jurnal khusus.',
+            r1: 'Sering salah menghitung potongan tunai saat pelunasan piutang/utang dalam masa potongan.',
+            r2: 'Dapat menginput transaksi ke jurnal khusus dengan bantuan petunjuk kolom.',
+            r3: 'Mampu mencatat seluruh transaksi perusahaan dagang ke dalam jurnal khusus dan menyusun rekapitulasi secara tepat dan mandiri.',
+            r4: 'Mampu merancang kontrol keseimbangan debit-kredit pada tabel rekapitulasi seluruh jurnal khusus.',
+            teknik: 'Praktik buku jurnal khusus perusahaan dagang'
+          },
+          {
+            teks: '[TP F.PA.2.2] memproses mutasi Buku Besar Pembantu Piutang, Buku Besar Pembantu Utang, Kartu Persediaan, dan memposting ke Buku Besar Utama',
+            jp: 14,
+            ind: 'Peserta didik dapat memperbarui saldo tiap pelanggan/pemasok setiap terjadi transaksi kredit dan menyusun daftar saldo piutang/utang.',
+            r1: 'Saldo daftar piutang/utang belum cocok dengan saldo akun kontrol Piutang Dagang dan Utang Dagang di Buku Besar.',
+            r2: 'Dapat memposting mutasi ke buku pembantu dengan bimbingan bertahap.',
+            r3: 'Mampu mengelola buku besar pembantu dan buku besar utama hingga menghasilkan neraca saldo yang cocok secara mandiri.',
+            r4: 'Mampu menelusuri selisih antara buku besar utama dan buku pembantu serta membuat berita acara rekonsiliasi internal.',
+            teknik: 'Penilaian portofolio buku besar dan kartu pembantu'
+          }
+        ]
+      },
+      {
+        nama: 'Praktikum Laporan Keuangan Perusahaan Dagang (SAK Entitas Privat & SAK EMKM)',
+        sem: 1,
+        elemen: 'Pengikhtisaran dan Pelaporan Keuangan Perusahaan Dagang (SAK EP & SAK EMKM)',
+        tps: [
+          {
+            teks: '[TP F.PA.3.1] menyusun jurnal penyesuaian perusahaan dagang (metode Ikhtisar Laba Rugi & HPP), neraca lajur, dan laporan keuangan lengkap beserta Arus Kas',
+            jp: 16,
+            ind: 'Peserta didik dapat menyusun Laporan Laba Rugi (multiple-step), Laporan Perubahan Ekuitas, Laporan Posisi Keuangan, dan Laporan Arus Kas (metode langsung/tidak langsung).',
+            r1: 'Masih keliru menyusun laporan arus kas dari aktivitas operasi, investasi, dan pendanaan.',
+            r2: 'Dapat menyusun laporan laba rugi dan neraca dari neraca lajur dengan format acuan.',
+            r3: 'Mampu menyusun paket lengkap laporan keuangan perusahaan dagang berbasis SAK EP beserta arus kas dan jurnal penutup secara mandiri.',
+            r4: 'Mampu menyusun Catatan atas Laporan Keuangan (CaLK) yang menjelaskan kebijakan akuntansi perusahaan dagang.',
+            teknik: 'Uji kompetensi laporan keuangan dagang'
+          }
+        ]
+      },
+      {
+        nama: 'Praktikum Akuntansi Biaya Manufaktur: Harga Pokok Pesanan & Harga Pokok Proses',
+        sem: 2,
+        elemen: 'Perhitungan Harga Pokok Pesanan (Job Order Costing) dan Harga Pokok Proses (Process Costing)',
+        tps: [
+          {
+            teks: '[TP F.PA.4.1] mencatat transaksi pemakaian bahan baku, distribusi gaji dan upah pabrik, serta pembebanan BOP ke dalam jurnal perusahaan manufaktur',
+            jp: 16,
+            ind: 'Peserta didik dapat menjurnal pembelian bahan, pemakaian bahan baku/penolong, pencatatan waktu kerja langsung, dan pembebanan BOP ditentukan di muka.',
+            r1: 'Belum mampu membedakan pencatatan BOP sesungguhnya dan BOP yang dibebankan.',
+            r2: 'Dapat menjurnal biaya bahan baku dan tenaga kerja dengan panduan alur akun.',
+            r3: 'Mampu mencatat seluruh transaksi biaya produksi ke dalam jurnal dan buku besar manufaktur secara tepat dan mandiri.',
+            r4: 'Mampu menganalisis selisih BOP (under-applied / over-applied overhead) dan menutupnya ke akun Harga Pokok Penjualan.',
+            teknik: 'Praktik jurnal akuntansi manufaktur'
+          },
+          {
+            teks: '[TP F.PA.5.1] menyusun Kartu Harga Pokok Pesanan (Job Order Cost Sheet) dan Laporan Biaya Produksi metode Harga Pokok Proses (Process Costing)',
+            jp: 16,
+            ind: 'Peserta didik dapat menghitung unit ekuivalen produksi dan menyusun laporan biaya produksi 1 atau 2 departemen.',
+            r1: 'Kesulitan menghitung unit ekuivalen berdasarkan tingkat penyelesaian (persentase penyelesaian BDP akhir).',
+            r2: 'Dapat menghitung unit ekuivalen dengan rumus panduan.',
+            r3: 'Mampu menyusun Kartu Harga Pokok Pesanan dan Laporan Biaya Produksi metode proses secara akurat dan mandiri.',
+            r4: 'Mampu mengevaluasi efisiensi biaya produksi per unit produk dan memberikan rekomendasi pengendalian biaya pabrik.',
+            teknik: 'Tes tertulis dan studi kasus biaya produksi'
+          }
+        ]
+      },
+      {
+        nama: 'Praktikum Penyusunan Laporan Harga Pokok Produksi dan Laporan Keuangan Manufaktur',
+        sem: 2,
+        elemen: 'Laporan Harga Pokok Produksi dan Laporan Keuangan Perusahaan Manufaktur',
+        tps: [
+          {
+            teks: '[TP F.PA.6.1] menyusun neraca lajur manufaktur, Laporan Harga Pokok Produksi (COGM), Laporan Laba Rugi, dan Neraca Perusahaan Manufaktur berbasis SAK EP',
+            jp: 18,
+            ind: 'Peserta didik dapat menyesuaikan 3 jenis persediaan (Bahan Baku, BDP, Barang Jadi) dan menyajikan laporan keuangan manufaktur lengkap.',
+            r1: 'Masih tertukar menempatkan persediaan awal dan akhir BDP pada Laporan Harga Pokok Produksi.',
+            r2: 'Dapat menyusun Laporan Harga Pokok Produksi dengan template kertas kerja.',
+            r3: 'Mampu menyajikan Laporan Harga Pokok Produksi dan Laporan Keuangan perusahaan manufaktur lengkap secara mandiri dan balance.',
+            r4: 'Mampu menyelesaikan simulasi paket Uji Kompetensi Keahlian (UKK) Akuntansi Manufaktur sesuai standar industri.',
+            teknik: 'Simulasi UKK Praktikum Akuntansi Manufaktur'
+          }
+        ]
+      }
+    ]
+  };
+}
+
+// ============================================================================
+// 4. AKUNTANSI KEUANGAN (FASE F - KELAS XI & XII)
+// Pembaruan Inspirasi Ruang GTK: Pengukuran Pos Keuangan berbasis SAK EP
+// ============================================================================
+function generateAkuntansiKeuangan(fase: string, topik: string): CurriculumResponse {
+  const f = fase === 'E' ? 'F' : fase;
+  return {
+    isFallback: true,
+    cp: [
+      {
+        elemen: 'Pengelolaan Kas Kecil (Petty Cash) dan Kas Bank',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu mengelola administrasi dana kas kecil dengan metode dana tetap (imprest fund system) dan metode fluktuasi (fluctuating fund system), melakukan pemeriksaan fisik kas (cash opname), menganalisis perbedaan saldo kas menurut catatan perusahaan dan rekening koran bank, serta menyusun laporan rekonsiliasi bank dan jurnal penyesuaiannya.`
+      },
+      {
+        elemen: 'Pengelolaan Piutang Usaha dan Piutang Wesel',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu mengelola kartu piutang, melakukan konfirmasi saldo piutang, menganalisis penghapusan piutang tak tertagih (metode langsung dan metode cadangan), menyusun daftar umur piutang (aging schedule), serta mencatat transaksi piutang wesel (wesel tagih berbunga dan tanpa bunga) beserta pendiskontoan wesel.`
+      },
+      {
+        elemen: 'Pengelolaan Persediaan Barang Dagang',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menerapkan pencatatan persediaan sistem periodik (fisik) dan sistem perpetual dengan metode Masuk Pertama Keluar Pertama (MPKP/FIFO) dan Rata-rata Tertimbang/Bergerak (Weighted/Moving Average) sesuai SAK Entitas Privat (SAK EP), serta melaksanakan perhitungan fisik persediaan (stock opname).`
+      },
+      {
+        elemen: 'Pengelolaan Aset Tetap Berwujud dan Tidak Berwujud',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menghitung harga perolehan aset tetap (pembelian tunai, kredit, gabungan, pertukaran, hibah), menghitung dan mencatat beban penyusutan aset tetap (metode garis lurus, saldo menurun ganda, jumlah angka tahun, satuan jam kerja, satuan hasil produksi), pengeluaran masa manfaat aset, penghentian/penjualan aset tetap, deplesi aset sumber daya alam, dan amortisasi aset tak berwujud.`
+      },
+      {
+        elemen: 'Pengelolaan Utang Jangka Pendek, Utang Wesel, dan Utang Obligasi',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu mengelola kartu utang usaha, mencatat utang wesel jangka pendek dan jangka panjang, utang beban, pendapatan diterima di muka, serta mencatat penerbitan utang obligasi (pada nilai nominal, agio/premium, dan disagio/diskonto), pembayaran bunga, amortisasi agio/disagio, dan pelunasan obligasi.`
+      },
+      {
+        elemen: 'Akuntansi Ekuitas / Modal Perusahaan (Perseorangan, Firma, CV, PT, dan Koperasi)',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu mencatat transaksi pembentukan dan pembagian laba-rugi pada perusahaan perseorangan, persekutuan (Firma/CV), akuntansi modal saham Perseroan Terbatas (penerbitan saham biasa/preferen, agio/disagio saham, treasury stock, pembagian dividen kas/saham), serta akuntansi ekuitas dan Sisa Hasil Usaha (SHU) Koperasi.`
+      }
+    ],
+    units: [
+      {
+        nama: topik ? `Kas Kecil, Rekonsiliasi Bank & ${topik}` : 'Pengelolaan Dana Kas Kecil (Petty Cash) dan Rekonsiliasi Bank',
+        sem: 1,
+        elemen: 'Pengelolaan Kas Kecil (Petty Cash) dan Kas Bank',
+        tps: [
+          {
+            teks: '[TP F.AK.1.1] mengelola administrasi dana kas kecil metode Imprest dan Fluktuasi serta melaksanakan perhitungan fisik kas (Cash Opname)',
+            jp: 12,
+            ind: 'Peserta didik dapat menyusun buku kas kecil, bukti pengeluaran kas kecil, jurnal pengisian kembali, dan berita acara cash opname.',
+            r1: 'Masih tertukar saat menjurnal pengeluaran kas kecil antara sistem dana tetap dan dana tidak tetap.',
+            r2: 'Dapat mencatat buku kas kecil dan jurnal pembentukan dengan panduan format.',
+            r3: 'Mampu mengelola kas kecil kedua metode dan menyelesaikan berita acara pemeriksaan fisik kas (termasuk selisih kas) secara mandiri.',
+            r4: 'Mampu merancang sistem pengendalian internal (internal control) kas kecil untuk mencegah kecurangan (fraud).',
+            teknik: 'Praktik dokumen kas kecil dan simulasi cash opname'
+          },
+          {
+            teks: '[TP F.AK.1.2] menganalisis rekening koran bank, menyusun laporan rekonsiliasi bank (2 kolom, 4 kolom, 8 kolom), dan mencatat jurnal penyesuaian kas bank',
+            jp: 12,
+            ind: 'Peserta didik dapat mengidentifikasi setoran dalam perjalanan, cek beredar, cek kosong (NSF), jasa giro, dan biaya admin bank untuk mencari saldo kas yang benar.',
+            r1: 'Belum tepat menentukan item yang menambah atau mengurangi saldo kas menurut perusahaan vs menurut bank.',
+            r2: 'Dapat menyusun laporan rekonsiliasi bank 2 kolom dengan panduan daftar pos rekonsiliasi.',
+            r3: 'Mampu menyusun laporan rekonsiliasi bank dan membuat jurnal penyesuaian kas dengan tepat dan mandiri.',
+            r4: 'Mampu menyusun rekonsiliasi bank 4 kolom (proof of cash) untuk menguji mutasi penerimaan dan pengeluaran kas selama satu bulan.',
+            teknik: 'Tes tertulis dan lembar kerja rekonsiliasi bank'
+          }
+        ]
+      },
+      {
+        nama: 'Pengelolaan Piutang Usaha, Cadangan Kerugian Piutang, dan Piutang Wesel',
+        sem: 1,
+        elemen: 'Pengelolaan Piutang Usaha dan Piutang Wesel',
+        tps: [
+          {
+            teks: '[TP F.AK.2.1] mengelola kartu piutang, menyusun daftar umur piutang (aging schedule), dan mencatat penghapusan piutang metode langsung & cadangan',
+            jp: 14,
+            ind: 'Peserta didik dapat menghitung taksiran kerugian piutang (pendekatan % penjualan dan % analisa umur piutang) serta menjurnal penerimaan kembali piutang yang telah dihapus.',
+            r1: 'Masih keliru memperhitungkan saldo awal akun Cadangan Kerugian Piutang saat menggunakan pendekatan neraca.',
+            r2: 'Dapat menghitung cadangan piutang dengan tabel umur piutang yang sudah disiapkan.',
+            r3: 'Mampu menyusun aging schedule, menghitung cadangan kerugian piutang, dan menjurnal penghapusan piutang secara akurat dan mandiri.',
+            r4: 'Mampu mengevaluasi kebijakan kredit perusahaan berdasarkan rasio perputaran piutang (receivable turnover).',
+            teknik: 'Praktik analisis umur piutang dan tes tertulis'
+          },
+          {
+            teks: '[TP F.AK.2.2] menghitung nilai jatuh tempo, bunga, dan diskonto piutang wesel serta mencatat transaksi pendiskontoan wesel tagih',
+            jp: 10,
+            ind: 'Peserta didik dapat menentukan tanggal jatuh tempo wesel (harian dan bulanan), menghitung diskonto bank, dan menjurnal penerimaan kas hasil pendiskontoan wesel.',
+            r1: 'Kesulitan menghitung jumlah hari diskonto dari tanggal pendiskontoan hingga tanggal jatuh tempo.',
+            r2: 'Dapat menghitung bunga wesel dan nilai jatuh tempo dengan rumus panduan.',
+            r3: 'Mampu menghitung dan menjurnal transaksi piutang wesel berbunga maupun tidak berbunga serta pendiskontoannya secara mandiri.',
+            r4: 'Mampu mencatat penyelesaian wesel tagih yang didiskontokan apabila saat jatuh tempo debitur gagal bayar (wanprestasi).',
+            teknik: 'Uji hitung wesel dan praktik penjurnalan'
+          }
+        ]
+      },
+      {
+        nama: 'Penilaian Persediaan Barang Dagang (FIFO & Average SAK EP) dan Stock Opname',
+        sem: 1,
+        elemen: 'Pengelolaan Persediaan Barang Dagang',
+        tps: [
+          {
+            teks: '[TP F.AK.3.1] menghitung nilai persediaan akhir dan HPP dengan sistem periodik dan perpetual (metode FIFO/MPKP dan Average) berbasis SAK EP',
+            jp: 16,
+            ind: 'Peserta didik dapat menyusun kartu persediaan barang dagang, memperlakukan retur pembelian/penjualan pada kartu persediaan, dan menjurnal transaksi.',
+            r1: 'Sering keliru menentukan harga pokok per unit saat terjadi retur penjualan pada kartu persediaan perpetual.',
+            r2: 'Dapat mengisi kartu persediaan metode FIFO dengan bimbingan guru.',
+            r3: 'Mampu menyusun kartu persediaan sistem perpetual & periodik serta menghitung HPP dan laba kotor secara tepat dan mandiri.',
+            r4: 'Mampu menerapkan penilaian persediaan berdasarkan nilai realisasi neto terendah (Lower of Cost or Net Realizable Value / LCNRV) sesuai SAK EP.',
+            teknik: 'Praktik kartu persediaan dan berita acara stock opname'
+          }
+        ]
+      },
+      {
+        nama: 'Akuntansi Aset Tetap: Perolehan, Penyusutan, Pengeluaran Modal/Pendapatan, dan Penghentian',
+        sem: 2,
+        elemen: 'Pengelolaan Aset Tetap Berwujud dan Tidak Berwujud',
+        tps: [
+          {
+            teks: '[TP F.AK.4.1] menghitung harga perolehan aset tetap (tunai, angsuran, gabungan, pertukaran) dan menyusun tabel penyusutan berbagai metode',
+            jp: 16,
+            ind: 'Peserta didik dapat menghitung dan menjurnal beban penyusutan dengan metode garis lurus, jumlah angka tahun, saldo menurun ganda, dan unit produksi.',
+            r1: 'Belum tepat menghitung penyusutan tahun pertama jika aset tetap diperoleh pada pertengahan tahun berjalan.',
+            r2: 'Dapat menyusun tabel penyusutan metode garis lurus dan jumlah angka tahun dengan panduan rumus.',
+            r3: 'Mampu mengelola daftar aset tetap, menghitung penyusutan lintas periode, dan mencatat jurnal penyesuaian secara mandiri.',
+            r4: 'Mampu menganalisis laba/rugi pertukaran aset tetap sejenis dan tidak sejenis yang memiliki substansi komersial.',
+            teknik: 'Praktik kartu aset tetap dan tes tertulis'
+          },
+          {
+            teks: '[TP F.AK.4.2] mencatat pengeluaran selama masa pakai aset tetap (capital vs revenue expenditure), penjualan/penghentian aset tetap, deplesi, dan amortisasi',
+            jp: 12,
+            ind: 'Peserta didik dapat menghitung akumulasi penyusutan sampai tanggal penjualan/penyingkiran aset serta menjurnal laba atau rugi pelepasan aset.',
+            r1: 'Lupa memperbarui beban penyusutan berjalan sebelum menghitung nilai buku saat penjualan aset.',
+            r2: 'Dapat menghitung nilai buku aset tetap dengan bimbingan langkah kerja.',
+            r3: 'Mampu mencatat transaksi perbaikan besar (overhaul), penghentian aset tetap, deplesi tambang, dan amortisasi hak paten/goodwill secara mandiri.',
+            r4: 'Mampu menyusun rekomendasi keputusan manajemen terkait penggantian mesin lama dengan mesin baru berdasarkan analisis nilai buku.',
+            teknik: 'Studi kasus manajemen aset tetap'
+          }
+        ]
+      },
+      {
+        nama: 'Akuntansi Liabilitas Jangka Panjang (Utang Obligasi) dan Ekuitas (CV, PT, dan Koperasi)',
+        sem: 2,
+        elemen: 'Pengelolaan Utang Jangka Pendek, Utang Wesel, dan Utang Obligasi',
+        tps: [
+          {
+            teks: '[TP F.AK.5.1] mencatat penerbitan utang obligasi (kurs pari, agio, disagio), pembayaran bunga, amortisasi agio/disagio, dan pelunasan obligasi',
+            jp: 14,
+            ind: 'Peserta didik dapat menghitung bunga berjalan saat obligasi diterbitkan di antara tanggal pembayaran bunga dan menjurnal amortisasi agio/disagio.',
+            r1: 'Masih keliru membedakan perlakuan jurnal amortisasi agio obligasi dan disagio obligasi terhadap beban bunga.',
+            r2: 'Dapat mencatat penerbitan obligasi pada nilai nominal dan kurs dengan panduan contoh.',
+            r3: 'Mampu menghitung dan menjurnal siklus utang obligasi dari penerbitan hingga pelunasan secara akurat dan mandiri.',
+            r4: 'Mampu menyusun tabel amortisasi obligasi menggunakan metode suku bunga efektif (effective interest method) sesuai SAK EP.',
+            teknik: 'Tes tertulis dan lembar kerja obligasi'
+          },
+          {
+            teks: '[TP F.AK.6.1] mencatat transaksi ekuitas Perseroan Terbatas (modal saham, agio saham, dividen), pembagian laba CV, dan Sisa Hasil Usaha (SHU) Koperasi',
+            jp: 14,
+            ind: 'Peserta didik dapat menjurnal emisi saham, pembelian kembali saham (treasury stock), pengumuman/pembayaran dividen, dan alokasi SHU anggota koperasi.',
+            r1: 'Belum memahami perbedaan pencatatan dividen kas dan dividen saham terhadap posisi laba ditahan.',
+            r2: 'Dapat menghitung pembagian laba CV dan SHU koperasi dengan rumus panduan.',
+            r3: 'Mampu mencatat akuntansi modal saham PT, persekutuan CV, dan pembagian SHU koperasi secara tepat dan mandiri.',
+            r4: 'Mampu menyusun Laporan Perubahan Ekuitas korporasi yang memuat modal saham, tambahan modal disetor, saham treasuri, dan saldo laba.',
+            teknik: 'Uji kompetensi akuntansi ekuitas'
+          }
+        ]
+      }
+    ]
+  };
+}
+
+// ============================================================================
+// 5. PRAKTIKUM AKUNTANSI LEMBAGA / INSTANSI PEMERINTAH (FASE F - XI & XII)
+// Pembaruan Inspirasi Ruang GTK: SIPD RI Kemendagri, SAP PP 71/2010 & Siskeudes 2.0
+// ============================================================================
+function generateAkuntansiLembagaPemerintah(fase: string, topik: string): CurriculumResponse {
+  const f = fase === 'E' ? 'F' : fase;
+  return {
+    isFallback: true,
+    cp: [
+      {
+        elemen: 'Konsep Dasar Akuntansi Pemerintah, Regulasi SAP, dan Struktur APBD/APBDes',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu memahami karakteristik keuangan negara/daerah, kerangka konseptual Standar Akuntansi Pemerintahan (PP Nomor 71 Tahun 2010 & Permendagri Nomor 77 Tahun 2020), struktur APBD dan APBDes, kodefikasi akun standar pemerintah (Bagan Akun Standar / BAS), serta hubungan entitas akuntansi (SKPD) dan entitas pelaporan (PPKD/BUD) pada ekosistem SIPD RI.`
+      },
+      {
+        elemen: 'Akuntansi Pendapatan dan Belanja Satuan Kerja Perangkat Daerah (SKPD)',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menganalisis dokumen pelaksanaan anggaran (DPA, SPD, SPP, SPM, SP2D) dan mencatat transaksi pendapatan daerah (PAD) serta belanja daerah (mekanisme Uang Persediaan/UP, Ganti Uang/GU, Tambah Uang/TU, dan Pembayaran Langsung/LS) ke dalam Jurnal Finansial (LO/Neraca) dan Jurnal Pelaksanaan Anggaran (LRA).`
+      },
+      {
+        elemen: 'Akuntansi Pejabat Pengelola Keuangan Daerah (PPKD) dan Pembiayaan Daerah',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu mencatat transaksi pendapatan dana perimbangan/transfer, belanja bagi hasil/bantuan keuangan, transaksi penerimaan dan pengeluaran pembiayaan daerah (SiLPA, pinjaman daerah, penyertaan modal), serta mekanisme akun resiprokal (RK-PPKD dan RK-SKPD).`
+      },
+      {
+        elemen: 'Akuntansi Aset, Kewajiban, dan Koreksi Kesalahan Pemerintah Daerah',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu mencatat transaksi perolehan, konstruksi dalam pengerjaan, penyusutan, dan penghapusan aset tetap pemerintah daerah, pencatatan persediaan pemda, pengakuan kewajiban jangka pendek/panjang, serta koreksi kesalahan pencatatan tahun berjalan dan tahun sebelumnya.`
+      },
+      {
+        elemen: 'Penyusunan Laporan Keuangan Pemerintah Daerah (LRA, LO, LPE, Neraca, LPSAL, LAK)',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menyusun jurnal penyesuaian akhir tahun, kertas kerja (worksheet) SKPD dan PPKD, jurnal penutup LRA dan LO, serta menyajikan Laporan Realisasi Anggaran (LRA), Laporan Operasional (LO), Laporan Perubahan Ekuitas (LPE), Neraca Pemerintah Daerah, dan penginputan melalui SIPD RI.`
+      },
+      {
+        elemen: 'Pengelolaan dan Praktikum Akuntansi Keuangan Desa (Permendagri 20/2018 & Siskeudes 2.0)',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu memahami struktur APBDes (Pendapatan Desa, Belanja Desa 5 Bidang, Pembiayaan Desa), penatausahaan keuangan oleh Kaur Keuangan/Bendahara Desa, pemungutan pajak belanja desa, serta mengoperasikan alur pembukuan dan pelaporan keuangan desa menggunakan sistem Siskeudes 2.0.`
+      }
+    ],
+    units: [
+      {
+        nama: topik ? `Konsep SAP, BAS, Struktur APBD & ${topik}` : 'Kerangka Konseptual SAP (PP 71/2010), Bagan Akun Standar, dan Struktur APBD',
+        sem: 1,
+        elemen: 'Konsep Dasar Akuntansi Pemerintah, Regulasi SAP, dan Struktur APBD/APBDes',
+        tps: [
+          {
+            teks: '[TP F.AL.1.1] menganalisis prinsip Standar Akuntansi Pemerintahan (SAP) berbasis akrual (LO) dan kas menuju akrual (LRA) serta struktur APBD',
+            jp: 12,
+            ind: 'Peserta didik dapat membedakan basis akrual pada Laporan Operasional/Neraca dengan basis kas pada Laporan Realisasi Anggaran.',
+            r1: 'Belum memahami mengapa satu transaksi kas pemerintah memerlukan dua jurnal sekaligus (Jurnal LO dan Jurnal LRA).',
+            r2: 'Dapat menyebutkan komponen Pendapatan, Belanja, dan Pembiayaan APBD dengan bantuan bagan.',
+            r3: 'Mampu menganalisis struktur APBD, kodefikasi Bagan Akun Standar (BAS), dan mekanisme hubungan RK-PPKD dan RK-SKPD secara mandiri.',
+            r4: 'Mampu menganalisis postur APBD daerah setempat serta mengevaluasi proporsi PAD terhadap dana transfer pusat.',
+            teknik: 'Tes tertulis dan analisis dokumen APBD'
+          }
+        ]
+      },
+      {
+        nama: 'Praktikum Akuntansi Pendapatan dan Belanja SKPD (Mekanisme UP, GU, TU, dan LS)',
+        sem: 1,
+        elemen: 'Akuntansi Pendapatan dan Belanja Satuan Kerja Perangkat Daerah (SKPD)',
+        tps: [
+          {
+            teks: '[TP F.AL.2.1] menganalisis dokumen SPP, SPM, dan SP2D serta menjurnal transaksi Pendapatan Asli Daerah (PAD) pada SKPD',
+            jp: 14,
+            ind: 'Peserta didik dapat mencatat penerimaan pajak/retribusi daerah baik melalui bendahara penerimaan maupun setor langsung ke Kas Daerah.',
+            r1: 'Masih keliru menggunakan akun Perubahan SAL pada saat menjurnal realisasi anggaran (LRA).',
+            r2: 'Dapat menjurnal transaksi pendapatan SKPD dengan panduan tabel jurnal standar.',
+            r3: 'Mampu mencatat transaksi pendapatan SKPD (penetapan SKP-Daerah dan penerimaan tunai) ke dalam Jurnal LO dan Jurnal LRA secara tepat dan mandiri.',
+            r4: 'Mampu menyusun pembukuan Bendahara Penerimaan SKPD beserta Surat Tanda Setoran (STS) ke Rekening Kas Umum Daerah.',
+            teknik: 'Praktik pembukuan SKPD dan dokumen SP2D'
+          },
+          {
+            teks: '[TP F.AL.2.2] mencatat transaksi Belanja Operasi dan Belanja Modal SKPD melalui mekanisme Uang Persediaan (UP/GU/TU) dan Pembayaran Langsung (LS)',
+            jp: 16,
+            ind: 'Peserta didik dapat membuat jurnal finansial, jurnal anggaran, dan jurnal pengakuan aset tetap atas belanja modal LS.',
+            r1: 'Lupa membuat jurnal pengakuan Aset Tetap bersamaan dengan realisasi Belanja Modal.',
+            r2: 'Dapat mencatat pencairan SP2D-UP dan SP2D-LS dengan bimbingan guru.',
+            r3: 'Mampu mencatat seluruh siklus belanja SKPD (UP, GU, TU, LS Gaji, dan LS Barang/Modal) secara akurat dan mandiri.',
+            r4: 'Mampu memverifikasi pemotongan dan penyetoran pajak (PFK: PPN, PPh 21, PPh 22, PPh 23) oleh Bendahara Pengeluaran SKPD.',
+            teknik: 'Uji praktik penjurnalan transaksi SKPD'
+          }
+        ]
+      },
+      {
+        nama: 'Praktikum Akuntansi PPKD, Pembiayaan Daerah, dan Akuntansi Aset Tetap Pemda',
+        sem: 1,
+        elemen: 'Akuntansi Pejabat Pengelola Keuangan Daerah (PPKD) dan Pembiayaan Daerah',
+        tps: [
+          {
+            teks: '[TP F.AL.3.1] mencatat transaksi PPKD (Dana Perimbangan/Transfer, Belanja Bantuan/Hibah, Pembiayaan Daerah) serta transaksi Aset Tetap Pemda',
+            jp: 14,
+            ind: 'Peserta didik dapat menjurnal penerimaan DAU/DAK, pencairan SP2D untuk SKPD pada buku PPKD, serta penyusutan dan konstruksi aset daerah.',
+            r1: 'Masih tertukar antara pencatatan di buku SKPD (akun RK-PPKD) dan pencatatan di buku PPKD (akun RK-SKPD).',
+            r2: 'Dapat menjurnal transaksi PPKD dengan bantuan skema hubungan timbal balik (resiprokal).',
+            r3: 'Mampu mencatat transaksi akuntansi PPKD dan pengelolaan aset tetap pemerintah daerah secara tepat dan mandiri.',
+            r4: 'Mampu menyusun jurnal konsolidasi penggabungan laporan keuangan SKPD dan PPKD menjadi Laporan Keuangan Pemda.',
+            teknik: 'Praktik pembukuan PPKD dan konsolidasi'
+          }
+        ]
+      },
+      {
+        nama: 'Penyusunan Laporan Keuangan Pemerintah Daerah (LRA, LO, LPE, dan Neraca) & SIPD RI',
+        sem: 2,
+        elemen: 'Penyusunan Laporan Keuangan Pemerintah Daerah (LRA, LO, LPE, Neraca, LPSAL, LAK)',
+        tps: [
+          {
+            teks: '[TP F.AL.5.1] menyusun jurnal penyesuaian pemda, kertas kerja SKPD, serta menyajikan LRA, LO, Laporan Perubahan Ekuitas (LPE), dan Neraca sesuai alur SIPD RI',
+            jp: 18,
+            ind: 'Peserta didik dapat menyelesaikan worksheet SKPD dan menyusun 4 laporan keuangan pokok SKPD serta jurnal penutup LRA & LO.',
+            r1: 'Belum dapat menghubungkan surplus/defisit-LO ke Laporan Perubahan Ekuitas dan Ekuitas di Neraca.',
+            r2: 'Dapat menyusun LRA dan LO dengan format laporan standar SAP.',
+            r3: 'Mampu menyajikan paket lengkap Laporan Keuangan SKPD (LRA, LO, LPE, Neraca) secara seimbang (balance) dan mandiri.',
+            r4: 'Mampu mengevaluasi capaian realisasi anggaran terhadap pagu DPA serta mengidentifikasi penyebab terjadinya SiLPA.',
+            teknik: 'Uji kompetensi laporan keuangan pemerintah daerah'
+          }
+        ]
+      },
+      {
+        nama: 'Praktikum Pengelolaan dan Akuntansi Keuangan Desa (APBDes & Siskeudes 2.0)',
+        sem: 2,
+        elemen: 'Pengelolaan dan Praktikum Akuntansi Keuangan Desa (Permendagri 20/2018 & Siskeudes 2.0)',
+        tps: [
+          {
+            teks: '[TP F.AL.6.1] menyusun dokumen penganggaran APBDes serta memproses penatausahaan Buku Kas Umum (BKU), Buku Pembantu Bank, dan Buku Pembantu Pajak Desa',
+            jp: 16,
+            ind: 'Peserta didik dapat mengklasifikasikan Pendapatan Desa (PADes, Dana Desa, ADD) dan 5 Bidang Belanja Desa serta mengisi BKU dan Buku Pajak Desa.',
+            r1: 'Masih keliru mengklasifikasikan belanja desa ke dalam 5 bidang penyelenggaraan pemerintahan dan pembangunan desa.',
+            r2: 'Dapat mengisi Buku Kas Umum Desa dengan panduan contoh transaksi.',
+            r3: 'Mampu melaksanakan penatausahaan keuangan desa (SPP Desa, kuitansi, BKU, Buku Bank, Buku Pajak) secara tertib dan mandiri.',
+            r4: 'Mampu menghitung kewajiban pemungutan PPN dan PPh Pasal 22/23 atas belanja pengadaan barang/jasa desa.',
+            teknik: 'Praktik pembukuan bendahara desa'
+          },
+          {
+            teks: '[TP F.AL.6.2] menyajikan Laporan Realisasi Pelaksanaan APBDes dan Laporan Kekayaan Milik Desa berbasis struktur aplikasi Siskeudes 2.0',
+            jp: 14,
+            ind: 'Peserta didik dapat menginput parameter data desa, penganggaran, penatausahaan, dan mencetak laporan keuangan desa.',
+            r1: 'Belum memahami alur modul Penganggaran dan Penatausahaan pada sistem Siskeudes.',
+            r2: 'Dapat mengikuti alur input transaksi desa dengan modul panduan Siskeudes.',
+            r3: 'Mampu menyusun Laporan Realisasi APBDes dan Laporan Kekayaan Milik Desa secara akurat dan mandiri.',
+            r4: 'Mampu merancang infografis transparansi APBDes (baliho informasi publik desa) yang akuntabel bagi masyarakat desa.',
+            teknik: 'Proyek simulasi Siskeudes dan laporan APBDes'
+          }
+        ]
+      }
+    ]
+  };
+}
+
+// ============================================================================
+// 6. KOMPUTER AKUNTANSI (FASE F - KELAS XI & XII)
+// Pembaruan Inspirasi Ruang GTK: Cloud Accounting (Accurate Online) & MYOB
+// ============================================================================
+function generateKomputerAkuntansi(fase: string, topik: string): CurriculumResponse {
+  const f = fase === 'E' ? 'F' : fase;
+  return {
+    isFallback: true,
+    cp: [
+      {
+        elemen: 'Setup Database Awal dan Konfigurasi Sistem Komputer Akuntansi (Cloud & Desktop)',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menginstalasi dan menyiapkan data awal perusahaan baru pada aplikasi komputer akuntansi berbasis Cloud (Accurate Online / Jurnal.id) maupun Desktop (MYOB Accounting), mengatur periode akuntansi, mata uang, preferensi fitur perusahaan, serta mengonfigurasi kode pajak (PPN) dan akun keterkaitan (linked accounts).`
+      },
+      {
+        elemen: 'Pengelolaan Bagan Akun (Chart of Accounts) dan Master Data Kartu',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menyusun, mengimpor, menghapus, dan mengedit daftar akun (Chart of Accounts), mengisi saldo awal neraca saldo, membuat kartu pelanggan (customer), kartu pemasok (vendor/supplier), kartu pegawai, serta memasukkan saldo awal piutang usaha dan saldo awal utang usaha.`
+      },
+      {
+        elemen: 'Pengelolaan Kartu Persediaan Barang/Jasa dan Daftar Aset Tetap',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu membuat daftar barang dan jasa (item list), mengatur metode penilaian persediaan (Average / FIFO), mengisi kuantitas dan nilai saldo awal persediaan, serta mendaftarkan kategori aset tetap, aset tetap pajak, dan daftar aset tetap perusahaan.`
+      },
+      {
+        elemen: 'Entri Transaksi Siklus Pembelian, Penjualan, dan Kas/Bank pada Perusahaan Jasa & Dagang',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu mengentri dokumen transaksi pembelian tunai/kredit, retur pembelian, pelunasan utang, penjualan tunai/kredit, retur penjualan, penerimaan pelunasan piutang, transaksi penerimaan kas/bank, pengeluaran kas/bank, dan kas kecil ke dalam modul komputer akuntansi.`
+      },
+      {
+        elemen: 'Komputerisasi Akuntansi Perusahaan Manufaktur',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menyiapkan database perusahaan manufaktur, menyusun formula produk / Bill of Material (BOM), mengentri perintah kerja (work order), pengeluaran bahan baku, penyelesaian barang jadi (finished goods), dan pengalokasian biaya produksi pada aplikasi komputer akuntansi.`
+      },
+      {
+        elemen: 'Rekonsiliasi Bank, Penyesuaian Akhir Periode, Pelaporan Keuangan, dan Backup Data',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu memproses rekonsiliasi bank otomatis, mengentri jurnal penyesuaian akhir periode (proses akhir bulan / penyusutan otomatis), memeriksa kebenaran jurnal (audit trail), menampilkan dan mengekspor laporan keuangan (Laba Rugi, Neraca, Arus Kas), serta membuat file cadangan (backup data).`
+      }
+    ],
+    units: [
+      {
+        nama: topik ? `Setup Database, COA, Master Data & ${topik}` : 'Setup Database Awal, Bagan Akun (COA), dan Master Data pada Cloud Accounting / MYOB',
+        sem: 1,
+        elemen: 'Setup Database Awal dan Konfigurasi Sistem Komputer Akuntansi (Cloud & Desktop)',
+        tps: [
+          {
+            teks: '[TP F.KA.1.1] menyiapkan database perusahaan baru, periode akuntansi, kode pajak PPN, dan Linked Accounts pada Accurate Online / MYOB',
+            jp: 12,
+            ind: 'Peserta didik dapat membuat file database perusahaan tepat sesuai tahun fiskal dan mengatur linked accounts (akun kas, piutang, utang, potongan, PPN).',
+            r1: 'Keliru memasukkan bulan konversi (conversion month) sehingga transaksi tidak dapat diinput pada bulan berjalan.',
+            r2: 'Dapat membuat database awal dengan mengikuti panduan langkah kerja modul.',
+            r3: 'Mampu melakukan setup database awal, konfigurasi pajak, dan linked accounts secara tepat dan mandiri.',
+            r4: 'Mampu mengimpor seluruh master data (COA, Pelanggan, Pemasok, Barang) sekaligus dari file Excel ke dalam aplikasi.',
+            teknik: 'Praktik laboratorium komputer akuntansi'
+          },
+          {
+            teks: '[TP F.KA.2.1] menyusun daftar akun (Chart of Accounts), mengisi saldo awal akun, serta membuat kartu piutang, kartu utang, dan kartu persediaan',
+            jp: 14,
+            ind: 'Peserta didik dapat mengentri saldo awal neraca hingga Historical Balancing / Opening Balance Equity bernilai Rp 0.',
+            r1: 'Saldo Historical Balancing / Opening Balance Equity belum bernilai Rp 0 karena kesalahan tanda minus pada akun kontra.',
+            r2: 'Dapat menginput daftar akun dan saldo awal dengan bimbingan guru.',
+            r3: 'Mampu menyusun COA, saldo awal neraca, kartu piutang, utang, dan persediaan hingga seimbang (saldo selisih Rp 0) secara mandiri.',
+            r4: 'Mampu mendiagnosis penyebab selisih saldo awal antara buku besar dengan rincian kartu pembantu.',
+            teknik: 'Uji praktik setup master data'
+          }
+        ]
+      },
+      {
+        nama: 'Entri Transaksi Siklus Perusahaan Jasa dan Dagang Terkomputerisasi',
+        sem: 1,
+        elemen: 'Entri Transaksi Siklus Pembelian, Penjualan, dan Kas/Bank pada Perusahaan Jasa & Dagang',
+        tps: [
+          {
+            teks: '[TP F.KA.4.1] mengentri transaksi siklus pembelian (pesanan, faktur pembelian, retur debet, dan pembayaran utang) serta transaksi kas keluar',
+            jp: 16,
+            ind: 'Peserta didik dapat menginput faktur pembelian kredit ber-PPN, memproses retur pembelian (Register/Apply to Purchase), dan pelunasan utang.',
+            r1: 'Lupa mengaktifkan/mematikan opsi Tax Inclusive sehingga nilai PPN Masukan tidak sesuai dokumen faktur.',
+            r2: 'Dapat mengentri faktur pembelian dan pengeluaran kas dengan petunjuk modul.',
+            r3: 'Mampu mengentri seluruh variasi transaksi pembelian, retur, pelunasan utang, dan kas keluar secara cepat, tepat, dan mandiri.',
+            r4: 'Mampu memperbaiki atau menghapus transaksi yang salah diinput serta memverifikasi jurnal yang terbentuk (Ctrl+R).',
+            teknik: 'Praktik entri transaksi komputer akuntansi'
+          },
+          {
+            teks: '[TP F.KA.4.2] mengentri transaksi siklus penjualan (faktur penjualan, penjualan tunai, retur kredit, penerimaan piutang) dan penerimaan kas/bank',
+            jp: 16,
+            ind: 'Peserta didik dapat menginput faktur penjualan, memproses potongan penjualan, retur penjualan (Apply to Sale), dan pelunasan piutang pelanggan.',
+            r1: 'Masih keliru menginput denda keterlambatan (finance charge) atau potongan pelunasan piutang.',
+            r2: 'Dapat mengentri transaksi penjualan dan penerimaan piutang dengan bimbingan.',
+            r3: 'Mampu mengentri seluruh transaksi penjualan tunai/kredit, retur, dan penerimaan kas/bank secara akurat dan mandiri.',
+            r4: 'Mampu mencetak faktur penjualan dan kuitansi digital langsung dari aplikasi komputer akuntansi.',
+            teknik: 'Uji praktik entri transaksi dagang'
+          }
+        ]
+      },
+      {
+        nama: 'Rekonsiliasi Bank, Jurnal Penyesuaian, Laporan Keuangan Digital, dan Backup Data',
+        sem: 2,
+        elemen: 'Rekonsiliasi Bank, Penyesuaian Akhir Periode, Pelaporan Keuangan, dan Backup Data',
+        tps: [
+          {
+            teks: '[TP F.KA.6.1] memproses rekonsiliasi bank (Reconcile Accounts), mengentri jurnal penyesuaian akhir periode (Period End), dan mencetak laporan keuangan',
+            jp: 16,
+            ind: 'Peserta didik dapat melakukan rekonsiliasi bank hingga Out of Balance Rp 0, menginput penyesuaian di Record Journal Entry, dan mengekspor Laporan Laba Rugi, Neraca, dan Arus Kas.',
+            r1: 'Nilai Out of Balance pada menu Reconcile Accounts belum nol saat mencocokkan rekening koran.',
+            r2: 'Dapat menginput jurnal penyesuaian dan menampilkan laporan keuangan dengan panduan guru.',
+            r3: 'Mampu menyelesaikan rekonsiliasi bank, penyesuaian akhir periode, ekspor laporan keuangan PDF/Excel, dan backup file (.zip) secara mandiri.',
+            r4: 'Mampu melakukan proses tutup buku akhir tahun (Start a New Financial Year) dan mengamankan arsip database.',
+            teknik: 'Simulasi UKK Komputer Akuntansi Perusahaan Dagang'
+          }
+        ]
+      },
+      {
+        nama: 'Komputerisasi Akuntansi Perusahaan Manufaktur (Bill of Material & Proses Produksi)',
+        sem: 2,
+        elemen: 'Komputerisasi Akuntansi Perusahaan Manufaktur',
+        tps: [
+          {
+            teks: '[TP F.KA.5.1] menyusun standar biaya produksi (Bill of Material / BOM), mengentri perintah kerja (Work Order), pengambilan bahan baku, dan penyelesaian produk jadi',
+            jp: 18,
+            ind: 'Peserta didik dapat mengoperasikan modul manufaktur/inventory assembly untuk memproses konversi bahan baku menjadi barang jadi serta menyajikan laporan HPP.',
+            r1: 'Belum memahami cara menghubungkan kuantitas bahan baku dan biaya konversi ke dalam formula Bill of Material (BOM).',
+            r2: 'Dapat menyusun Bill of Material dan menginput penyelesaian barang jadi dengan panduan modul.',
+            r3: 'Mampu memproses siklus transaksi perusahaan manufaktur pada aplikasi komputer akuntansi hingga menghasilkan Laporan Keuangan secara mandiri.',
+            r4: 'Mampu menganalisis laporan selisih biaya standar dan biaya aktual produksi pada sistem komputer akuntansi.',
+            teknik: 'Proyek komputer akuntansi manufaktur'
+          }
+        ]
+      }
+    ]
+  };
+}
+
+// ============================================================================
+// 7. ADMINISTRASI PERPAJAKAN (FASE F - KELAS XI & XII)
+// Pembaruan Inspirasi Ruang GTK: Coretax DJP (SIAP), TER PPh 21 & NIK-NPWP 16 Digit
+// ============================================================================
+function generateAdministrasiPerpajakan(fase: string, topik: string): CurriculumResponse {
+  const f = fase === 'E' ? 'F' : fase;
+  return {
+    isFallback: true,
+    cp: [
+      {
+        elemen: 'Ketentuan Umum dan Tata Cara Perpajakan (KUP) serta Sistem Coretax DJP',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu memahami hak dan kewajiban Wajib Pajak, pendaftaran dan pemadanan NIK sebagai NPWP 16 digit, pengukuhan Pengusaha Kena Pajak (PKP), tata cara pembayaran/deposit pajak, pelaporan SPT, ketetapan pajak (SKPKB, SKPKBT, SKPLB, SKPN), serta alur administrasi pada Sistem Inti Administrasi Perpajakan (Coretax DJP / SIAP).`
+      },
+      {
+        elemen: 'Pajak Penghasilan (PPh) Pasal 21/26 dan Metode Tarif Efektif Rata-rata (TER)',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu mengidentifikasi subjek dan objek PPh Pasal 21/26, menentukan status PTKP dan kategori Tarif Efektif Rata-rata (TER A, TER B, TER C sesuai PP Nomor 58 Tahun 2023 & PMK Nomor 168 Tahun 2023), menghitung PPh Pasal 21 masa Januari–November dengan tarif TER dan masa pajak Desember dengan tarif Pasal 17 UU HPP, serta membuat bukti potong e-Bupot 21/26 dan SPT Masa PPh 21.`
+      },
+      {
+        elemen: 'PPh Pemotongan/Pemungutan Unifikasi (Pasal 22, 23, 24, 26, dan Pasal 4 Ayat 2) serta PPh Final UMKM',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menghitung, memotong/memungut, menyetor, dan melaporkan PPh Pasal 22 (impor dan bendahara), PPh Pasal 23 (dividen, bunga, royalti, sewa, dan jasa), PPh Pasal 4 ayat (2) bersifat final, kredit pajak luar negeri PPh Pasal 24, angsuran PPh Pasal 25, serta PPh Final UMKM 0,5% (PP Nomor 55 Tahun 2022) termasuk batas omzet tidak kena pajak Rp500 juta bagi WP OP.`
+      },
+      {
+        elemen: 'Rekonsiliasi Fiskal dan SPT Tahunan PPh Wajib Pajak Orang Pribadi (1770/1770S/1770SS)',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menganalisis penghasilan neto dalam negeri (pekerjaan bebas, usaha, pekerjaan), penghasilan final dan non-objek pajak, daftar harta dan kewajiban, serta mengisi dan melaporkan SPT Tahunan PPh Wajib Pajak Orang Pribadi melalui portal Coretax DJP / DJP Online.`
+      },
+      {
+        elemen: 'Rekonsiliasi Fiskal dan SPT Tahunan PPh Wajib Pajak Badan (Formulir 1771)',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu mengidentifikasi beda tetap (permanent difference) dan beda waktu (temporary difference), menyusun kertas kerja rekonsiliasi fiskal dari laporan laba rugi komersial menjadi laba/rugi fiskal, menghitung PPh Badan terutang (tarif umum 22% dan fasilitas pengurangan tarif 50% Pasal 31E), menghitung kredit pajak dan angsuran PPh Pasal 25, serta mengisi SPT Tahunan PPh Badan.`
+      },
+      {
+        elemen: 'Pajak Pertambahan Nilai (PPN), PPnBM, e-Faktur, dan SPT Masa PPN',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu memahami mekanisme pengkreditan Pajak Masukan terhadap Pajak Keluaran sesuai UU HPP, menghitung PPN dan PPnBM dengan DPP Nilai Lain, menerbitkan Faktur Pajak elektronik (e-Faktur di Coretax DJP) beserta kode transaksi (01 s.d. 09), nota retur, serta menyusun dan melaporkan SPT Masa PPN.`
+      }
+    ],
+    units: [
+      {
+        nama: topik ? `KUP, NIK-NPWP 16 Digit, Coretax DJP & ${topik}` : 'Ketentuan Umum Perpajakan (KUP), Integrasi NIK-NPWP 16 Digit, dan Sistem Coretax DJP',
+        sem: 1,
+        elemen: 'Ketentuan Umum dan Tata Cara Perpajakan (KUP) serta Sistem Coretax DJP',
+        tps: [
+          {
+            teks: '[TP F.PJ.1.1] menganalisis sistem pemungutan pajak, alur pendaftaran NIK sebagai NPWP 16 digit, pengukuhan PKP, dan fitur portal Coretax DJP (SIAP)',
+            jp: 10,
+            ind: 'Peserta didik dapat memproses simulasi pemadanan NIK-NPWP, pembuatan kode billing/deposit pajak, dan memahami batas waktu setor serta lapor pajak.',
+            r1: 'Belum hafal batas waktu penyetoran dan pelaporan SPT Masa maupun SPT Tahunan.',
+            r2: 'Dapat menyebutkan jenis-jenis pajak pusat dan daerah serta fungsi NPWP dengan bantuan tabel.',
+            r3: 'Mampu menganalisis ketentuan KUP, menghitung sanksi bunga/denda administrasi pajak, dan mensimulasikan alur Coretax DJP secara mandiri.',
+            r4: 'Mampu menganalisis kasus pemeriksaan pajak (SKPKB/SKPLB) dan prosedur pengajuan keberatan atau banding pajak.',
+            teknik: 'Tes tertulis dan simulasi portal Coretax DJP'
+          }
+        ]
+      },
+      {
+        nama: 'Perhitungan dan Pelaporan PPh Pasal 21/26 Metode Tarif Efektif Rata-rata (TER PP 58/2023)',
+        sem: 1,
+        elemen: 'Pajak Penghasilan (PPh) Pasal 21/26 dan Metode Tarif Efektif Rata-rata (TER)',
+        tps: [
+          {
+            teks: '[TP F.PJ.2.1] menghitung PPh Pasal 21 pegawai tetap masa Januari–November menggunakan Tabel TER (A, B, C) dan masa Desember dengan tarif Pasal 17 UU HPP',
+            jp: 16,
+            ind: 'Peserta didik dapat memetakan status PTKP ke kategori TER A/B/C, menghitung potongan PPh 21 bulanan, dan menghitung kurang/lebih potong pada bulan Desember.',
+            r1: 'Masih keliru mengelompokkan status PTKP (TK/0, K/0, K/1, dst.) ke dalam Kategori TER A, B, atau C.',
+            r2: 'Dapat menghitung PPh 21 masa Januari–November dengan tabel TER yang disediakan.',
+            r3: 'Mampu menghitung PPh 21 pegawai tetap (masa Januari–November dengan TER dan rekalkulasi Desember Pasal 17) secara akurat dan mandiri.',
+            r4: 'Mampu menghitung PPh Pasal 21 bagi pegawai tidak tetap, bukan pegawai, dewan komisaris, dan peserta kegiatan.',
+            teknik: 'Praktik kertas kerja PPh 21 TER dan tes hitung'
+          },
+          {
+            teks: '[TP F.PJ.2.2] menyusun Bukti Pemotongan PPh Pasal 21 bulanan dan Formulir 1721-A1/BPA1 serta SPT Masa PPh Pasal 21/26 melalui e-Bupot / Coretax DJP',
+            jp: 12,
+            ind: 'Peserta didik dapat mengisi bukti potong bulanan, bukti potong tahunan 1721-A1, dan rekapitulasi SPT Masa PPh 21.',
+            r1: 'Belum tepat memindahkan rincian penghasilan bruto dan pengurang (biaya jabatan & iuran pensiun) ke formulir 1721-A1.',
+            r2: 'Dapat mengisi formulir bukti potong 1721-A1 dengan panduan contoh pengisian.',
+            r3: 'Mampu menyusun bukti potong e-Bupot 21/26 dan SPT Masa PPh Pasal 21 secara lengkap, tepat, dan mandiri.',
+            r4: 'Mampu merekonsiliasi total beban gaji di laporan laba rugi dengan dasar pengenaan pajak pada SPT Masa PPh 21.',
+            teknik: 'Praktik pengisian e-Bupot 21/26 dan SPT Masa'
+          }
+        ]
+      },
+      {
+        nama: 'PPh Pemotongan/Pemungutan Unifikasi (PPh 22, 23, 4 Ayat 2) dan PPh Final UMKM (PP 55/2022)',
+        sem: 1,
+        elemen: 'PPh Pemotongan/Pemungutan Unifikasi (Pasal 22, 23, 24, 26, dan Pasal 4 Ayat 2) serta PPh Final UMKM',
+        tps: [
+          {
+            teks: '[TP F.PJ.3.1] menghitung PPh Pasal 22 (impor/bendahara), PPh Pasal 23 (dividen, royalti, sewa, jasa), PPh Pasal 4 ayat (2), dan PPh Final UMKM 0,5% serta mengisi e-Bupot Unifikasi',
+            jp: 16,
+            ind: 'Peserta didik dapat menghitung PPh unifikasi, menerapkan batas omzet bebas pajak Rp500 juta bagi UMKM OP, dan membuat bukti potong unifikasi.',
+            r1: 'Sering tertukar antara objek sewa tanah/bangunan (PPh Pasal 4 ayat 2 tarif 10%) dengan sewa harta selain tanah/bangunan (PPh Pasal 23 tarif 2%).',
+            r2: 'Dapat menghitung PPh 22, 23, dan PPh Final UMKM dengan bantuan tabel tarif pajak.',
+            r3: 'Mampu menghitung seluruh jenis PPh Unifikasi & PPh Final UMKM serta menyusun SPT Masa PPh Unifikasi secara mandiri.',
+            r4: 'Mampu menganalisis dampak perpajakan jika transaksi dilakukan dengan lawan transaksi yang belum memiliki NPWP.',
+            teknik: 'Studi kasus transaksi unifikasi dan tes tertulis'
+          }
+        ]
+      },
+      {
+        nama: 'Rekonsiliasi Fiskal dan Pelaporan SPT Tahunan PPh WP Orang Pribadi & WP Badan',
+        sem: 2,
+        elemen: 'Rekonsiliasi Fiskal dan SPT Tahunan PPh Wajib Pajak Badan (Formulir 1771)',
+        tps: [
+          {
+            teks: '[TP F.PJ.4.1] mengisi dan melaporkan SPT Tahunan PPh Wajib Pajak Orang Pribadi (1770, 1770S, 1770SS) untuk karyawan dan usahawan/pekerja bebas',
+            jp: 14,
+            ind: 'Peserta didik dapat menghitung PPh terutang WP OP (pencatatan NPPN maupun pembukuan), mengkreditkan bukti potong, dan mengisi lampiran harta/utang.',
+            r1: 'Masih keliru memilih jenis formulir SPT (1770, 1770S, atau 1770SS) sesuai sumber penghasilan Wajib Pajak.',
+            r2: 'Dapat mengisi SPT 1770S berdasarkan bukti potong 1721-A1 dengan bimbingan guru.',
+            r3: 'Mampu menyusun SPT Tahunan PPh WP OP (1770 dan 1770S) secara lengkap, akurat, dan mandiri.',
+            r4: 'Mampu menghitung PPh terutang gabungan suami-istri dengan status perpajakan Pisah Harta (PH) atau Memilih Terpisah (MT).',
+            teknik: 'Praktik pengisian SPT Tahunan OP'
+          },
+          {
+            teks: '[TP F.PJ.5.1] menyusun Kertas Kerja Rekonsiliasi Fiskal (koreksi fiskal positif & negatif), menghitung PPh Badan Pasal 31E, angsuran PPh 25, dan mengisi SPT 1771',
+            jp: 18,
+            ind: 'Peserta didik dapat mengidentifikasi biaya yang boleh dan tidak boleh dikurangkan (deductible vs non-deductible expense) serta menghitung PPh Badan Kurang/Lebih Bayar (Pasal 29/28A).',
+            r1: 'Masih terbalik menentukan apakah suatu koreksi biaya mengakibatkan koreksi fiskal positif atau koreksi fiskal negatif.',
+            r2: 'Dapat menyusun tabel rekonsiliasi fiskal dengan daftar pedoman koreksi fiskal.',
+            r3: 'Mampu menyusun rekonsiliasi fiskal, menghitung PPh Badan Pasal 31E & angsuran PPh Pasal 25, serta mengisi SPT 1771 beserta lampirannya secara mandiri.',
+            r4: 'Mampu menyelesaikan paket soal Uji Kompetensi Keahlian (UKK) Perpajakan Badan secara komprehensif.',
+            teknik: 'Uji praktik Rekonsiliasi Fiskal dan SPT 1771'
+          }
+        ]
+      },
+      {
+        nama: 'Administrasi PPN, PPnBM, Penerbitan e-Faktur Coretax, dan SPT Masa PPN',
+        sem: 2,
+        elemen: 'Pajak Pertambahan Nilai (PPN), PPnBM, e-Faktur, dan SPT Masa PPN',
+        tps: [
+          {
+            teks: '[TP F.PJ.6.1] menganalisis kode transaksi Faktur Pajak (01–09), menghitung PPN Keluaran dan PPN Masukan (termasuk DPP Nilai Lain), serta menyusun SPT Masa PPN',
+            jp: 16,
+            ind: 'Peserta didik dapat menentukan kode faktur pajak (01, 02, 03, 04, 07, 08), memproses Faktur Pajak & Nota Retur, dan menghitung PPN Kurang Bayar / Lebih Bayar (kompensasi/restitusi).',
+            r1: 'Masih keliru menentukan kode faktur pajak saat penyerahan BKP/JKP kepada Pemungut PPN (Bendahara Pemerintah / BUMN).',
+            r2: 'Dapat menghitung PPN Keluaran dan PPN Masukan serta mengisi lampiran A dan B SPT PPN dengan panduan.',
+            r3: 'Mampu mengadministrasikan e-Faktur di sistem Coretax dan menyusun SPT Masa PPN secara tepat dan mandiri.',
+            r4: 'Mampu mengidentifikasi Faktur Pajak Masukan yang tidak dapat dikreditkan sesuai ketentuan Undang-Undang PPN & UU HPP.',
+            teknik: 'Praktik simulasi e-Faktur dan SPT Masa PPN'
+          }
+        ]
+      }
+    ]
+  };
+}
+
+// ============================================================================
+// 8. PROJEK KREATIF DAN KEWIRAUSAHAAN (PKK) AKUNTANSI (FASE F - XI & XII)
+// Inspirasi Ruang GTK Kemendikdasmen: Teaching Factory (TeFa) Jasa Akuntansi & UMKM
+// ============================================================================
+function generatePkkAkuntansi(fase: string, topik: string): CurriculumResponse {
+  const f = fase === 'E' ? 'F' : fase;
+  return {
+    isFallback: true,
+    cp: [
+      {
+        elemen: 'Peluang Usaha dan Perencanaan Bisnis Jasa Akuntansi / Keuangan & Produk UMKM',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu membaca peluang usaha dengan mengidentifikasi potensi di bidang layanan jasa pembukuan digital, asistensi perpajakan UMKM (Tax Center SMK / Teaching Factory), maupun usaha produk kreatif, menganalisis SWOT, menyusun Business Model Canvas (BMC), serta merancang proposal usaha yang layak.`
+      },
+      {
+        elemen: 'Desain Layanan Jasa Keuangan / Produksi dan Perhitungan Harga Pokok (HPP & BEP)',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menyusun Standar Operasional Prosedur (SOP) layanan jasa pembukuan/keuangan atau alur produksi barang, menghitung kebutuhan modal kerja, menghitung Harga Pokok Produksi / Harga Pokok Jasa, menentukan harga jual, serta menganalisis titik impas (Break Even Point / BEP) dan Return on Investment (ROI).`
+      },
+      {
+        elemen: 'Pemasaran Digital, Pelayanan Pelanggan, dan Pengelolaan Transaksi E-Commerce / QRIS',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menerapkan strategi bauran pemasaran (marketing mix) dan pemasaran digital (media sosial, marketplace, Google Business), mempraktikkan negosiasi dan pelayanan prima kepada klien/pelanggan, serta mengelola sistem pembayaran digital (QRIS, e-wallet, virtual account, dan payment gateway).`
+      },
+      {
+        elemen: 'Pembukuan Digital, Pelaporan Keuangan Usaha, dan Kepatuhan Pajak UMKM',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu mengelola administrasi bukti transaksi usaha, melakukan pembukuan harian menggunakan aplikasi akuntansi mobile/cloud (SIAPIK BI / BukuWarung / Accurate Lite / Spreadsheet), menyusun laporan laba rugi dan posisi keuangan sesuai SAK EMKM, serta menghitung pajak UMKM.`
+      },
+      {
+        elemen: 'Evaluasi Kinerja Usaha, Hak Kekayaan Intelektual (HKI), dan Pengembangan Bisnis',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu memahami perlindungan Hak Kekayaan Intelektual (merek usaha dan legalitas NIB OSS), mengevaluasi rasio profitabilitas dan arus kas usaha projek kewirausahaan, serta menyusun laporan pertanggungjawaban dan rencana pengembangan usaha berkelanjutan.`
+      }
+    ],
+    units: [
+      {
+        nama: topik ? `Peluang Usaha Jasa Akuntansi, BMC & ${topik}` : 'Analisis Peluang Usaha Jasa Akuntansi/UMKM dan Penyusunan Business Model Canvas (BMC)',
+        sem: 1,
+        elemen: 'Peluang Usaha dan Perencanaan Bisnis Jasa Akuntansi / Keuangan & Produk UMKM',
+        tps: [
+          {
+            teks: '[TP F.PKK.1.1] menganalisis peluang usaha jasa pembukuan/perpajakan UMKM (Teaching Factory) dan menyusun Business Model Canvas (BMC) serta analisis SWOT',
+            jp: 12,
+            ind: 'Peserta didik dapat memetakan 9 blok Business Model Canvas (BMC) dan menyusun proposal bisnis kreatif berbasis kompetensi akuntansi.',
+            r1: 'Belum mampu merumuskan Value Proposition (keunggulan nilai) usaha yang membedakan dengan pesaing.',
+            r2: 'Dapat mengisi 9 blok BMC dengan bantuan template dan contoh usaha.',
+            r3: 'Mampu menganalisis peluang usaha dengan SWOT dan menyusun BMC serta proposal bisnis secara logis, kreatif, dan mandiri.',
+            r4: 'Mampu mempresentasikan (pitching) proposal bisnis di hadapan tim penilai/mitra UMKM dengan meyakinkan.',
+            teknik: 'Penilaian proyek BMC dan business pitching'
+          }
+        ]
+      },
+      {
+        nama: 'Perencanaan Operasional, Perhitungan HPP, Penentuan Harga Jual, dan Analisis BEP',
+        sem: 1,
+        elemen: 'Desain Layanan Jasa Keuangan / Produksi dan Perhitungan Harga Pokok (HPP & BEP)',
+        tps: [
+          {
+            teks: '[TP F.PKK.2.1] menyusun SOP layanan/produksi serta menghitung kebutuhan modal, HPP, harga jual (cost-plus pricing), BEP, dan proyeksi ROI',
+            jp: 14,
+            ind: 'Peserta didik dapat memisahkan biaya tetap (fixed cost) dan biaya variabel (variable cost) serta menghitung BEP dalam unit dan rupiah.',
+            r1: 'Masih keliru memisahkan komponen biaya tetap dan biaya variabel saat menghitung titik impas (BEP).',
+            r2: 'Dapat menghitung HPP dan BEP dengan menggunakan tabel rumus panduan.',
+            r3: 'Mampu menyusun anggaran biaya, menghitung HPP, menetapkan harga jual yang kompetitif, dan menganalisis BEP secara mandiri.',
+            r4: 'Mampu membuat simulasi analisis sensitivitas laba usaha pada berbagai skenario target volume penjualan.',
+            teknik: 'Praktik perhitungan kelayakan finansial usaha'
+          }
+        ]
+      },
+      {
+        nama: 'Eksekusi Usaha: Pemasaran Digital, Pelayanan Klien, dan Transaksi QRIS',
+        sem: 1,
+        elemen: 'Pemasaran Digital, Pelayanan Pelanggan, dan Pengelolaan Transaksi E-Commerce / QRIS',
+        tps: [
+          {
+            teks: '[TP F.PKK.3.1] mempraktikkan pemasaran digital, layanan konsultasi/penjualan, dan pengelolaan transaksi pembayaran non-tunai (QRIS & e-commerce)',
+            jp: 16,
+            ind: 'Peserta didik dapat membuat konten promosi digital, melayani pesanan pelanggan/klien UMKM, dan merekap mutasi penerimaan pembayaran.',
+            r1: 'Belum konsisten mendokumentasikan bukti transaksi penjualan dan mutasi pembayaran digital.',
+            r2: 'Dapat menjalankan kegiatan pemasaran dan penjualan kelompok dengan arahan guru.',
+            r3: 'Mampu menjalankan operasional pemasaran digital, pelayanan pelanggan, dan pencatatan transaksi QRIS secara aktif dan mandiri.',
+            r4: 'Mampu menjalin kemitraan nyata dengan pelaku UMKM sekitar sekolah untuk layanan pendampingan pembukuan sederhana.',
+            teknik: 'Observasi unjuk kerja proyek kewirausahaan'
+          }
+        ]
+      },
+      {
+        nama: 'Pembukuan Digital Usaha (SIAPIK BI / Spreadsheet) dan Laporan Keuangan SAK EMKM',
+        sem: 2,
+        elemen: 'Pembukuan Digital, Pelaporan Keuangan Usaha, dan Kepatuhan Pajak UMKM',
+        tps: [
+          {
+            teks: '[TP F.PKK.4.1] mencatat transaksi usaha projek menggunakan aplikasi akuntansi (SIAPIK BI / Spreadsheet) dan menyusun Laporan Keuangan sesuai SAK EMKM',
+            jp: 16,
+            ind: 'Peserta didik dapat menyajikan Laporan Laba Rugi, Laporan Posisi Keuangan, dan Catatan atas Laporan Keuangan dari usaha yang dijalankan.',
+            r1: 'Masih mencampuradukkan uang pribadi anggota kelompok dengan kas usaha projek.',
+            r2: 'Dapat mencatat kas masuk dan keluar usaha dengan template buku kas.',
+            r3: 'Mampu menyelenggarakan pembukuan tertib menggunakan aplikasi digital dan menyusun laporan keuangan usaha berbasis SAK EMKM secara mandiri.',
+            r4: 'Mampu membantu 1 pelaku UMKM binaan dalam menyusun laporan keuangan SAK EMKM untuk syarat pengajuan pembiayaan KUR.',
+            teknik: 'Penilaian portofolio laporan keuangan usaha'
+          }
+        ]
+      },
+      {
+        nama: 'Legalitas Usaha (NIB & HKI), Evaluasi Rasio Keuangan, dan Laporan Akhir Projek',
+        sem: 2,
+        elemen: 'Evaluasi Kinerja Usaha, Hak Kekayaan Intelektual (HKI), dan Pengembangan Bisnis',
+        tps: [
+          {
+            teks: '[TP F.PKK.5.1] memahami prosedur perizinan NIB OSS & HKI serta mengevaluasi rasio profitabilitas (GPM, NPM, ROI) dan menyusun laporan pertanggungjawaban usaha',
+            jp: 14,
+            ind: 'Peserta didik dapat menghitung rasio margin laba usaha, mengevaluasi kendala operasional, dan mempresentasikan laporan akhir projek.',
+            r1: 'Laporan akhir usaha belum disertai analisis perbandingan antara target anggaran dan realisasi laba.',
+            r2: 'Dapat menyusun laporan hasil usaha dengan format kerangka laporan.',
+            r3: 'Mampu mengevaluasi kinerja finansial usaha secara komprehensif dan menyajikan laporan pertanggungjawaban projek secara mandiri.',
+            r4: 'Mampu merumuskan strategi pengembangan usaha (scaling up) dan inovasi layanan baru berdasarkan hasil evaluasi.',
+            teknik: 'Sidang presentasi laporan akhir projek PKK'
+          }
+        ]
+      }
+    ]
+  };
+}
+
+// ============================================================================
+// 9. LAYANAN PERBANKAN (MAPEL PILIHAN FASE F - KELAS XI)
+// Pembaruan Inspirasi Ruang GTK: Digital Banking, BI-FAST, QRIS & SLIK OJK
+// ============================================================================
+function generateLayananPerbankan(fase: string, topik: string): CurriculumResponse {
+  const f = fase === 'E' ? 'F' : fase;
+  return {
+    isFallback: true,
+    cp: [
+      {
+        elemen: 'Ekonomi Bisnis dan Administrasi Umum Perbankan',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu memahami masalah-masalah ekonomi, model dan pelaku ekonomi, perilaku konsumen dan produsen, terbentuknya harga pasar, peran Bank Sentral (BI), OJK, dan LPS dalam stabilitas sistem keuangan, serta menerapkan administrasi dan fungsi-fungsi manajemen operasional perbankan.`
+      },
+      {
+        elemen: 'Pengelolaan Kas Kecil dan Operasional Kas Teller Perbankan',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu mengelola kas kecil (petty cash) kantor bank, kas operasional teller, melayani transaksi setoran dan penarikan tunai, melakukan pemeriksaan keaslian fisik uang kertas rupiah dan valuta asing (metode 3D & sinar UV), memproses warkat kliring (cek dan bilyet giro), serta menyusun rekonsiliasi kas teller harian.`
+      },
+      {
+        elemen: 'Layanan Lembaga Perbankan, Digital Banking (BI-FAST & QRIS), dan Analisis Kredit 5C',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menerapkan standar pelayanan prima (Service Excellence), prosedur Know Your Customer (KYC) / Customer Due Diligence (CDD) & APU-PPT dalam pembukaan rekening simpanan (tabungan, giro, deposito), mengoperasikan layanan perbankan digital (Mobile Banking, BI-FAST, QRIS, RTGS), melakukan analisis kelayakan kredit prinsip 5C dan pengecekan SLIK OJK, pengikatan agunan, serta layanan safe deposit box.`
+      },
+      {
+        elemen: 'Akuntansi Perbankan (Pencatatan Simpanan, Kliring, Transfer, dan Kredit)',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu memahami siklus akuntansi perbankan (PAPI), mencatat transaksi penghimpunan dana masyarakat (tabungan, giro, deposito), transaksi lalu lintas pembayaran (kliring, BI-FAST, RTGS), transaksi antar-kantor (RAK), penyaluran kredit dan pencadangan CKPN, hingga penyusunan laporan keuangan bank.`
+      },
+      {
+        elemen: 'Komputer Akuntansi dan Core Banking Layanan Perbankan',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu mengoperasikan program spreadsheet dan aplikasi komputer akuntansi / simulasi Mini Core Banking untuk mengentri data CIF nasabah, memproses mutasi simpanan dan angsuran pinjaman (anuitas, flat, efektif), serta menyajikan neraca dan laporan laba rugi bank secara terkomputerisasi.`
+      },
+      {
+        elemen: 'Perpajakan Jasa Perbankan',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu memahami dan menghitung kewajiban perpajakan di sektor perbankan meliputi PPh Final Pasal 4 ayat (2) atas bunga tabungan, bunga deposito, dan diskonto SBI, PPh Pasal 21 pegawai bank, PPh Pasal 23/26, dan PPN atas jasa perbankan tertentu, serta menyusun bukti potong dan SPT Masa.`
+      }
+    ],
+    units: [
+      {
+        nama: topik ? `Arsitektur Perbankan, OJK, LPS & ${topik}` : 'Sistem Moneter, Regulasi BI-OJK-LPS, dan Manajemen Operasional Bank',
+        sem: 1,
+        elemen: 'Ekonomi Bisnis dan Administrasi Umum Perbankan',
+        tps: [
+          {
+            teks: '[TP F.LP.1.1] menganalisis fungsi intermediasi perbankan, peran BI, OJK, dan LPS (penjaminan simpanan), serta tata kelola administrasi bank',
+            jp: 10,
+            ind: 'Peserta didik dapat menjelaskan syarat penjaminan simpanan LPS (3T) serta mengelola tata naskah dan arsip dokumen rekening nasabah.',
+            r1: 'Belum memahami perbedaan kewenangan pengaturan dan pengawasan antara Bank Indonesia, OJK, dan LPS.',
+            r2: 'Dapat menyebutkan fungsi bank dan syarat penjaminan LPS dengan bantuan modul.',
+            r3: 'Mampu menganalisis peran lembaga perbankan, syarat penjaminan LPS, dan tata kelola administrasi bank secara mandiri.',
+            r4: 'Mampu mengevaluasi dampak perubahan suku bunga acuan (BI-Rate) terhadap suku bunga simpanan dan kredit perbankan.',
+            teknik: 'Tes tertulis dan analisis studi kasus moneter'
+          }
+        ]
+      },
+      {
+        nama: 'Operasional Kas Teller, Deteksi Uang 3D/UV, Kliring, dan Transfer BI-FAST / RTGS',
+        sem: 1,
+        elemen: 'Pengelolaan Kas Kecil dan Operasional Kas Teller Perbankan',
+        tps: [
+          {
+            teks: '[TP F.LP.2.1] mempraktikkan SOP layanan kas teller (setoran/penarikan tunai), verifikasi keaslian uang rupiah/valas (3D & UV), dan penutupan kas teller harian',
+            jp: 14,
+            ind: 'Peserta didik dapat menghitung uang tunai dengan cepat dan akurat, memverifikasi ciri keaslian uang rupiah, dan menyusun laporan mutasi kas teller.',
+            r1: 'Masih terdapat selisih hitung uang fisik dan belum lancar mengoperasikan alat deteksi UV/mesin hitung uang.',
+            r2: 'Dapat melayani transaksi setoran dan penarikan tunai dengan panduan slip dan pendampingan.',
+            r3: 'Mampu melayani transaksi kas teller sesuai SOP dengan ramah, cepat, teliti (zero discrepancy), dan mandiri.',
+            r4: 'Mampu menangani prosedur penemuan uang yang diragukan keasliannya serta transaksi pertukaran valuta asing (banknotes) dengan kurs beli/jual.',
+            teknik: 'Simulasi unjuk kerja teller bank mini'
+          },
+          {
+            teks: '[TP F.LP.2.2] memverifikasi keabsahan warkat kliring (cek dan bilyet giro) serta memproses transfer dana melalui BI-FAST, SKNBI, QRIS, dan RTGS',
+            jp: 12,
+            ind: 'Peserta didik dapat memeriksa syarat formal cek/bilyet giro, mengidentifikasi alasan tolakan kliring, dan memilih jalur transfer (BI-FAST vs RTGS).',
+            r1: 'Belum dapat membedakan batasan nominal, biaya, dan waktu penyelesaian antara BI-FAST, SKNBI, dan BI-RTGS.',
+            r2: 'Dapat memeriksa warkat cek dan bilyet giro dengan daftar periksa (checklist).',
+            r3: 'Mampu memverifikasi warkat kliring dan memproses transaksi transfer dana BI-FAST serta RTGS secara tepat dan mandiri.',
+            r4: 'Mampu menganalisis mekanisme sanksi penarikan cek/bilyet giro kosong dan Daftar Hitam Nasional (DHN) Bank Indonesia.',
+            teknik: 'Praktik verifikasi warkat dan simulasi transfer'
+          }
+        ]
+      },
+      {
+        nama: 'Layanan Customer Service (KYC & APU-PPT), Produk Simpanan, dan Analisis Kredit 5C & SLIK OJK',
+        sem: 1,
+        elemen: 'Layanan Lembaga Perbankan, Digital Banking (BI-FAST & QRIS), dan Analisis Kredit 5C',
+        tps: [
+          {
+            teks: '[TP F.LP.3.1] mempraktikkan Service Excellence Customer Service, prosedur KYC/CDD & APU-PPT dalam pembukaan rekening tabungan, giro, dan deposito',
+            jp: 14,
+            ind: 'Peserta didik dapat melayani pembukaan rekening baru, pengisian CIF, aktivasi Mobile Banking/QRIS, dan penanganan keluhan nasabah.',
+            r1: 'Tahapan verifikasi identitas nasabah (KYC) dan penjelasan fitur/biaya produk belum disampaikan secara lengkap.',
+            r2: 'Dapat melayani nasabah dengan bantuan lembar dialog skenario Customer Service.',
+            r3: 'Mampu mempraktikkan layanan Customer Service secara profesional, komunikatif, dan patuh prosedur KYC/APU-PPT secara mandiri.',
+            r4: 'Mampu mengidentifikasi profil transaksi mencurigakan (red flag APU-PPT) dan menerapkan perlindungan konsumen jasa keuangan.',
+            teknik: 'Role play Customer Service perbankan'
+          },
+          {
+            teks: '[TP F.LP.3.2] menganalisis kelayakan permohonan kredit menggunakan prinsip 5C, pembacaan informasi debitur SLIK OJK, dan perhitungan tabel angsuran kredit',
+            jp: 14,
+            ind: 'Peserta didik dapat membaca status kolektibilitas SLIK OJK (Kol 1 s.d. Kol 5) serta menyusun jadwal angsuran kredit metode flat, efektif, dan anuitas.',
+            r1: 'Belum memahami arti tingkat kolektibilitas kredit (Lancar, DPK, Kurang Lancar, Diragukan, Macet) pada laporan SLIK OJK.',
+            r2: 'Dapat menghitung angsuran kredit bunga flat dengan panduan rumus.',
+            r3: 'Mampu menyusun analisis kelayakan kredit 5C, membaca SLIK OJK, dan membuat tabel angsuran kredit (flat, efektif, anuitas) secara mandiri.',
+            r4: 'Mampu menyusun nota rekomendasi kredit (Credit Proposal Memo) lengkap dengan analisis rasio kemampuan bayar (Repayment Capacity).',
+            teknik: 'Studi kasus analisis kredit dan praktik spreadsheet'
+          }
+        ]
+      },
+      {
+        nama: 'Akuntansi Perbankan, Simulasi Core Banking, dan Perpajakan Jasa Perbankan',
+        sem: 2,
+        elemen: 'Akuntansi Perbankan (Pencatatan Simpanan, Kliring, Transfer, dan Kredit)',
+        tps: [
+          {
+            teks: '[TP F.LP.4.1] menjurnal transaksi penghimpunan dana, kliring, RAK antar-cabang, dan penyaluran kredit ke dalam sistem Akuntansi Perbankan hingga Laporan Keuangan Bank',
+            jp: 18,
+            ind: 'Peserta didik dapat mencatat mutasi rekening simpanan nasabah (liabilitas bank) dan kredit yang diberikan (aset bank) serta menyusun Neraca dan Laba Rugi Bank.',
+            r1: 'Masih terbalik menjurnal setoran dan penarikan tabungan karena menyamakan sudut pandang bank dengan sudut pandang nasabah.',
+            r2: 'Dapat menjurnal transaksi simpanan dan kredit dengan panduan bagan akun bank.',
+            r3: 'Mampu mencatat transaksi operasional bank ke jurnal perbankan dan menyusun laporan keuangan bank secara tepat dan mandiri.',
+            r4: 'Mampu menghitung rasio kesehatan bank meliputi LDR (Loan to Deposit Ratio), NPL, BOPO, dan CAR.',
+            teknik: 'Praktik pembukuan akuntansi perbankan'
+          },
+          {
+            teks: '[TP F.LP.5.1] mengoperasikan aplikasi Core Banking / Spreadsheet Perbankan serta menghitung PPh Final Pasal 4 ayat (2) atas bunga simpanan dan perpajakan bank',
+            jp: 16,
+            ind: 'Peserta didik dapat mengentri mutasi harian pada aplikasi bank mini serta menghitung potongan pajak bunga tabungan/deposito 20% (di atas Rp7.500.000).',
+            r1: 'Masih memotong pajak bunga 20% atas saldo tabungan/deposito yang nilai pokoknya tidak melebihi Rp7.500.000.',
+            r2: 'Dapat menghitung bunga bersih deposito setelah pajak dengan rumus panduan.',
+            r3: 'Mampu mengoperasikan sistem komputer akuntansi perbankan dan menghitung serta melaporkan pajak bunga simpanan secara akurat dan mandiri.',
+            r4: 'Mampu merancang otomasi buku tabungan, bilyet deposito, dan bukti potong PPh Pasal 4 ayat (2) pada aplikasi Bank Mini SMK.',
+            teknik: 'Praktik komputer perbankan dan perhitungan pajak'
+          }
+        ]
+      }
+    ]
+  };
+}
+
+// ============================================================================
+// 10. LAYANAN PERBANKAN SYARIAH (MAPEL PILIHAN FASE F - KELAS XII)
+// Pembaruan Inspirasi Ruang GTK: Penomoran Baru PSAK Syariah (401–410 eks 101–112)
+// ============================================================================
+function generatePerbankanSyariah(fase: string, topik: string): CurriculumResponse {
+  const f = fase === 'E' ? 'F' : fase;
+  return {
+    isFallback: true,
+    cp: [
+      {
+        elemen: 'Fiqih Muamalah, Regulasi Bank Syariah, dan Tata Kelola Syariah',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu memahami landasan hukum fiqih muamalah ekonomi Islam, larangan transaksi yang mengandung unsur riba, maysir, gharar, tadlis, dan dharar, kedudukan fatwa Dewan Syariah Nasional MUI (DSN-MUI), peran pengawasan Dewan Pengawas Syariah (DPS), serta regulasi perbankan syariah oleh OJK dan Bank Indonesia.`
+      },
+      {
+        elemen: 'Operasional Kas Teller Syariah, Islamic Customer Service, dan Dana Kebajikan (ZISWAF)',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menerapkan standar Islamic Service Excellence (akhlak pelayanan shiddiq, amanah, fathanah, tabligh), prosedur KYC/CDD pembukaan rekening syariah, operasional kas teller syariah, transaksi perbankan digital syariah, serta pengelolaan dana kebajikan (Qardhul Hasan) dan penghimpunan/penyaluran ZISWAF (Zakat, Infaq, Shadaqah, dan Wakaf Uang).`
+      },
+      {
+        elemen: 'Produk Penghimpunan Dana Bank Syariah (Akad Wadiah dan Mudharabah)',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu memproses administrasi pembukaan, mutasi, dan penutupan rekening tabungan dan giro syariah berbasis akad Wadiah Yad Dhamanah, penempatan deposito dan tabungan investasi berbasis akad Mudharabah Mutlaqah dan Mudharabah Muqayyadah, serta menghitung distribusi bagi hasil (nisbah) dengan metode Revenue Sharing dan Profit Sharing.`
+      },
+      {
+        elemen: 'Produk Pembiayaan Bank Syariah (Murabahah, Salam, Istishna, Mudharabah, Musyarakah, Ijarah)',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menganalisis kelayakan pembiayaan syariah (5C + 1S Sharia Compliance), mensimulasikan pembiayaan jual beli (Murabahah, Salam, Istishna'), pembiayaan kerja sama bagi hasil (Mudharabah, Musyarakah, dan Musyarakah Mutanaqishah / MMQ), pembiayaan sewa (Ijarah dan Ijarah Muntahiya Bittamlik / IMBT), serta jasa perbankan syariah (Wakalah, Kafalah, Hawalah, Rahn, dan Sharf).`
+      },
+      {
+        elemen: 'Akuntansi Perbankan Syariah (PSAK Syariah 401–410 / eks PSAK 101–112)',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu menerapkan Kerangka Dasar Penyusunan dan Penyajian Laporan Keuangan Syariah (KDPPLKS) serta standar akuntansi transaksi syariah berdasarkan penomoran baru SAK Indonesia (PSAK 401 Penyajian Laporan Keuangan Syariah eks PSAK 101, PSAK 402 Murabahah eks PSAK 102, PSAK 403 Salam, PSAK 404 Istishna, PSAK 405 Mudharabah, PSAK 406 Musyarakah, PSAK 407 Ijarah, dan PSAK 409 ZIS), mencatat jurnal umum, buku besar, dana syirkah temporer, dan penyesuaian margin/bagi hasil.`
+      },
+      {
+        elemen: 'Komputer Akuntansi dan Pelaporan Keuangan Bank Syariah',
+        teks: `Pada akhir Fase ${f}, peserta didik mampu mengoperasikan aplikasi spreadsheet dan software komputer akuntansi perbankan syariah untuk memproses transaksi penghimpunan dana dan pembiayaan, serta menyajikan Laporan Posisi Keuangan Syariah, Laporan Laba Rugi, Laporan Rekonsiliasi Pendapatan dan Bagi Hasil, Laporan Sumber dan Penggunaan Dana Zakat, serta Laporan Sumber dan Penggunaan Dana Kebajikan.`
+      }
+    ],
+    units: [
+      {
+        nama: topik ? `Fiqih Muamalah, Fatwa DSN-MUI & ${topik}` : 'Prinsip Fiqih Muamalah, Larangan Riba-Maysir-Gharar, dan Peran DPS / DSN-MUI',
+        sem: 1,
+        elemen: 'Fiqih Muamalah, Regulasi Bank Syariah, dan Tata Kelola Syariah',
+        tps: [
+          {
+            teks: '[TP F.LPS.1.1] menganalisis perbedaan fundamental sistem bunga konvensional dengan prinsip bagi hasil syariah serta identifikasi unsur Riba, Maysir, Gharar, dan Zalim',
+            jp: 10,
+            ind: 'Peserta didik dapat membedakan skema bunga dan bagi hasil serta mengidentifikasi bentuk-bentuk transaksi yang dilarang dalam muamalah keuangan.',
+            r1: 'Belum mampu menjelaskan perbedaan mendasar antara penetapan bunga di muka dengan nisbah bagi hasil.',
+            r2: 'Dapat menyebutkan pengertian riba, maysir, dan gharar beserta contohnya dengan panduan modul.',
+            r3: 'Mampu menganalisis perbedaan operasional bank syariah dan bank konvensional serta mengidentifikasi transaksi MAGHRIB (Maysir, Gharar, Riba) secara mandiri.',
+            r4: 'Mampu menelaah kesesuaian suatu produk keuangan digital modern terhadap fatwa Dewan Syariah Nasional MUI (DSN-MUI).',
+            teknik: 'Tes tertulis dan analisis studi kasus muamalah'
+          },
+          {
+            teks: '[TP F.LPS.2.1] mempraktikkan layanan Islamic Customer Service, operasional Teller Syariah, serta pengelolaan dana kebajikan (Qardhul Hasan) dan ZISWAF',
+            jp: 12,
+            ind: 'Peserta didik dapat menunjukkan etika pelayanan islami, menjelaskan rukun akad kepada nasabah, dan melayani transaksi kas serta penerimaan zakat/wakaf.',
+            r1: 'Penjelasan pilihan akad (Wadiah vs Mudharabah) kepada calon nasabah masih belum tepat.',
+            r2: 'Dapat mempraktikkan pelayanan pembukaan rekening syariah dengan panduan skenario ijab kabul.',
+            r3: 'Mampu mempraktikkan layanan CS dan Teller Syariah beserta penjelasan akad secara fasih, santun, amanah, dan mandiri.',
+            r4: 'Mampu merancang program penghimpunan dan penyaluran dana ZISWAF produktif serta Qardhul Hasan bagi pelaku usaha ultra mikro.',
+            teknik: 'Role play pelayanan bank mini syariah'
+          }
+        ]
+      },
+      {
+        nama: 'Penghimpunan Dana Syariah (Wadiah & Mudharabah) dan Perhitungan Distribusi Bagi Hasil',
+        sem: 1,
+        elemen: 'Produk Penghimpunan Dana Bank Syariah (Akad Wadiah dan Mudharabah)',
+        tps: [
+          {
+            teks: '[TP F.LPS.3.1] mengelola administrasi tabungan/giro akad Wadiah Yad Dhamanah dan deposito investasi akad Mudharabah serta menghitung distribusi bagi hasil (Revenue Sharing)',
+            jp: 16,
+            ind: 'Peserta didik dapat menghitung saldo rata-rata harian (SRRH), porsi bagi hasil nasabah berdasarkan nisbah, Equivalent Rate, dan potongan pajak bagi hasil.',
+            r1: 'Masih keliru menerapkan rumus distribusi bagi hasil berdasarkan Saldo Rata-Rata Harian (SRRH) dan nisbah yang disepakati.',
+            r2: 'Dapat menghitung bagi hasil deposito mudharabah dengan tabel rumus terbimbing.',
+            r3: 'Mampu mengelola administrasi simpanan syariah dan menghitung tabel distribusi hasil usaha (nisbah revenue sharing) secara akurat dan mandiri.',
+            r4: 'Mampu membandingkan simulasi bagi hasil metode Revenue Sharing dengan metode Profit & Loss Sharing.',
+            teknik: 'Praktik perhitungan distribusi bagi hasil (nisbah)'
+          }
+        ]
+      },
+      {
+        nama: 'Pembiayaan Jual Beli (Murabahah, Salam, Istishna), Bagi Hasil (Musyarakah/MMQ), dan Sewa (Ijarah/IMBT)',
+        sem: 1,
+        elemen: 'Produk Pembiayaan Bank Syariah (Murabahah, Salam, Istishna, Mudharabah, Musyarakah, Ijarah)',
+        tps: [
+          {
+            teks: '[TP F.LPS.4.1] menyusun simulasi pembiayaan jual beli Murabahah (termasuk Murabahah bil Wakalah), Salam, dan Istishna beserta jadwal angsuran',
+            jp: 16,
+            ind: 'Peserta didik dapat menghitung harga perolehan, margin keuntungan yang disepakati, diskon pemasok, uang muka (urbun), dan jadwal angsuran piutang murabahah.',
+            r1: 'Belum memahami ketentuan bahwa margin murabahah yang telah disepakati dalam akad tidak boleh berubah naik selama masa pembiayaan.',
+            r2: 'Dapat menghitung harga jual murabahah dan angsuran bulanan dengan rumus panduan.',
+            r3: 'Mampu menyusun simulasi akad dan perhitungan pembiayaan Murabahah, Salam, dan Istishna secara tepat dan mandiri.',
+            r4: 'Mampu menganalisis perlakuan akuntansi dan syariah atas potongan pelunasan dipercepat (muqasah) dan denda keterlambatan (ta’zir untuk dana sosial).',
+            teknik: 'Simulasi akad pembiayaan dan uji hitung'
+          },
+          {
+            teks: '[TP F.LPS.4.2] menganalisis skema pembiayaan kemitraan (Mudharabah, Musyarakah, MMQ), pembiayaan sewa (Ijarah & IMBT), serta jasa Rahn dan Wakalah',
+            jp: 14,
+            ind: 'Peserta didik dapat menghitung pembagian hasil usaha kemitraan Musyarakah, angsuran kepemilikan bertahap MMQ, dan biaya ujrah Ijarah/gadai emas (Rahn).',
+            r1: 'Masih tertukar antara ketentuan pembagian keuntungan (sesuai nisbah) dan pembagian kerugian (sesuai porsi modal) pada akad Musyarakah.',
+            r2: 'Dapat menghitung bagi hasil Musyarakah dan ujrah Ijarah dengan bantuan lembar kerja.',
+            r3: 'Mampu menganalisis kelayakan 5C+1S dan menghitung skema pembiayaan Mudharabah, Musyarakah, IMBT, dan Rahn secara mandiri.',
+            r4: 'Mampu merancang skema pembiayaan kepemilikan rumah syariah (KPR Syariah) dengan perbandingan akad Murabahah vs Musyarakah Mutanaqishah (MMQ).',
+            teknik: 'Studi kasus pembiayaan syariah dan tes tertulis'
+          }
+        ]
+      },
+      {
+        nama: 'Akuntansi Transaksi Perbankan Syariah (PSAK 401–410 eks PSAK 101–112) & Laporan Keuangan Syariah',
+        sem: 2,
+        elemen: 'Akuntansi Perbankan Syariah (PSAK Syariah 401–410 / eks PSAK 101–112)',
+        tps: [
+          {
+            teks: '[TP F.LPS.5.1] mencatat jurnal transaksi penghimpunan dana Wadiah & Dana Syirkah Temporer (Mudharabah) serta transaksi pembiayaan sesuai PSAK Syariah 401–410 (eks PSAK 101–112)',
+            jp: 18,
+            ind: 'Peserta didik dapat menjurnal perolehan aset murabahah, pengakuan piutang murabahah, margin murabahah tangguhan (PSAK 402/102), dan investasi mudharabah/musyarakah (PSAK 405/406).',
+            r1: 'Masih keliru mengklasifikasikan akun Dana Syirkah Temporer ke dalam kelompok Liabilitas biasa pada neraca bank syariah.',
+            r2: 'Dapat menjurnal transaksi murabahah dan simpanan syariah dengan daftar akun standar bank syariah.',
+            r3: 'Mampu mencatat jurnal transaksi perbankan syariah sesuai PSAK 401–410 (eks PSAK 101–112) secara akurat dan mandiri.',
+            r4: 'Mampu menghitung dan menjurnal amortisasi margin murabahah tangguhan serta penyisihan penghapusan aset produktif (PPAP) syariah.',
+            teknik: 'Praktik penjurnalan akuntansi bank syariah'
+          },
+          {
+            teks: '[TP F.LPS.6.1] mengoperasikan aplikasi spreadsheet/komputer akuntansi syariah untuk menyajikan Laporan Keuangan Bank Syariah lengkap sesuai PSAK 401 (eks PSAK 101)',
+            jp: 16,
+            ind: 'Peserta didik dapat menyusun Laporan Posisi Keuangan (Aset = Liabilitas + Dana Syirkah Temporer + Ekuitas), Laporan Laba Rugi, Laporan Dana Zakat, dan Laporan Dana Kebajikan.',
+            r1: 'Struktur Laporan Posisi Keuangan belum memisahkan kelompok Dana Syirkah Temporer dari Liabilitas dan Ekuitas.',
+            r2: 'Dapat menyusun Laporan Posisi Keuangan dan Laba Rugi Syariah dengan template PSAK 401 (eks PSAK 101).',
+            r3: 'Mampu menyajikan paket lengkap Laporan Keuangan Bank Syariah termasuk Laporan Dana Zakat dan Dana Kebajikan secara seimbang dan mandiri.',
+            r4: 'Mampu menganalisis rasio kinerja keuangan bank syariah meliputi NPF (Non-Performing Financing), FDR (Financing to Deposit Ratio), dan ROA.',
+            teknik: 'Proyek penyusunan laporan keuangan bank syariah terkomputerisasi'
+          }
+        ]
+      }
+    ]
+  };
 }

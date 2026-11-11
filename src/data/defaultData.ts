@@ -96,7 +96,12 @@ export const blankState = (): AppState => ({
 });
 
 export const intiText = (s: string): string => {
-  return String(s || '').trim().replace(/^peserta didik\s+(mampu|dapat)\s+/i, '').replace(/[.\s]+$/, '');
+  return String(s || '')
+    .trim()
+    .replace(/^peserta didik\s+(mampu|dapat)\s+/i, '')
+    .replace(/^\[TP\s+[^\]]+\]\s*/i, '')
+    .replace(/^peserta didik\s+(mampu|dapat)\s+/i, '')
+    .replace(/[.\s]+$/, '');
 };
 
 export const genKktp = (t: TpItem) => {
@@ -107,7 +112,7 @@ export const genKktp = (t: TpItem) => {
     r2: `Dapat ${x} sebagian, dengan bantuan guru atau teman.`,
     r3: `Dapat ${x} secara mandiri dan tepat.`,
     r4: `Dapat ${x} secara mandiri dan tepat, serta mampu menjelaskan atau menerapkannya pada situasi baru.`,
-    teknik: 'Observasi, tes tertulis, dan penugasan'
+    teknik: 'Observasi, tes tertulis, dan unjuk kerja praktik'
   };
 };
 
@@ -117,24 +122,24 @@ export const genModul = (u: UnitItem): ModulItem => {
   return {
     awal: `Peserta didik telah mempelajari konsep dasar yang menjadi prasyarat ${lcNm} pada pembelajaran sebelumnya.`,
     dimensi: ['Penalaran Kritis', 'Kolaborasi', 'Kemandirian'],
-    sarana: 'Buku teks, LKPD, papan tulis, alat tulis; proyektor atau gawai bila tersedia.',
-    target: 'Peserta didik reguler. Sediakan pendampingan tambahan bagi yang masih kesulitan dan tantangan lanjutan bagi yang cepat memahami.',
-    model: 'Pembelajaran berbasis masalah dengan diskusi kelompok kecil dan presentasi hasil.',
-    pemahaman: `${nm} dijumpai dalam kehidupan sehari-hari. Dengan memahaminya, peserta didik dapat mengambil keputusan dan menyelesaikan masalah secara tepat.`,
-    pemantik: `1. Di mana kamu pernah menjumpai ${lcNm} dalam kehidupan sehari-hari?\n2. Apa yang terjadi jika kita keliru menerapkannya?`,
-    pendahuluan: '1. Guru memberi salam, mengecek kehadiran, dan mengajak berdoa.\n2. Guru menyampaikan tujuan pembelajaran dan kaitannya dengan kehidupan sehari-hari.\n3. Guru mengajukan pertanyaan pemantik dan peserta didik menjawab secara singkat.\n4. Guru melakukan asesmen diagnostik singkat untuk mengetahui kesiapan belajar.',
-    memahami: '1. Peserta didik mengamati contoh dan situasi yang disajikan guru.\n2. Peserta didik mendiskusikan konsep kunci dalam kelompok kecil.\n3. Guru membimbing penarikan kesimpulan konsep secara bersama.',
-    mengaplikasi: '1. Peserta didik mengerjakan LKPD secara berkelompok.\n2. Peserta didik menerapkan konsep pada masalah kontekstual.\n3. Perwakilan kelompok mempresentasikan hasil dan menerima tanggapan.',
-    merefleksi: '1. Peserta didik menuliskan bagian yang sudah dan belum dipahami.\n2. Peserta didik memberi umpan balik pada hasil kerja teman.\n3. Guru memberi penguatan dan umpan balik.',
-    penutup: '1. Guru dan peserta didik menyimpulkan pembelajaran.\n2. Guru menyampaikan tugas lanjutan dan rencana pertemuan berikutnya.\n3. Berdoa dan salam penutup.',
-    diagnostik: 'Pertanyaan singkat lisan atau tertulis di awal pembelajaran untuk memetakan pengetahuan prasyarat.',
-    formatif: 'Observasi saat diskusi, penilaian LKPD, dan umpan balik tertulis. Acuan penilaian mengikuti KKTP pada bagian asesmen di bawah.',
-    sumatif: 'Tes tertulis atau penugasan di akhir unit. Acuan penilaian mengikuti KKTP pada bagian asesmen di bawah.',
-    remedial: 'Pembelajaran ulang dengan penjelasan yang disederhanakan, tutor sebaya, dan latihan terbimbing bagi peserta didik yang belum mencapai kriteria cukup.',
-    pengayaan: 'Soal pemecahan masalah tingkat lanjut atau proyek mini bagi peserta didik yang telah mencapai kriteria sangat baik.',
-    refGuru: '1. Apakah tujuan pembelajaran tercapai?\n2. Bagian mana yang perlu diperbaiki?\n3. Peserta didik mana yang perlu tindak lanjut?',
-    refSiswa: '1. Apa yang paling kamu pahami hari ini?\n2. Bagian mana yang masih membingungkan?\n3. Apa yang akan kamu lakukan agar lebih paham?',
-    pustaka: 'Isi dengan judul buku teks utama, penulis, penerbit, dan tahun terbit.'
+    sarana: 'Buku teks Kurikulum Merdeka, LKPD, dokumen bukti transaksi/kasus nyata, papan tulis, alat tulis; komputer/spreadsheet dan proyektor bila tersedia.',
+    target: 'Peserta didik reguler. Sediakan pendampingan tambahan (scaffolding) bagi yang masih kesulitan dan tantangan studi kasus lanjutan bagi yang cepat memahami.',
+    model: 'Pembelajaran Mendalam (Deep Learning: Berkesadaran/Mindful, Bermakna/Meaningful, Menggembirakan/Joyful) berbasis Masalah/Projek (PBL/PjBL) sesuai Inspirasi Ruang GTK Kemendikdasmen.',
+    pemahaman: `${nm} diterapkan secara nyata di dunia kerja dan industri. Dengan memahaminya secara bermakna, peserta didik mampu mengambil keputusan finansial/profesional dan menyelesaikan masalah secara akurat dan bertanggung jawab.`,
+    pemantik: `1. Di mana kamu pernah menjumpai penerapan ${lcNm} dalam dunia usaha atau kehidupan sehari-hari?\n2. Mengapa ketelitian dan integritas sangat penting ketika kita memproses ${lcNm}?`,
+    pendahuluan: '1. Guru memberi salam, mengecek kehadiran, mengajak berdoa, dan membangun kesiapan belajar yang berkesadaran (Mindful Learning).\n2. Guru menyampaikan tujuan pembelajaran serta mengaitkan manfaat materi dengan dunia kerja nyata (Meaningful Learning).\n3. Guru mengajukan pertanyaan pemantik dengan suasana interaktif yang menggembirakan (Joyful Learning).\n4. Guru melakukan asesmen diagnostik singkat untuk memetakan kesiapan belajar peserta didik.',
+    memahami: '1. Peserta didik mengamati dokumen/studi kasus nyata yang disajikan guru secara berkesadaran (Mindful).\n2. Peserta didik mendiskusikan konsep kunci dan prosedur kerja dalam kelompok kecil secara bermakna (Meaningful).\n3. Guru memfasilitasi elaborasi dan penarikan kesimpulan konsep bersama peserta didik.',
+    mengaplikasi: '1. Peserta didik mengerjakan LKPD dan simulasi praktik secara kolaboratif.\n2. Peserta didik menerapkan konsep pada penyelesaian masalah/dokumen transaksi kontekstual dunia kerja.\n3. Perwakilan kelompok mempresentasikan hasil kerja dengan suasana aktif dan menggembirakan (Joyful) serta menerima umpan balik.',
+    merefleksi: '1. Peserta didik melakukan refleksi berkesadaran mengenai bagian yang sudah dikuasai dan yang masih perlu ditingkatkan.\n2. Peserta didik saling memberikan apresiasi dan umpan balik konstruktif atas hasil kerja rekan sejawat.\n3. Guru memberikan penguatan konsep dan konfirmasi akhir.',
+    penutup: '1. Guru dan peserta didik menyimpulkan intisari pembelajaran hari ini.\n2. Guru menyampaikan informasi tindak lanjut dan agenda pertemuan berikutnya.\n3. Berdoa bersama dan salam penutup.',
+    diagnostik: 'Pertanyaan pemantik lisan atau kuis singkat di awal pembelajaran untuk memetakan penguasaan prasyarat.',
+    formatif: 'Observasi keaktifan diskusi, penilaian unjuk kerja LKPD, dan umpan balik langsung mengacu pada rubrik KKTP.',
+    sumatif: 'Uji kompetensi praktik dan/atau tes tertulis di akhir lingkup materi mengacu pada kriteria KKTP.',
+    remedial: 'Pendampingan terbimbing (coaching), penyederhanaan studi kasus, dan tutor sebaya bagi peserta didik pada kriteria Perlu Bimbingan/Cukup.',
+    pengayaan: 'Studi kasus tingkat lanjut (analisis laporan/audit kasus industri) bagi peserta didik yang telah mencapai kriteria Sangat Baik.',
+    refGuru: '1. Apakah pengalaman belajar Memahami, Mengaplikasi, dan Merefleksi berjalan optimal?\n2. Bagian mana dari strategi pembelajaran yang perlu ditingkatkan?\n3. Peserta didik mana yang memerlukan pendampingan khusus pada pertemuan berikutnya?',
+    refSiswa: '1. Hal baru paling bermakna apa yang kamu kuasai pada pembelajaran hari ini?\n2. Bagian mana yang menurutmu masih menantang dan perlu latihan lagi?\n3. Bagaimana kamu akan menerapkan keterampilan ini di dunia kerja/kehidupan nyata?',
+    pustaka: 'Panduan Inspirasi CP & ATP Ruang GTK Kemendikdasmen (Keputusan Kepala BSKAP Nomor 046/H/KR/2025), Buku Teks Utama Kemendikdasmen, serta Standar Akuntansi Keuangan (SAK EP / SAK EMKM) & Regulasi Perpajakan terbaru.'
   };
 };
 
@@ -143,31 +148,54 @@ export const genLkpd = (u: UnitItem, tps: TpItem[]): LkpdItem => {
   const lcNm = nm ? nm.charAt(0).toLowerCase() + nm.slice(1) : nm;
   return {
     judul: `LKPD ${nm}`,
-    petunjuk: '1. Tulis nama kelompok dan anggota pada tempat yang disediakan.\n2. Baca setiap petunjuk dan pertanyaan dengan teliti.\n3. Diskusikan bersama anggota kelompok sebelum menulis jawaban.\n4. Tanyakan kepada guru jika ada hal yang belum jelas.\n5. Kumpulkan LKPD setelah selesai.',
+    petunjuk: '1. Tulis nama kelompok dan anggota pada tempat yang disediakan.\n2. Baca setiap petunjuk dan analisis dokumen/kasus dengan teliti.\n3. Diskusikan bersama anggota kelompok sebelum menuliskan penyelesaian.\n4. Tanyakan kepada guru jika ada instruksi yang belum jelas.\n5. Periksa kembali ketelitian perhitungan dan kerapian sebelum dikumpulkan.',
     tujuan: tps.map((t, i) => `${i + 1}. ${t.teks}`).join('\n'),
-    alat: 'Alat tulis, buku catatan, dan bahan pendukung dari guru.',
-    kegiatan: '1. Amati contoh atau situasi yang diberikan guru.\n2. Diskusikan bersama kelompokmu: apa yang sudah kamu ketahui dan apa yang ingin kamu cari tahu.\n3. Kerjakan tugas di bawah ini.',
-    tugas: tps.map((t, i) => `Tugas ${i + 1}. Kerjakan dan tuliskan langkah penyelesaianmu untuk: ${intiText(t.teks)}.`).join('\n'),
+    alat: 'Alat tulis, kalkulator/spreadsheet, buku catatan, dan lembar dokumen sumber/studi kasus dari guru.',
+    kegiatan: '1. Amati dokumen atau studi kasus nyata yang diberikan guru (Memahami).\n2. Diskusikan bersama kelompokmu: identifikasi data penting dan langkah penyelesaiannya.\n3. Kerjakan tugas praktik di bawah ini secara teliti dan sistematis (Mengaplikasi).',
+    tugas: tps.map((t, i) => `Tugas ${i + 1}. Analisis dan tuliskan langkah penyelesaian secara lengkap untuk: ${intiText(t.teks)}.`).join('\n'),
     baris: 3,
-    kesimpulan: `Tuliskan kesimpulan kelompokmu tentang ${lcNm}.`,
-    refleksi: 'Beri tanda centang sesuai pemahamanmu setelah mengerjakan LKPD ini.'
+    kesimpulan: `Tuliskan kesimpulan kelompokmu tentang konsep dan penerapan ${lcNm} (Merefleksi).`,
+    refleksi: 'Beri tanda centang sesuai tingkat penguasaanmu setelah menyelesaikan LKPD ini.'
   };
 };
 
 export const seedSampleData = (): AppState => {
   const s = blankState();
   s.sample = true;
-  s.profil.mapel = 'Akuntansi';
+  s.profil.mapel = 'Dasar-Dasar Akuntansi dan Keuangan Lembaga';
   s.profil.fase = 'E';
   s.profil.kelas = 'X';
   s.bulan = getMonths(true);
 
   const cpList = [
-    ['Proses Bisnis', 'Peserta didik mampu memahami proses bisnis bidang akuntansi dan keuangan lembaga secara menyeluruh pada berbagai jenis perusahaan.'],
-    ['Perkembangan Teknologi', 'Peserta didik mampu memahami perkembangan teknologi di industri dan dunia kerja serta isu-isu global di bidang akuntansi.'],
-    ['Profesi dan Kewirausahaan', 'Peserta didik mampu memahami profesi akuntansi, peluang kerja, serta berwirausaha di bidang akuntansi dan keuangan.'],
-    ['Etika Profesi', 'Peserta didik mampu menerapkan etika profesi akuntansi dalam menjalankan tugas dan pekerjaan.'],
-    ['Dasar Akuntansi', 'Peserta didik mampu memahami prinsip dan siklus akuntansi perusahaan jasa secara mendasar.']
+    [
+      'Proses Bisnis di Bidang Akuntansi dan Keuangan Lembaga',
+      'Pada akhir Fase E, peserta didik mampu memahami tahapan proses akuntansi secara menyeluruh baik akuntansi pada perusahaan jasa, perusahaan dagang, dan perusahaan manufaktur antara lain menerapkan prinsip praktik profesional dalam bekerja, menerapkan praktik-praktik kesehatan dan keselamatan di tempat kerja, memproses entry jurnal, memproses buku besar, menyusun laporan keuangan, serta mengoperasikan paket program pengolah angka/spreadsheet.'
+    ],
+    [
+      'Perkembangan Teknologi di Industri dan Dunia Kerja serta Isu-Isu Global di Bidang Akuntansi dan Keuangan Lembaga',
+      'Pada akhir Fase E, peserta didik mampu memahami perkembangan standar akuntansi mulai dari pembukuan secara manual sampai kepada penggunaan teknologi sebagai alat bantu, serta mengikuti perkembangan aplikasi komputer akuntansi yang banyak digunakan di dunia industri dan dunia kerja (cloud accounting, fintech, e-commerce, dan keamanan data finansial).'
+    ],
+    [
+      'Profil Pekerjaan/Profesi (Job Profile) dan Peluang Usaha di Bidang Akuntansi dan Keuangan Lembaga',
+      'Pada akhir Fase E, peserta didik mampu memahami profesi akuntansi lulusan SMK untuk mendapatkan gambaran pekerjaan pada Tingkat Kualifikasi II KKNI Teknisi Akuntansi Yunior serta meningkat menjadi Tingkat Kualifikasi IV KKNI Teknisi Akuntansi Madya sehingga terinspirasi untuk membangun visi dan passion, serta melakukan pembelajaran berbasis projek nyata sebagai simulasi projek kewirausahaan.'
+    ],
+    [
+      'Lingkup Kerja pada Bidang Akuntansi dan Keuangan Lembaga serta Etika Profesi',
+      'Pada akhir Fase E, peserta didik mampu memahami siklus akuntansi pada perusahaan jasa, dagang, dan manufaktur secara mendasar, serta menerapkan pedoman, prosedur, dan aturan berkaitan dengan industri jasa keuangan dan profesi-profesi yang ada dalam industri jasa keuangan beserta kode etik profesi akuntan Indonesia.'
+    ],
+    [
+      'Keselamatan dan Kesehatan Kerja Lingkungan Hidup (K3LH) dan Budaya Kerja Industri',
+      'Pada akhir Fase E, peserta didik mampu menerapkan merawat peralatan kerja, menerapkan perilaku kerja aman di area kerja, mengidentifikasi bahaya dan keadaan darurat, serta menerapkan budaya kerja industri (Ringkas, Rapi, Resik, Rawat, Rajin / 5R) dan ergonomi kerja perkantoran akuntansi.'
+    ],
+    [
+      'Prinsip-Prinsip dan Konsep Akuntansi Dasar dan Perbankan Dasar',
+      'Pada akhir Fase E, peserta didik mampu memahami pengertian akuntansi, tujuan pencatatan akuntansi, pihak-pihak yang membutuhkan informasi akuntansi, prinsip-prinsip akuntansi, serta konsep akuntansi dasar dan perbankan dasar (sejarah uang, fungsi bank, simpanan tabungan, giro, dan deposito).'
+    ],
+    [
+      'Penggunaan Aplikasi Pengolah Angka (Spreadsheet)',
+      'Pada akhir Fase E, peserta didik mampu mengoperasikan paket program pengolah angka (spreadsheet), mengolah data berdasarkan karakter, mengolah data berdasarkan rumus umum, rumus statistik, rumus finansial, fungsi logika, fungsi pembacaan tabel (VLOOKUP/HLOOKUP/XLOOKUP), serta menyusun siklus laporan keuangan otomatis pada spreadsheet.'
+    ]
   ];
 
   const E: Record<string, string> = {};
@@ -181,10 +209,10 @@ export const seedSampleData = (): AppState => {
     const u: UnitItem = { id: uid(), sem, nama, cpId: E[el] };
     s.unit.push(u);
     tps.forEach(t => {
-      s.tp.push({
+      const tpObj: TpItem = {
         id: uid(),
         unitId: u.id,
-        teks: `Peserta didik dapat ${t[0]}`,
+        teks: `Peserta didik mampu ${t[0]}`,
         jp: t[1],
         ind: '',
         r1: '',
@@ -192,42 +220,38 @@ export const seedSampleData = (): AppState => {
         r3: '',
         r4: '',
         teknik: ''
-      });
+      };
+      const k = genKktp(tpObj);
+      tpObj.ind = k.ind;
+      tpObj.r1 = k.r1;
+      tpObj.r2 = k.r2;
+      tpObj.r3 = k.r3;
+      tpObj.r4 = k.r4;
+      tpObj.teknik = k.teknik;
+      s.tp.push(tpObj);
     });
     return u;
   };
 
-  const u1 = addUnitWithTp(1, 'Proses Bisnis dan Lingkup Akuntansi', 'Proses Bisnis', [
-    ['menjelaskan proses bisnis bidang akuntansi dan keuangan lembaga', 8],
-    ['mengidentifikasi jenis-jenis perusahaan dalam dunia ekonomi', 12]
+  const u1 = addUnitWithTp(1, 'Proses Bisnis dan Budaya Kerja Industri (K3LH & 5R) Akuntansi', 'Proses Bisnis di Bidang Akuntansi dan Keuangan Lembaga', [
+    ['[TP E.1.1] menganalisis karakteristik proses bisnis perusahaan jasa, dagang, dan manufaktur serta alur siklus akuntansi secara menyeluruh', 12],
+    ['[TP E.5.1] menerapkan prosedur K3LH perkantoran, ergonomi kerja komputer, dan budaya kerja industri 5R (Ringkas, Rapi, Resik, Rawat, Rajin)', 8]
   ]);
-  addUnitWithTp(1, 'Perkembangan Teknologi Akuntansi', 'Perkembangan Teknologi', [
-    ['menjelaskan perkembangan teknologi digital pada bidang akuntansi dan keuangan', 8],
-    ['menerapkan literasi digital dalam pencatatan keuangan', 8]
+  addUnitWithTp(1, 'Perkembangan Teknologi Finansial (Fintech), Profesi Teknisi Akuntansi KKNI, dan Etika Profesi', 'Perkembangan Teknologi di Industri dan Dunia Kerja serta Isu-Isu Global di Bidang Akuntansi dan Keuangan Lembaga', [
+    ['[TP E.2.1] menganalisis perkembangan teknologi akuntansi dari manual menuju Cloud Accounting, Fintech, QRIS, dan keamanan data siber finansial', 10],
+    ['[TP E.3.1] memetakan profil profesi Teknisi Akuntansi Yunior (KKNI Level II), peluang wirausaha jasa pembukuan, dan menerapkan kode etik profesi akuntan', 10]
   ]);
-  addUnitWithTp(1, 'Profesi dan Kewirausahaan Akuntansi', 'Profesi dan Kewirausahaan', [
-    ['mengidentifikasi berbagai profesi di bidang akuntansi dan keuangan lembaga', 10],
-    ['merencanakan peluang wirausaha di bidang jasa akuntansi', 10]
+  addUnitWithTp(1, 'Prinsip Dasar Akuntansi, Persamaan Dasar Akuntansi, dan Siklus Akuntansi Perusahaan Jasa', 'Prinsip-Prinsip dan Konsep Akuntansi Dasar dan Perbankan Dasar', [
+    ['[TP E.6.1] menerapkan konsep persamaan dasar akuntansi (Aset = Liabilitas + Ekuitas) dan mekanisme debit-kredit dari bukti transaksi', 16],
+    ['[TP E.4.1] memproses siklus akuntansi perusahaan jasa mulai dari jurnal umum, posting buku besar, neraca saldo, jurnal penyesuaian, neraca lajur, hingga laporan keuangan', 20]
   ]);
-  addUnitWithTp(2, 'Etika Profesi Akuntan', 'Etika Profesi', [
-    ['menjelaskan prinsip-prinsip etika profesi akuntansi', 10],
-    ['menerapkan kode etik akuntan dalam praktik pekerjaan sehari-hari', 14]
+  addUnitWithTp(2, 'Perbankan Dasar: Sejarah Uang, Fungsi Bank, dan Produk Simpanan & Pinjaman', 'Prinsip-Prinsip dan Konsep Akuntansi Dasar dan Perbankan Dasar', [
+    ['[TP E.6.2] menganalisis sejarah uang, jenis lembaga keuangan bank & non-bank, serta prosedur layanan simpanan (tabungan, giro, deposito) dan kredit dasar', 16]
   ]);
-  addUnitWithTp(2, 'Pengantar Siklus Akuntansi Perusahaan Jasa', 'Dasar Akuntansi', [
-    ['menjelaskan persamaan dasar akuntansi dan mekanisme debet kredit', 16],
-    ['melakukan pencatatan transaksi ke dalam jurnal umum perusahaan jasa', 16]
+  addUnitWithTp(2, 'Aplikasi Pengolah Angka (Spreadsheet) untuk Otomasi Siklus Akuntansi', 'Penggunaan Aplikasi Pengolah Angka (Spreadsheet)', [
+    ['[TP E.7.1] mengoperasikan rumus matematika, statistik (SUM, AVERAGE, COUNTIF, SUMIF), fungsi logika (IF bertingkat, AND, OR), dan pembacaan tabel (VLOOKUP, HLOOKUP, XLOOKUP)', 20],
+    ['[TP E.7.2] merancang aplikasi siklus akuntansi perusahaan jasa terotomatisasi (Daftar Akun, Jurnal Umum, Buku Besar, Neraca Lajur, dan Laporan Keuangan) di Spreadsheet', 20]
   ]);
-
-  // Fill KKTP for first 3 TPs
-  s.tp.slice(0, 3).forEach(t => {
-    const k = genKktp(t);
-    t.ind = k.ind;
-    t.r1 = k.r1;
-    t.r2 = k.r2;
-    t.r3 = k.r3;
-    t.r4 = k.r4;
-    t.teknik = k.teknik;
-  });
 
   const autoSebarSem = (sem: Semester, state: AppState) => {
     const bs = state.bulan.filter(b => b.sem === sem);
@@ -258,8 +282,11 @@ export const seedSampleData = (): AppState => {
   autoSebarSem(1, s);
   autoSebarSem(2, s);
 
-  s.modul[u1.id] = genModul(u1);
-  s.lkpd[u1.id] = genLkpd(u1, s.tp.filter(t => t.unitId === u1.id));
+  s.unit.forEach(u => {
+    s.modul[u.id] = genModul(u);
+    s.lkpd[u.id] = genLkpd(u, s.tp.filter(t => t.unitId === u.id));
+  });
+
   s.ui.unit = u1.id;
   s.ui.unitL = u1.id;
 

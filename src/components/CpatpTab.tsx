@@ -90,9 +90,9 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
           onApplyAiData(data);
           applied = true;
           if (data.isFallback) {
-            showToast(`CP & ATP ${activeMapel} berhasil disusun sesuai Keputusan BSKAP No. 046/H/KR/2025!`);
+            showToast(`CP & ATP ${activeMapel} berhasil disusun sesuai Pembaruan Inspirasi Ruang GTK Kemendikdasmen (BSKAP 046/H/KR/2025)!`);
           } else {
-            showToast(`CP & ATP ${activeMapel} berhasil digenerate oleh AI sesuai BSKAP Kemendikdasmen!`);
+            showToast(`CP & ATP ${activeMapel} berhasil digenerate sesuai Inspirasi Ruang GTK Kemendikdasmen!`);
           }
           return;
         }
@@ -101,13 +101,13 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
       // Jika server tidak dapat dihubungi atau 500, lanjutkan ke fallback client-side otomatis
     }
 
-    // 2. Fallback tangguh di sisi klien: Menyusun kurikulum standar BSKAP No. 046/H/KR/2025 secara offline/langsung
+    // 2. Fallback tangguh di sisi klien: Menyusun kurikulum standar Inspirasi Ruang GTK Kemendikdasmen secara langsung
     try {
       const fallbackData = generateStandardCurriculum(activeMapel, activeFase, activeKelas, aiTopic);
       if (fallbackData && Array.isArray(fallbackData.cp) && Array.isArray(fallbackData.units)) {
         onApplyAiData(fallbackData);
         applied = true;
-        showToast(`CP & ATP ${activeMapel} berhasil disusun sesuai Keputusan BSKAP No. 046/H/KR/2025!`);
+        showToast(`CP & ATP ${activeMapel} berhasil disusun sesuai Pembaruan Inspirasi Ruang GTK Kemendikdasmen!`);
         return;
       }
     } catch (clientErr: any) {
@@ -151,42 +151,45 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
 
   const renderEdit = () => (
     <div className="flex flex-col gap-6">
-      {/* AI Kurikulum Kemendikdasmen Generator Card */}
+      {/* AI Kurikulum & Inspirasi Ruang GTK Kemendikdasmen Generator Card */}
       <section className="bg-gradient-to-br from-emerald-900 to-teal-950 text-white rounded-2xl p-6 shadow-xl flex flex-col gap-4 border border-emerald-700/50">
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs uppercase tracking-wider font-bold text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-600/60">
-              ✨ Analisis AI Khusus Mata Pelajaran
+            <span className="text-xs uppercase tracking-wider font-bold text-amber-300 bg-amber-950/80 px-2.5 py-0.5 rounded-full border border-amber-500/60">
+              🌟 Pembaruan Inspirasi Ruang GTK Kemendikdasmen
+            </span>
+            <span className="text-xs uppercase tracking-wider font-bold text-emerald-300 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-600/60">
+              Keputusan BSKAP No. 046/H/KR/2025
             </span>
             <span className="text-xs font-semibold text-emerald-200 bg-teal-950/80 px-2 py-0.5 rounded border border-teal-700/50">
               Mata Pelajaran: <span className="text-white font-bold">{p.mapel || 'Belum diisi (isi di Data Induk)'}</span> · Fase {p.fase || 'E'} {p.kelas ? `(Kelas ${p.kelas})` : ''}
             </span>
           </div>
           <h2 className="text-xl font-bold">
-            Generate CP, ATP, KKTP & Prota Khusus {p.mapel || 'Mata Pelajaran Anda'}
+            Generate CP, ATP, KKTP & Prota — Inspirasi Ruang GTK ({p.mapel || 'Mata Pelajaran Anda'})
           </h2>
-          <p className="text-xs text-emerald-200/90 max-w-2xl m-0 leading-relaxed">
-            Analisis kurikulum berfokus penuh dan spesifik pada mata pelajaran <strong>{p.mapel || 'pilihan Anda'}</strong> sesuai standar resmi Kemendikdasmen & BSNP. AI menyusun Capaian Pembelajaran (CP) per elemen resmi, Alur Tujuan Pembelajaran (ATP) per Semester lengkap dengan alokasi JP, rubrik kriteria KKTP 4 tingkat, serta sinkronisasi otomatis ke Promes, Modul Ajar, dan LKPD.
+          <p className="text-xs text-emerald-200/90 max-w-3xl m-0 leading-relaxed">
+            Menyusun Capaian Pembelajaran (CP) per elemen resmi, Alur Tujuan Pembelajaran (ATP) lengkap dengan <strong>Kode TP Ruang GTK</strong>, alokasi JP per semester, rubrik KKTP 4 tingkat, serta sinkronisasi otomatis ke Prota, Promes, Modul Ajar <strong>Pembelajaran Mendalam (Deep Learning)</strong>, dan LKPD.
           </p>
         </div>
 
-        {/* Katalog Lengkap Mapel Akuntansi & Keuangan Lembaga (AKL) */}
+        {/* Katalog Lengkap 10 Mapel Akuntansi & Keuangan Lembaga (AKL) - Pembaruan Inspirasi Ruang GTK */}
         <div className="bg-emerald-950/80 border border-emerald-700/70 rounded-xl p-3.5 flex flex-col gap-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-emerald-800/80 pb-2.5">
-            <div className="flex flex-col">
-              <span className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
-                <span>📚 Jurusan Akuntansi & Keuangan Lembaga (AKL) — Keputusan BSKAP No. 046/H/KR/2025</span>
+            <div className="flex flex-col gap-0.5">
+              <span className="text-xs font-bold text-emerald-300 flex items-center gap-1.5 flex-wrap">
+                <span>📚 Katalog CP & ATP Akuntansi (AKL) — Pembaruan Inspirasi Ruang GTK Kemendikdasmen</span>
               </span>
               <span className="text-[11px] text-emerald-400/90">
-                Pilih mata pelajaran untuk otomatis menyusun CP, ATP per semester, JP, KKTP rubrik 4 tingkat, dan Prota:
+                Mencakup pembaruan <strong>SAK Entitas Privat (SAK EP)</strong>, <strong>Coretax DJP & PPh 21 TER</strong>, <strong>SIPD RI & Siskeudes 2.0</strong>, <strong>Cloud Accounting</strong>, <strong>BI-FAST/QRIS</strong>, dan <strong>PSAK Syariah 401–410</strong>:
               </span>
             </div>
-            <div className="flex items-center gap-1 bg-emerald-900/60 p-1 rounded-lg border border-emerald-700/60 self-start sm:self-auto text-[10px]">
+            <div className="flex items-center gap-1 bg-emerald-900/60 p-1 rounded-lg border border-emerald-700/60 self-start sm:self-auto text-[10px] flex-wrap">
               <span className="text-emerald-300 font-semibold px-1.5">Filter:</span>
               {[
-                { id: 'semua', l: 'Semua (9 Mapel)' },
-                { id: 'fase-e', l: 'Fase E (X)' },
-                { id: 'konsentrasi', l: 'Konsentrasi (XI-XII)' },
+                { id: 'semua', l: 'Semua (10 Mapel)' },
+                { id: 'fase-e', l: 'Fase E (Kelas X)' },
+                { id: 'konsentrasi', l: 'Konsentrasi (XI–XII)' },
                 { id: 'pilihan', l: 'Mapel Pilihan' }
               ].map(f => (
                 <button
@@ -205,7 +208,7 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
             {AKL_SUBJECTS_CATALOG.filter(s => {
               if (aklFilter === 'fase-e') return s.fase === 'E';
               if (aklFilter === 'konsentrasi') return s.kategori.includes('Konsentrasi');
@@ -216,29 +219,38 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
               return (
                 <div
                   key={s.id}
-                  className={`p-2.5 rounded-xl border transition-all flex flex-col justify-between gap-2 ${
+                  className={`p-3 rounded-xl border transition-all flex flex-col justify-between gap-2 ${
                     isSelected
                       ? 'bg-emerald-900/90 border-emerald-400 ring-2 ring-emerald-400/50 shadow-md'
                       : 'bg-emerald-950/60 border-emerald-800/80 hover:border-emerald-600 hover:bg-emerald-900/40'
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <span className="text-base shrink-0">{s.icon}</span>
-                      <div className="min-w-0">
-                        <div className="text-xs font-bold text-white truncate" title={s.nama}>
-                          {s.shortName}
-                        </div>
-                        <div className="text-[10px] text-emerald-300 font-medium">
-                          {s.tag}
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="text-base shrink-0">{s.icon}</span>
+                        <div className="min-w-0">
+                          <div className="text-xs font-bold text-white leading-snug" title={s.nama}>
+                            {s.shortName}
+                          </div>
+                          <div className="text-[10px] text-emerald-300 font-medium">
+                            Fase {s.fase} · {s.tingkat} · {s.elemenCount} Elemen CP
+                          </div>
                         </div>
                       </div>
+                      <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-800/90 text-emerald-200 border border-emerald-600/50 shrink-0">
+                        {s.kodeAtp}
+                      </span>
                     </div>
-                  </div>
 
-                  <p className="text-[10.5px] text-emerald-200/80 line-clamp-2 m-0 leading-tight">
-                    {s.deskripsi}
-                  </p>
+                    <div className="text-[10px] font-semibold text-amber-300 bg-amber-950/60 border border-amber-700/50 px-2 py-0.5 rounded-md leading-tight">
+                      ✨ {s.ruangGtkUpdate}
+                    </div>
+
+                    <p className="text-[10.5px] text-emerald-200/80 line-clamp-2 m-0 leading-tight">
+                      {s.deskripsi}
+                    </p>
+                  </div>
 
                   <button
                     type="button"
@@ -253,7 +265,7 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
                     {isGenerating && p.mapel === s.nama ? (
                       <span>⏳ Sedang menyusun...</span>
                     ) : (
-                      <span>⚡ Generate CP–ATP {s.shortName}</span>
+                      <span>⚡ Terapkan Inspirasi Ruang GTK</span>
                     )}
                   </button>
                 </div>
