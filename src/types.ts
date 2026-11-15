@@ -171,5 +171,6 @@ export interface AppState {
   modul: Record<string, ModulItem>;
   lkpd: Record<string, LkpdItem>;
   soal?: Record<string, SoalPkg>;
+  customDocs?: Record<string, string>;
 }
 

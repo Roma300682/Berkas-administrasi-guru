@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppState } from '../types';
 import { DocHeader } from './DocHeader';
-import { generateLkpdHtml } from '../utils/docExport';
+import { getTabDocHtml } from '../utils/docExport';
 
 interface LkpdTabProps {
   state: AppState;
@@ -109,10 +109,10 @@ export const LkpdTab: React.FC<LkpdTabProps> = ({
             <button
               key={u.id}
               onClick={() => onSelectUnitL(u.id)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors cursor-pointer ${
                 u.id === uId
                   ? 'bg-emerald-700 border-emerald-700 text-white'
-                  : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300'
+                  : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-emerald-600'
               }`}
             >
               {u.nama || `Unit ${i + 1}`} <span className="opacity-75 ml-1">S{u.sem}</span>
@@ -180,10 +180,10 @@ export const LkpdTab: React.FC<LkpdTabProps> = ({
           <button
             key={u.id}
             onClick={() => onSelectUnitL(u.id)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors cursor-pointer ${
               u.id === uId
                 ? 'bg-emerald-700 border-emerald-700 text-white'
-                : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300'
+                : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-emerald-600'
             }`}
           >
             {u.nama || `Unit ${i + 1}`} <span className="opacity-75 ml-1">S{u.sem}</span>
@@ -194,7 +194,7 @@ export const LkpdTab: React.FC<LkpdTabProps> = ({
       <div className="docwrap">
         <article
           className="doc-paper font-serif"
-          dangerouslySetInnerHTML={{ __html: generateLkpdHtml(state, uId) }}
+          dangerouslySetInnerHTML={{ __html: getTabDocHtml(state, 'lkpd').html }}
         />
       </div>
     </div>

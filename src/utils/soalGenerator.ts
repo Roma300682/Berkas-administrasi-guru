@@ -293,8 +293,10 @@ export function generateContextualSoal(
   const waktuMenit = opts?.waktuMenit || 90;
   const topikFokus = opts?.topikFokus?.trim() || unit.nama || mapel || 'Materi Pembelajaran';
   const kesulitan = opts?.kesulitan || 'Proporsional (LOTS 30%, MOTS 50%, HOTS 20%)';
-  const targetPg = Math.max(1, Math.min(30, Number(opts?.jmlPg) || 10));
-  const targetEssay = Math.max(1, Math.min(10, Number(opts?.jmlEssay) || 5));
+  const rawPg = opts?.jmlPg !== undefined ? Number(opts.jmlPg) : 10;
+  const rawEssay = opts?.jmlEssay !== undefined ? Number(opts.jmlEssay) : 5;
+  const targetPg = Math.max(1, Math.min(50, Number.isFinite(rawPg) ? Math.round(rawPg) : 10));
+  const targetEssay = Math.max(0, Math.min(5, Number.isFinite(rawEssay) ? Math.round(rawEssay) : 5));
 
   const combinedText = `${mapel} ${unit.nama} ${topikFokus} ${tps.map(t => t.teks).join(' ')}`.toLowerCase();
 
@@ -321,7 +323,7 @@ export function generateContextualSoal(
       });
 
       bank.essay.forEach((e, idx) => {
-        if (essayList.length < targetEssay) {
+        if (targetEssay > 0 && essayList.length < targetEssay) {
           const refTp = tps[idx % Math.max(1, tps.length)];
           essayList.push({
             id: uid(),
@@ -337,7 +339,7 @@ export function generateContextualSoal(
     }
   });
 
-  // 2. Generate tailored questions from the Unit's TPs & Topic to reach exact targetPg
+  // 2. Generate tailored questions from the Unit's TPs & Topic to reach exact targetPg (up to 50)
   const effectiveTps: TpItem[] =
     tps.length > 0
       ? tps
@@ -356,12 +358,25 @@ export function generateContextualSoal(
           },
         ];
 
+  const scenarioContexts = [
+    'Perusahaan Jasa Karya Mandiri',
+    'UD Niaga Sejahtera',
+    'PT Mitra Akuntan Nusantara',
+    'Koperasi Simpan Pinjam Maju',
+    'UMKM Berkah Sentosa',
+    'CV Cipta Karya Abadi',
+    'Unit Usaha Teaching Factory Sekolah',
+    'Kantor Jasa Akuntan Pratama',
+    'Lembaga Keuangan Mikro Sejahtera',
+    'Perusahaan Dagang Sinar Harapan',
+  ];
+
   const pgVariants = [
     {
       level: 'L1 (C2 - Pemahaman Konsep)',
       prefixInd: 'Disajikan deskripsi konsep tentang',
-      makeQ: (inti: string, uNama: string) =>
-        `Dalam mempelajari materi "${uNama}", langkah awal yang paling tepat ketika peserta didik ${inti} sesuai prosedur standar adalah ....`,
+      makeQ: (inti: string, uNama: string, ctx: string, round: number) =>
+        `[${ctx} · Kasus #${round}] Dalam mempelajari materi "${uNama}", langkah awal yang paling tepat ketika peserta didik ${inti} sesuai prosedur standar adalah ....`,
       makeOpts: (inti: string) => ({
         A: `Mengidentifikasi dokumen sumber, konsep dasar, dan memverifikasi kelengkapan data untuk ${inti} secara sistematis`,
         B: `Langsung menyusun kesimpulan akhir tanpa memeriksa kesesuaian data awal transaksi`,
@@ -376,8 +391,8 @@ export function generateContextualSoal(
     {
       level: 'L2 (C3 - Penerapan / Aplikasi)',
       prefixInd: 'Disajikan situasi praktik di dunia kerja terkait',
-      makeQ: (inti: string, uNama: string) =>
-        `Seorang staf profesional sedang menangani pekerjaan pada lingkup "${uNama}", khususnya untuk ${inti}. Tindakan penerapan yang menunjukkan ketelitian dan kepatuhan standar adalah ....`,
+      makeQ: (inti: string, uNama: string, ctx: string, round: number) =>
+        `[Praktik ${ctx} · Seri #${round}] Seorang staf profesional sedang menangani pekerjaan pada lingkup "${uNama}", khususnya untuk ${inti}. Tindakan penerapan yang menunjukkan ketelitian dan kepatuhan standar adalah ....`,
       makeOpts: (inti: string) => ({
         A: `Mencatat dan mengolah data hanya berdasarkan ingatan tanpa arsip dokumen pendukung`,
         B: `Menerapkan prosedur kerja secara berurutan, memeriksa keseimbangan/akurasi perhitungan, dan mendokumentasikan hasil ketika ${inti}`,
@@ -392,8 +407,8 @@ export function generateContextualSoal(
     {
       level: 'L3 / HOTS (C4 - Analisis Kasus)',
       prefixInd: 'Disajikan studi kasus permasalahan pada',
-      makeQ: (inti: string, _uNama: string) =>
-        `Perhatikan kasus berikut: Pada saat dilakukan evaluasi berkala terkait proses ${inti}, ditemukan adanya ketidaksesuaian antara data catatan dengan bukti fisik di lapangan. Langkah analisis dan penyelesaian yang paling tepat adalah ....`,
+      makeQ: (inti: string, _uNama: string, ctx: string, round: number) =>
+        `[Studi Kasus ${ctx} · Evaluasi #${round}] Pada saat dilakukan evaluasi berkala terkait proses ${inti}, ditemukan adanya ketidaksesuaian antara data catatan dengan bukti fisik di lapangan. Langkah analisis dan penyelesaian yang paling tepat adalah ....`,
       makeOpts: (inti: string) => ({
         A: `Membiarkan selisih tersebut karena dianggap wajar dalam kegiatan operasional harian`,
         B: `Mengubah angka pada bukti asli secara sepihak agar sama dengan catatan`,
@@ -408,8 +423,8 @@ export function generateContextualSoal(
     {
       level: 'L3 / HOTS (C5 - Evaluasi)',
       prefixInd: 'Disajikan dua alternatif pengambilan keputusan dalam',
-      makeQ: (inti: string, uNama: string) =>
-        `Manajemen meminta pertimbangan Anda mengenai efektivitas pelaksanaan ${inti} pada unit "${uNama}". Indikator utama bahwa proses tersebut telah berjalan efektif, efisien, dan akuntabel adalah ....`,
+      makeQ: (inti: string, uNama: string, ctx: string, round: number) =>
+        `[Keputusan Manajerial ${ctx} · #${round}] Manajemen meminta pertimbangan Anda mengenai efektivitas pelaksanaan ${inti} pada unit "${uNama}". Indikator utama bahwa proses tersebut telah berjalan efektif, efisien, dan akuntabel adalah ....`,
       makeOpts: (inti: string) => ({
         A: `Banyaknya jumlah koreksi kesalahan yang harus dibuat pada akhir periode`,
         B: `Tidak adanya bukti dokumen tertulis yang disimpan di dalam arsip perusahaan`,
@@ -423,9 +438,9 @@ export function generateContextualSoal(
     },
     {
       level: 'L2 (C3 - Aplikasi Prosedural)',
-      prefixInd: 'Disajikan urutan tahapan kerja pada',
-      makeQ: (inti: string, _uNama: string) =>
-        `Apabila dalam proses ${inti} diperlukan pengendalian mutu (internal control) agar terhindar dari kesalahan input maupun kecurangan (fraud), maka langkah preventif yang wajib diterapkan adalah ....`,
+      prefixInd: 'Disajikan urutan tahapan kerja pengendalian mutu pada',
+      makeQ: (inti: string, _uNama: string, ctx: string, round: number) =>
+        `[Audit Internal ${ctx} · #${round}] Apabila dalam proses ${inti} diperlukan pengendalian mutu (internal control) agar terhindar dari kesalahan input maupun kecurangan (fraud), maka langkah preventif yang wajib diterapkan adalah ....`,
       makeOpts: (inti: string) => ({
         A: `Menyerahkan seluruh wewenang otorisasi, pencatatan, dan penyimpanan kepada satu orang tanpa pengawasan`,
         B: `Memisahkan fungsi otorisasi dan pencatatan serta melakukan verifikasi silang atas setiap dokumen saat ${inti}`,
@@ -437,6 +452,22 @@ export function generateContextualSoal(
       makeBahasan: (_inti: string) =>
         'Pengendalian internal yang baik menerapkan pemisahan tugas (segregation of duties) dan verifikasi silang terhadap dokumen sumber.',
     },
+    {
+      level: 'L2 (C3 - Dokumentasi & Pelaporan)',
+      prefixInd: 'Disajikan kebutuhan pelaporan periodik terkait',
+      makeQ: (inti: string, uNama: string, ctx: string, round: number) =>
+        `[Pelaporan ${ctx} · #${round}] Pada akhir periode, pimpinan membutuhkan ringkasan pertanggungjawaban untuk materi "${uNama}" khususnya aspek ${inti}. Kriteria dokumentasi pelaporan yang memenuhi prinsip akuntabilitas adalah ....`,
+      makeOpts: (inti: string) => ({
+        A: `Disusun hanya secara lisan dalam rapat evaluasi tanpa arsip fisik atau digital`,
+        B: `Menggunakan angka taksiran tahun lalu agar penyusunan laporan lebih cepat`,
+        C: `Menghilangkan lampiran bukti pendukung yang bernilai kecil`,
+        D: `Menunda penyusunan hingga pemeriksaan eksternal dimulai`,
+        E: `Menyajikan data ${inti} secara kronologis, terklasifikasi rapi sesuai posnya, dan dilampiri bukti otentik yang telah diotorisasi`,
+      }),
+      kunci: 'E' as const,
+      makeBahasan: (inti: string) =>
+        `Dokumentasi dan pelaporan ${inti} wajib disusun secara kronologis, terklasifikasi sesuai standar, dan didukung bukti transaksi yang sah dan terotorisasi.`,
+    },
   ];
 
   let variantIdx = 0;
@@ -444,6 +475,8 @@ export function generateContextualSoal(
     const tp = effectiveTps[variantIdx % effectiveTps.length];
     const inti = cleanTp(tp.teks);
     const v = pgVariants[variantIdx % pgVariants.length];
+    const ctx = scenarioContexts[variantIdx % scenarioContexts.length];
+    const round = Math.floor(variantIdx / pgVariants.length) + 1;
     const tpCode = extractTpCode(tp.teks, variantIdx % effectiveTps.length);
 
     pgList.push({
@@ -451,7 +484,7 @@ export function generateContextualSoal(
       tpKode: tpCode,
       indikatorSoal: `${v.prefixInd} ${inti}, peserta didik dapat menyelesaikan permasalahan pada topik ${topikFokus} dengan tepat.`,
       levelKognitif: v.level,
-      tanya: v.makeQ(inti, topikFokus),
+      tanya: v.makeQ(inti, topikFokus, ctx, round),
       opsi: v.makeOpts(inti),
       kunci: v.kunci,
       pembahasan: v.makeBahasan(inti),
@@ -460,7 +493,7 @@ export function generateContextualSoal(
   }
 
   let essayIdx = 0;
-  const defaultScore = Math.round(100 / Math.max(1, targetEssay));
+  const defaultScore = targetEssay > 0 ? Math.round(100 / targetEssay) : 0;
   while (essayList.length < targetEssay) {
     const tp = effectiveTps[essayIdx % effectiveTps.length];
     const inti = cleanTp(tp.teks);
@@ -483,6 +516,11 @@ export function generateContextualSoal(
     essayIdx++;
   }
 
+  const petunjukBase =
+    targetEssay > 0
+      ? '1. Berdoalah sebelum mulai mengerjakan soal ujian.\n2. Tulislah identitas lengkap (Nama, Nomor Peserta/Absen, dan Kelas) pada lembar jawaban.\n3. Bacalah setiap butir soal dan studi kasus dengan teliti.\n4. Untuk soal Pilihan Ganda, pilihlah satu jawaban yang paling tepat (A, B, C, D, atau E).\n5. Untuk soal Uraian/Studi Kasus, tuliskan langkah penyelesaian dan perhitungan secara lengkap, rapi, dan sistematis.'
+      : '1. Berdoalah sebelum mulai mengerjakan soal ujian.\n2. Tulislah identitas lengkap (Nama, Nomor Peserta/Absen, dan Kelas) pada lembar jawaban.\n3. Bacalah setiap butir soal dengan cermat dan teliti.\n4. Pilihlah satu jawaban yang paling tepat pada opsi (A, B, C, D, atau E).\n5. Periksa kembali seluruh jawaban sebelum dikumpulkan.';
+
   return {
     unitId: unit.id,
     jenisUjian,
@@ -491,8 +529,7 @@ export function generateContextualSoal(
     kesulitan,
     jmlPg: targetPg,
     jmlEssay: targetEssay,
-    petunjuk:
-      '1. Berdoalah sebelum mulai mengerjakan soal ujian.\n2. Tulislah identitas lengkap (Nama, Nomor Peserta/Absen, dan Kelas) pada lembar jawaban.\n3. Bacalah setiap butir soal dan studi kasus dengan teliti.\n4. Untuk soal Pilihan Ganda, pilihlah satu jawaban yang paling tepat (A, B, C, D, atau E).\n5. Untuk soal Uraian/Studi Kasus, tuliskan langkah penyelesaian dan perhitungan secara lengkap, rapi, dan sistematis.',
+    petunjuk: petunjukBase,
     cetakKisi: true,
     cetakNaskah: true,
     cetakKunci: true,

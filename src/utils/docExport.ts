@@ -1093,7 +1093,13 @@ export function generateSoalHtml(state: AppState, unitIdParam?: string): string 
                   </table>`
                : ''
            }
-           <p style="font-size:9.5pt;margin:4pt 0 10pt"><b>Rumus Nilai Akhir:</b> Nilai Pilihan Ganda (Bobot 60%) + Nilai Uraian/Kasus (Bobot 40%) = Nilai Total (Skala 0–100).</p>`
+           <p style="font-size:9.5pt;margin:4pt 0 10pt"><b>Rumus Nilai Akhir:</b> ${
+             essayItems.length > 0 && pgItems.length > 0
+               ? 'Nilai Pilihan Ganda (Bobot 60%) + Nilai Uraian/Kasus (Bobot 40%) = Nilai Total (Skala 0–100).'
+               : essayItems.length === 0
+               ? `(Jumlah Jawaban Benar Pilihan Ganda ÷ ${Math.max(1, pgItems.length)}) × 100 = Nilai Total (Skala 0–100).`
+               : `(Total Skor Perolehan Uraian ÷ ${Math.max(1, totalEssaySkor)}) × 100 = Nilai Total (Skala 0–100).`
+           }</p>`
         : '';
 
       return `<div class="doc-section" style="${idx > 0 ? 'page-break-before:always' : ''}">
@@ -1104,7 +1110,10 @@ export function generateSoalHtml(state: AppState, unitIdParam?: string): string 
           ['Unit / Lingkup Materi', u.nama],
           ['Fokus Topik Bahasan', pkg.topikFokus || u.nama],
           ['Jenis Evaluasi', pkg.jenisUjian || 'Asesmen Sumatif Lingkup Materi'],
-          ['Alokasi Waktu Ujian', `${Number(pkg.waktuMenit) || 90} Menit (${pgItems.length} PG & ${essayItems.length} Uraian)`],
+          [
+            'Alokasi Waktu Ujian',
+            `${Number(pkg.waktuMenit) || 90} Menit (${pgItems.length} PG${essayItems.length > 0 ? ` & ${essayItems.length} Uraian` : ' · 0 Uraian'})`,
+          ],
         ])}
         ${kisiBlock}
         ${naskahBlock}
@@ -1115,98 +1124,174 @@ export function generateSoalHtml(state: AppState, unitIdParam?: string): string 
     .join('\n');
 }
 
+export interface DocScopeInfo {
+  scopeKey: string;
+  generatedHtml: string;
+  activeHtml: string;
+  filename: string;
+  title: string;
+  landscape: boolean;
+  isCustom: boolean;
+}
+
+export function getDocScopeKey(state: AppState, tab: string): string {
+  switch (tab) {
+    case 'promes':
+      return `promes:${state.ui.sem || 1}`;
+    case 'modul': {
+      const u = state.unit.find(x => x.id === state.ui.unit) || state.unit[0];
+      return u ? `modul:${u.id}` : 'modul';
+    }
+    case 'lkpd': {
+      const u = state.unit.find(x => x.id === state.ui.unitL) || state.unit[0];
+      return u ? `lkpd:${u.id}` : 'lkpd';
+    }
+    case 'soal': {
+      const u = state.unit.find(x => x.id === state.ui.unitS) || state.unit[0];
+      return u ? `soal:${u.id}` : 'soal';
+    }
+    default:
+      return tab;
+  }
+}
+
+export function getDocScopeInfo(state: AppState, tab: string): DocScopeInfo {
+  const mapelSlug = (state.profil.mapel || 'Mapel').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '');
+  const kelasSlug = (state.profil.kelas || 'Kelas').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '');
+  const suffix = `${mapelSlug}_Kelas_${kelasSlug}`;
+  const scopeKey = getDocScopeKey(state, tab);
+
+  let generatedHtml = '';
+  let filename = '';
+  let title = '';
+  let landscape = false;
+
+  switch (tab) {
+    case 'waktu':
+      generatedHtml = generateWaktuHtml(state);
+      filename = `1_Analisis_Alokasi_Waktu_A4_${suffix}.doc`;
+      title = 'Kalender Pendidikan dan Analisis Alokasi Waktu';
+      landscape = false;
+      break;
+    case 'cpatp':
+      generatedHtml = generateCpatpHtml(state);
+      filename = `2_CP_dan_ATP_A4_${suffix}.doc`;
+      title = 'Capaian Pembelajaran dan Alur Tujuan Pembelajaran';
+      landscape = true;
+      break;
+    case 'prota':
+      generatedHtml = generateProtaHtml(state);
+      filename = `3_Program_Tahunan_A4_${suffix}.doc`;
+      title = 'Program Tahunan (Prota)';
+      landscape = false;
+      break;
+    case 'promes':
+      generatedHtml = generatePromesHtml(state, state.ui.sem);
+      filename = `4_Program_Semester_Smt${state.ui.sem}_A4_${suffix}.doc`;
+      title = `Program Semester ${state.ui.sem}`;
+      landscape = true;
+      break;
+    case 'kktp':
+      generatedHtml = generateKktpHtml(state);
+      filename = `5_KKTP_A4_${suffix}.doc`;
+      title = 'Kriteria Ketercapaian Tujuan Pembelajaran (KKTP)';
+      landscape = true;
+      break;
+    case 'modul': {
+      const u = state.unit.find(x => x.id === state.ui.unit) || state.unit[0];
+      const uSlug = u ? u.nama.replace(/[^a-zA-Z0-9]+/g, '_').slice(0, 30) : 'Unit';
+      generatedHtml = generateModulHtml(state, u?.id);
+      filename = `6_Modul_Ajar_A4_${uSlug}_${suffix}.doc`;
+      title = `Modul Ajar — ${u?.nama || 'Unit'}`;
+      landscape = false;
+      break;
+    }
+    case 'lkpd': {
+      const u = state.unit.find(x => x.id === state.ui.unitL) || state.unit[0];
+      const uSlug = u ? u.nama.replace(/[^a-zA-Z0-9]+/g, '_').slice(0, 30) : 'Unit';
+      generatedHtml = generateLkpdHtml(state, u?.id);
+      filename = `7_LKPD_A4_${uSlug}_${suffix}.doc`;
+      title = `LKPD — ${u?.nama || 'Unit'}`;
+      landscape = false;
+      break;
+    }
+    case 'soal': {
+      const u = state.unit.find(x => x.id === state.ui.unitS) || state.unit[0];
+      const uSlug = u ? u.nama.replace(/[^a-zA-Z0-9]+/g, '_').slice(0, 30) : 'Unit';
+      generatedHtml = generateSoalHtml(state, u?.id);
+      filename = `8_Soal_Ujian_Kisi_Kunci_A4_${uSlug}_${suffix}.doc`;
+      title = `Soal Ujian, Kisi-Kisi & Kunci — ${u?.nama || 'Unit'}`;
+      landscape = false;
+      break;
+    }
+    default:
+      generatedHtml = generateAllDocsHtml(state);
+      filename = `Berkas_Ajar_Lengkap_8_Dokumen_A4_${suffix}.doc`;
+      title = `Paket Lengkap 8 Berkas Ajar — ${state.profil.mapel || 'Mapel'}`;
+      landscape = false;
+      break;
+  }
+
+  const customHtml = state.customDocs?.[scopeKey];
+  const isCustom = Boolean(customHtml && customHtml.trim().length > 0);
+  const activeHtml = isCustom ? customHtml! : generatedHtml;
+
+  return {
+    scopeKey,
+    generatedHtml,
+    activeHtml,
+    filename,
+    title,
+    landscape,
+    isCustom,
+  };
+}
+
 export function generateAllDocsHtml(state: AppState): string {
   const breakToLandscape = '<br clear="all" style="page-break-before:always;mso-break-type:section-break" />';
   const breakToPortrait = '<br clear="all" style="page-break-before:always;mso-break-type:section-break" />';
   const pageBreak = '<br clear="all" style="page-break-before:always" />';
+  const c = state.customDocs || {};
 
-  const portraitModul = state.unit.map(u => generateModulHtml(state, u.id)).join(`\n${pageBreak}\n`);
-  const portraitLkpd = state.unit.map(u => generateLkpdHtml(state, u.id)).join(`\n${pageBreak}\n`);
-  const portraitSoal = state.unit.map(u => generateSoalHtml(state, u.id)).join(`\n${pageBreak}\n`);
+  const waktuHtml = c['waktu'] || generateWaktuHtml(state);
+  const cpatpHtml = c['cpatp'] || generateCpatpHtml(state);
+  const protaHtml = c['prota'] || generateProtaHtml(state);
+  const promes1Html = c['promes:1'] || generatePromesHtml(state, 1);
+  const promes2Html = c['promes:2'] || generatePromesHtml(state, 2);
+  const kktpHtml = c['kktp'] || generateKktpHtml(state);
+
+  const portraitModul = state.unit
+    .map(u => c[`modul:${u.id}`] || generateModulHtml(state, u.id))
+    .join(`\n${pageBreak}\n`);
+  const portraitLkpd = state.unit
+    .map(u => c[`lkpd:${u.id}`] || generateLkpdHtml(state, u.id))
+    .join(`\n${pageBreak}\n`);
+  const portraitSoal = state.unit
+    .map(u => c[`soal:${u.id}`] || generateSoalHtml(state, u.id))
+    .join(`\n${pageBreak}\n`);
 
   return [
-    `<div class="SectionPortrait">${generateWaktuHtml(state)}</div>`,
+    `<div class="SectionPortrait">${waktuHtml}</div>`,
     breakToLandscape,
-    `<div class="SectionLandscape">${generateCpatpHtml(state)}</div>`,
+    `<div class="SectionLandscape">${cpatpHtml}</div>`,
     breakToPortrait,
-    `<div class="SectionPortrait">${generateProtaHtml(state)}</div>`,
+    `<div class="SectionPortrait">${protaHtml}</div>`,
     breakToLandscape,
-    `<div class="SectionLandscape">${generatePromesHtml(state)}${pageBreak}${generateKktpHtml(state)}</div>`,
+    `<div class="SectionLandscape">${promes1Html}${pageBreak}${promes2Html}${pageBreak}${kktpHtml}</div>`,
     breakToPortrait,
     `<div class="SectionPortrait">${portraitModul}${pageBreak}${portraitLkpd}${pageBreak}${portraitSoal}</div>`,
   ].join('\n');
 }
 
-export function getTabDocHtml(state: AppState, tab: string): { html: string; filename: string; landscape?: boolean } {
-  const mapelSlug = (state.profil.mapel || 'Mapel').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '');
-  const kelasSlug = (state.profil.kelas || 'Kelas').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '');
-  const suffix = `${mapelSlug}_Kelas_${kelasSlug}`;
-
-  switch (tab) {
-    case 'waktu':
-      return {
-        html: generateWaktuHtml(state),
-        filename: `1_Analisis_Alokasi_Waktu_A4_${suffix}.doc`,
-        landscape: false,
-      };
-    case 'cpatp':
-      return {
-        html: generateCpatpHtml(state),
-        filename: `2_CP_dan_ATP_A4_${suffix}.doc`,
-        landscape: true,
-      };
-    case 'prota':
-      return {
-        html: generateProtaHtml(state),
-        filename: `3_Program_Tahunan_A4_${suffix}.doc`,
-        landscape: false,
-      };
-    case 'promes':
-      return {
-        html: generatePromesHtml(state, state.ui.sem),
-        filename: `4_Program_Semester_Smt${state.ui.sem}_A4_${suffix}.doc`,
-        landscape: true,
-      };
-    case 'kktp':
-      return {
-        html: generateKktpHtml(state),
-        filename: `5_KKTP_A4_${suffix}.doc`,
-        landscape: true,
-      };
-    case 'modul': {
-      const u = state.unit.find(x => x.id === state.ui.unit) || state.unit[0];
-      const uSlug = u ? u.nama.replace(/[^a-zA-Z0-9]+/g, '_').slice(0, 30) : 'Unit';
-      return {
-        html: generateModulHtml(state, u?.id),
-        filename: `6_Modul_Ajar_A4_${uSlug}_${suffix}.doc`,
-        landscape: false,
-      };
-    }
-    case 'lkpd': {
-      const u = state.unit.find(x => x.id === state.ui.unitL) || state.unit[0];
-      const uSlug = u ? u.nama.replace(/[^a-zA-Z0-9]+/g, '_').slice(0, 30) : 'Unit';
-      return {
-        html: generateLkpdHtml(state, u?.id),
-        filename: `7_LKPD_A4_${uSlug}_${suffix}.doc`,
-        landscape: false,
-      };
-    }
-    case 'soal': {
-      const u = state.unit.find(x => x.id === state.ui.unitS) || state.unit[0];
-      const uSlug = u ? u.nama.replace(/[^a-zA-Z0-9]+/g, '_').slice(0, 30) : 'Unit';
-      return {
-        html: generateSoalHtml(state, u?.id),
-        filename: `8_Soal_Ujian_Kisi_Kunci_A4_${uSlug}_${suffix}.doc`,
-        landscape: false,
-      };
-    }
-    default:
-      return {
-        html: generateAllDocsHtml(state),
-        filename: `Berkas_Ajar_Lengkap_8_Dokumen_A4_${suffix}.doc`,
-        landscape: false,
-      };
-  }
+export function getTabDocHtml(state: AppState, tab: string): { html: string; filename: string; landscape?: boolean; isCustom?: boolean; scopeKey?: string } {
+  const info = getDocScopeInfo(state, tab);
+  return {
+    html: info.activeHtml,
+    filename: info.filename,
+    landscape: info.landscape,
+    isCustom: info.isCustom,
+    scopeKey: info.scopeKey,
+  };
 }
 
 export function wrapWordDocument(bodyHtml: string, title: string, landscape = false): string {
@@ -1319,16 +1404,17 @@ export function triggerDocDownload(bodyHtml: string, filename: string, title: st
 }
 
 export function downloadDocForTab(state: AppState, tab: string): string {
-  const { html, filename, landscape } = getTabDocHtml(state, tab);
-  triggerDocDownload(html, filename, filename.replace(/\.doc$/, ''), landscape);
-  return filename;
+  const info = getDocScopeInfo(state, tab);
+  triggerDocDownload(info.activeHtml, info.filename, info.title, info.landscape);
+  return info.filename;
 }
 
 export function downloadAllDocsWord(state: AppState): string {
   const mapelSlug = (state.profil.mapel || 'Mapel').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '');
   const kelasSlug = (state.profil.kelas || 'Kelas').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '');
   const filename = `Berkas_Ajar_Lengkap_8_Dokumen_A4_${mapelSlug}_Kelas_${kelasSlug}.doc`;
-  const html = generateAllDocsHtml(state);
+  const customAll = state.customDocs?.['all'];
+  const html = customAll && customAll.trim().length > 0 ? customAll : generateAllDocsHtml(state);
   triggerDocDownload(html, filename, `Perangkat Ajar Lengkap A4 - ${state.profil.mapel}`, false);
   return filename;
 }
@@ -1337,7 +1423,8 @@ export function downloadAllModulWord(state: AppState): string {
   const mapelSlug = (state.profil.mapel || 'Mapel').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '');
   const kelasSlug = (state.profil.kelas || 'Kelas').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '');
   const pageBreak = '<br clear="all" style="page-break-before:always" />';
-  const html = state.unit.map(u => generateModulHtml(state, u.id)).join(`\n${pageBreak}\n`);
+  const c = state.customDocs || {};
+  const html = state.unit.map(u => c[`modul:${u.id}`] || generateModulHtml(state, u.id)).join(`\n${pageBreak}\n`);
   const filename = `6_Semua_Modul_Ajar_A4_${mapelSlug}_Kelas_${kelasSlug}.doc`;
   triggerDocDownload(html, filename, `Semua Modul Ajar A4 - ${state.profil.mapel}`, false);
   return filename;
@@ -1347,7 +1434,8 @@ export function downloadAllLkpdWord(state: AppState): string {
   const mapelSlug = (state.profil.mapel || 'Mapel').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '');
   const kelasSlug = (state.profil.kelas || 'Kelas').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '');
   const pageBreak = '<br clear="all" style="page-break-before:always" />';
-  const html = state.unit.map(u => generateLkpdHtml(state, u.id)).join(`\n${pageBreak}\n`);
+  const c = state.customDocs || {};
+  const html = state.unit.map(u => c[`lkpd:${u.id}`] || generateLkpdHtml(state, u.id)).join(`\n${pageBreak}\n`);
   const filename = `7_Semua_LKPD_A4_${mapelSlug}_Kelas_${kelasSlug}.doc`;
   triggerDocDownload(html, filename, `Semua LKPD A4 - ${state.profil.mapel}`, false);
   return filename;
@@ -1357,14 +1445,14 @@ export function downloadAllSoalWord(state: AppState): string {
   const mapelSlug = (state.profil.mapel || 'Mapel').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '');
   const kelasSlug = (state.profil.kelas || 'Kelas').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '');
   const pageBreak = '<br clear="all" style="page-break-before:always" />';
-  const html = state.unit.map(u => generateSoalHtml(state, u.id)).join(`\n${pageBreak}\n`);
+  const c = state.customDocs || {};
+  const html = state.unit.map(u => c[`soal:${u.id}`] || generateSoalHtml(state, u.id)).join(`\n${pageBreak}\n`);
   const filename = `8_Semua_Soal_Ujian_A4_${mapelSlug}_Kelas_${kelasSlug}.doc`;
   triggerDocDownload(html, filename, `Semua Soal Ujian A4 - ${state.profil.mapel}`, false);
   return filename;
 }
 
-export async function copyCleanDocToClipboard(state: AppState, tab: string): Promise<boolean> {
-  const { html } = getTabDocHtml(state, tab);
+export async function copyHtmlToClipboard(html: string): Promise<boolean> {
   const wrapped = `<div style="font-family:'Times New Roman',Times,serif;font-size:11pt;color:#000;line-height:1.4">${html}</div>`;
   try {
     if (window.ClipboardItem && navigator.clipboard?.write) {
@@ -1391,4 +1479,9 @@ export async function copyCleanDocToClipboard(state: AppState, tab: string): Pro
   } catch {
     return false;
   }
+}
+
+export async function copyCleanDocToClipboard(state: AppState, tab: string): Promise<boolean> {
+  const { html } = getTabDocHtml(state, tab);
+  return copyHtmlToClipboard(html);
 }

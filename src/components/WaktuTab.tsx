@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AppState, KaldikEvent, Semester } from '../types';
 import { DocHeader } from './DocHeader';
-import { generateWaktuHtml } from '../utils/docExport';
+import { getTabDocHtml } from '../utils/docExport';
 import {
   buildMonthGrid,
   CATEGORY_META,
@@ -856,7 +856,7 @@ export const WaktuTab: React.FC<WaktuTabProps> = ({
     <div className="docwrap">
       <article
         className="doc-paper font-serif"
-        dangerouslySetInnerHTML={{ __html: generateWaktuHtml(state) }}
+        dangerouslySetInnerHTML={{ __html: getTabDocHtml(state, 'waktu').html }}
       />
     </div>
   );

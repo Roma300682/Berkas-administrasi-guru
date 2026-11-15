@@ -24,6 +24,8 @@ import {
   syncCalendarToBulan,
 } from './utils/kalenderPendidikan';
 import { generateContextualSoal } from './utils/soalGenerator';
+import { DocActionProvider } from './context/DocActionContext';
+import { DocEditorModal } from './components/DocEditorModal';
 
 const KEY = 'berkas-ajar-guru-v1';
 
@@ -93,6 +95,9 @@ export default function App() {
           if (!parsed.soal) {
             parsed.soal = {};
           }
+          if (!parsed.customDocs) {
+            parsed.customDocs = {};
+          }
           return parsed;
         }
       }
@@ -102,6 +107,7 @@ export default function App() {
   });
 
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [editorModalTab, setEditorModalTab] = useState<string | null>(null);
 
   const showToast = useCallback((msg: string) => {
     setToastMsg(msg);
@@ -186,6 +192,26 @@ export default function App() {
       if (!parsed || !parsed.profil || !parsed.bulan || !parsed.tp || !parsed.unit) {
         throw new Error('Format tidak valid');
       }
+      const defProf = blankState().profil;
+      parsed.profil = {
+        ...defProf,
+        ...parsed.profil,
+        sekolah: parsed.profil.sekolah || defProf.sekolah,
+      };
+      const ta = parsed.profil.ta || '2026/2027';
+      if (needsJabarKaldikAutoUpdate(parsed.kaldik, ta)) {
+        parsed.kaldik = getDefaultKaldikEvents(ta);
+        parsed.bulan = syncCalendarToBulan(parsed.bulan, ta, parsed.kaldik);
+        parsed.promes = computePromesFromBulan(
+          parsed.bulan,
+          parsed.unit,
+          parsed.tp,
+          parsed.profil.jp
+        );
+      }
+      if (parsed.cetakKaldik === undefined) parsed.cetakKaldik = true;
+      if (!parsed.soal) parsed.soal = {};
+      if (!parsed.customDocs) parsed.customDocs = {};
       setState(parsed);
       showToast('Data berhasil dipulihkan dari cadangan.');
     } catch (e) {
@@ -676,6 +702,28 @@ export default function App() {
     }));
   };
 
+  // Custom pre-download edited document handlers
+  const handleSaveCustomDoc = useCallback((scopeKey: string, html: string) => {
+    setState(prev => ({
+      ...prev,
+      customDocs: {
+        ...(prev.customDocs || {}),
+        [scopeKey]: html,
+      },
+    }));
+  }, []);
+
+  const handleResetCustomDoc = useCallback((scopeKey: string) => {
+    setState(prev => {
+      const nextCustom = { ...(prev.customDocs || {}) };
+      delete nextCustom[scopeKey];
+      return {
+        ...prev,
+        customDocs: nextCustom,
+      };
+    });
+  }, []);
+
   // Copy Document helper
   const handleCopyDoc = async () => {
     const ok = await copyCleanDocToClipboard(state, state.ui.tab);
@@ -940,12 +988,29 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased p-4 sm:p-6 lg:p-8">
-      <div className="max-w-[1320px] mx-auto grid grid-cols-1 lg:grid-cols-[236px_minmax(0,1fr)] gap-8 items-start">
-        <Navbar state={state} onSelectTab={handleTabSelect} />
-        <main className="min-w-0 flex flex-col gap-6">{renderActiveTab()}</main>
+    <DocActionProvider
+      value={{
+        openDocEditor: (tabId: string) => setEditorModalTab(tabId),
+        saveCustomDoc: handleSaveCustomDoc,
+        resetCustomDoc: handleResetCustomDoc,
+      }}
+    >
+      <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased p-4 sm:p-6 lg:p-8">
+        <div className="max-w-[1360px] mx-auto grid grid-cols-1 lg:grid-cols-[248px_minmax(0,1fr)] gap-8 items-start">
+          <Navbar state={state} onSelectTab={handleTabSelect} showToast={showToast} />
+          <main className="min-w-0 flex flex-col gap-6">{renderActiveTab()}</main>
+        </div>
+        <DocEditorModal
+          isOpen={Boolean(editorModalTab)}
+          state={state}
+          tab={editorModalTab || 'waktu'}
+          onClose={() => setEditorModalTab(null)}
+          onSaveCustomDoc={handleSaveCustomDoc}
+          onResetCustomDoc={handleResetCustomDoc}
+          showToast={showToast}
+        />
+        <Toast message={toastMsg} />
       </div>
-      <Toast message={toastMsg} />
-    </div>
+    </DocActionProvider>
   );
 }

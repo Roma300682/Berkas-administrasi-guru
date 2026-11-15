@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppState, Semester } from '../types';
 import { DocHeader } from './DocHeader';
-import { generateProtaHtml } from '../utils/docExport';
+import { getTabDocHtml } from '../utils/docExport';
 
 interface ProtaTabProps {
   state: AppState;
@@ -118,7 +118,7 @@ export const ProtaTab: React.FC<ProtaTabProps> = ({
       <div className="docwrap">
         <article
           className="doc-paper font-serif"
-          dangerouslySetInnerHTML={{ __html: generateProtaHtml(state) }}
+          dangerouslySetInnerHTML={{ __html: getTabDocHtml(state, 'prota').html }}
         />
       </div>
     </div>

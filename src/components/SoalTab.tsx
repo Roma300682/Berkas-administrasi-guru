@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AppState, SoalEssayItem, SoalPgItem, SoalPkg } from '../types';
 import { DocHeader } from './DocHeader';
-import { generateSoalHtml } from '../utils/docExport';
+import { getTabDocHtml } from '../utils/docExport';
 import { generateContextualSoal } from '../utils/soalGenerator';
 
 interface SoalTabProps {
@@ -82,7 +82,9 @@ export const SoalTab: React.FC<SoalTabProps> = ({
           });
           showToast?.(
             data.source === 'ai'
-              ? `Berhasil menyusun ${data.pkg.pg.length} soal PG & ${data.pkg.essay.length} soal Uraian dengan AI sesuai topik "${pkg.topikFokus || currentUnit.nama}"`
+              ? data.pkg.essay.length === 0
+                ? `Berhasil menyusun ${data.pkg.pg.length} soal PG (tanpa soal uraian) dengan AI sesuai topik "${pkg.topikFokus || currentUnit.nama}"`
+                : `Berhasil menyusun ${data.pkg.pg.length} soal PG & ${data.pkg.essay.length} soal Uraian dengan AI sesuai topik "${pkg.topikFokus || currentUnit.nama}"`
               : `Berhasil menyusun soal kontekstual sesuai topik "${pkg.topikFokus || currentUnit.nama}"`
           );
           setIsGenerating(false);
@@ -155,6 +157,10 @@ export const SoalTab: React.FC<SoalTabProps> = ({
 
   const handleAddPg = () => {
     if (!currentUnit || !pkg) return;
+    if (pkg.pg.length >= 50) {
+      showToast?.('Maksimal jumlah soal Pilihan Ganda adalah 50 butir.');
+      return;
+    }
     const newNo = pkg.pg.length + 1;
     const newItem: SoalPgItem = {
       id: uid(),
@@ -179,7 +185,7 @@ export const SoalTab: React.FC<SoalTabProps> = ({
   const handleDeletePg = (idx: number) => {
     if (!currentUnit || !pkg) return;
     const nextPg = pkg.pg.filter((_, i) => i !== idx);
-    onUpdateSoalPkg(currentUnit.id, { ...pkg, pg: nextPg, jmlPg: nextPg.length });
+    onUpdateSoalPkg(currentUnit.id, { ...pkg, pg: nextPg, jmlPg: Math.max(1, nextPg.length) });
   };
 
   const handleUpdateEssay = (idx: number, patch: Partial<SoalEssayItem>) => {
@@ -190,6 +196,10 @@ export const SoalTab: React.FC<SoalTabProps> = ({
 
   const handleAddEssay = () => {
     if (!currentUnit || !pkg) return;
+    if (pkg.essay.length >= 5) {
+      showToast?.('Maksimal jumlah soal Uraian adalah 5 butir.');
+      return;
+    }
     const newNo = pkg.essay.length + 1;
     const newItem: SoalEssayItem = {
       id: uid(),
@@ -198,7 +208,7 @@ export const SoalTab: React.FC<SoalTabProps> = ({
       levelKognitif: 'L3 / HOTS (C4 - Analisis)',
       tanya: `Jelaskan langkah analisis dan penyelesaian studi kasus ${pkg.topikFokus || currentUnit.nama} berikut secara sistematis!`,
       kunci: 'Pedoman jawaban dan langkah penyelesaian lengkap.',
-      skor: 25,
+      skor: 20,
     };
     const nextEssay = [...pkg.essay, newItem];
     onUpdateSoalPkg(currentUnit.id, { ...pkg, essay: nextEssay, jmlEssay: nextEssay.length });
@@ -317,32 +327,79 @@ export const SoalTab: React.FC<SoalTabProps> = ({
                 </select>
               </div>
 
-              <div className="grid grid-cols-3 gap-2.5 md:col-span-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 md:col-span-2">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    Jumlah Soal PG
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      Jumlah Soal PG (Maks. 50)
+                    </label>
+                  </div>
                   <input
                     type="number"
                     min={1}
-                    max={25}
+                    max={50}
                     value={pkg.jmlPg}
-                    onChange={e => handleFieldChange('jmlPg', Math.max(1, Math.min(25, Number(e.target.value) || 5)))}
+                    onChange={e => {
+                      const raw = Number(e.target.value);
+                      const nextVal = Number.isFinite(raw) ? Math.max(1, Math.min(50, Math.round(raw))) : 1;
+                      handleFieldChange('jmlPg', nextVal);
+                    }}
                     className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-600"
                   />
+                  <div className="flex flex-wrap gap-1 mt-1.5">
+                    {[10, 20, 30, 40, 50].map(n => (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => handleFieldChange('jmlPg', n)}
+                        className={`px-2 py-0.5 text-[10px] font-mono font-semibold rounded border cursor-pointer transition-colors ${
+                          pkg.jmlPg === n
+                            ? 'bg-emerald-700 text-white border-emerald-700'
+                            : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-100'
+                        }`}
+                      >
+                        {n}
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    Jumlah Soal Uraian
+                    Jumlah Soal Uraian (0–5)
                   </label>
                   <input
                     type="number"
-                    min={1}
-                    max={10}
+                    min={0}
+                    max={5}
                     value={pkg.jmlEssay}
-                    onChange={e => handleFieldChange('jmlEssay', Math.max(1, Math.min(10, Number(e.target.value) || 2)))}
+                    onChange={e => {
+                      const valStr = e.target.value;
+                      if (valStr === '') {
+                        handleFieldChange('jmlEssay', 0);
+                        return;
+                      }
+                      const raw = Number(valStr);
+                      const nextVal = Number.isFinite(raw) ? Math.max(0, Math.min(5, Math.round(raw))) : 0;
+                      handleFieldChange('jmlEssay', nextVal);
+                    }}
                     className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-600"
                   />
+                  <div className="flex flex-wrap gap-1 mt-1.5">
+                    {[0, 1, 2, 3, 4, 5].map(n => (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => handleFieldChange('jmlEssay', n)}
+                        className={`px-2 py-0.5 text-[10px] font-mono font-semibold rounded border cursor-pointer transition-colors ${
+                          pkg.jmlEssay === n
+                            ? 'bg-emerald-700 text-white border-emerald-700'
+                            : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-100'
+                        }`}
+                      >
+                        {n}
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
@@ -455,19 +512,21 @@ export const SoalTab: React.FC<SoalTabProps> = ({
             {activeSubTab === 'pg' && (
               <button
                 type="button"
+                disabled={pkg.pg.length >= 50}
                 onClick={handleAddPg}
-                className="px-3.5 py-1.5 bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-800 rounded-lg text-xs font-semibold cursor-pointer"
+                className="px-3.5 py-1.5 bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 disabled:opacity-50 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-800 rounded-lg text-xs font-semibold cursor-pointer"
               >
-                + Tambah Soal Pilihan Ganda
+                + Tambah Soal Pilihan Ganda ({pkg.pg.length}/50)
               </button>
             )}
             {activeSubTab === 'essay' && (
               <button
                 type="button"
+                disabled={pkg.essay.length >= 5}
                 onClick={handleAddEssay}
-                className="px-3.5 py-1.5 bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-800 rounded-lg text-xs font-semibold cursor-pointer"
+                className="px-3.5 py-1.5 bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 disabled:opacity-50 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-800 rounded-lg text-xs font-semibold cursor-pointer"
               >
-                + Tambah Soal Uraian / Kasus
+                + Tambah Soal Uraian / Kasus ({pkg.essay.length}/5)
               </button>
             )}
           </div>
@@ -602,6 +661,16 @@ export const SoalTab: React.FC<SoalTabProps> = ({
           {/* Editor Uraian / Studi Kasus */}
           {activeSubTab === 'essay' && (
             <div className="space-y-4">
+              {pkg.essay.length === 0 ? (
+                <div className="bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-6 text-center space-y-2">
+                  <div className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                    Jumlah Soal Uraian: 0 (Tidak ada soal uraian)
+                  </div>
+                  <p className="text-xs text-slate-500 max-w-md mx-auto">
+                    Paket ujian ini hanya menggunakan soal Pilihan Ganda. Anda dapat mengubah <b>Jumlah Soal Uraian (0–5)</b> atau klik tombol <b>+ Tambah Soal Uraian / Kasus</b> jika ingin menambahkan soal uraian.
+                  </p>
+                </div>
+              ) : null}
               {pkg.essay.map((item, idx) => (
                 <div
                   key={item.id || idx}
@@ -766,12 +835,14 @@ export const SoalTab: React.FC<SoalTabProps> = ({
               </select>
             </div>
           )}
-          <article
-            className="doc-paper doc-portrait mx-auto"
-            dangerouslySetInnerHTML={{
-              __html: generateSoalHtml(state, currentUnit?.id),
-            }}
-          />
+          <div className="docwrap">
+            <article
+              className="doc-paper font-serif"
+              dangerouslySetInnerHTML={{
+                __html: getTabDocHtml(state, 'soal').html,
+              }}
+            />
+          </div>
         </div>
       )}
     </div>

@@ -62,7 +62,7 @@ export const KopEditor: React.FC<KopEditorProps> = ({
             <span>Kop Surat Dokumen & Logo Sekolah</span>
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Unggah logo sekolah/instansi dan sesuaikan identitas kop surat. Otomatis tampil di semua 7 dokumen & file unduhan Word (.doc).
+            Unggah logo sekolah/instansi dan sesuaikan identitas kop surat. Otomatis tampil di semua 8 dokumen & file unduhan Word (.doc).
           </p>
         </div>
 

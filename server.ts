@@ -138,13 +138,15 @@ app.post('/api/generate-soal', async (req, res) => {
     jenisUjian = 'Asesmen Sumatif Lingkup Materi',
     kesulitan = 'Proporsional (L1 Dasar, L2 Aplikasi, L3 HOTS)',
     waktuMenit = 90,
-    jmlPg = 5,
-    jmlEssay = 2,
+    jmlPg = 10,
+    jmlEssay = 5,
     tps = [],
   } = req.body || {};
 
-  const targetPg = Math.max(1, Math.min(25, Number(jmlPg) || 5));
-  const targetEssay = Math.max(1, Math.min(10, Number(jmlEssay) || 2));
+  const rawPg = jmlPg !== undefined && jmlPg !== null ? Number(jmlPg) : 10;
+  const rawEssay = jmlEssay !== undefined && jmlEssay !== null ? Number(jmlEssay) : 5;
+  const targetPg = Math.max(1, Math.min(50, Number.isFinite(rawPg) ? Math.round(rawPg) : 10));
+  const targetEssay = Math.max(0, Math.min(5, Number.isFinite(rawEssay) ? Math.round(rawEssay) : 5));
   const fokus = (topikFokus && String(topikFokus).trim()) || unitNama;
 
   const fallbackUnit = { id: 'unit-ai', sem: 1 as const, nama: unitNama, cpId: '' };
@@ -175,8 +177,13 @@ app.post('/api/generate-soal', async (req, res) => {
         },
       });
 
+      const essayInstruction =
+        targetEssay === 0
+          ? `1. Buat tepat ${targetPg} butir soal Pilihan Ganda (opsi A, B, C, D, E) dan TIDAK ADA soal uraian ("essay": []).`
+          : `1. Buat tepat ${targetPg} butir soal Pilihan Ganda (opsi A, B, C, D, E) dan tepat ${targetEssay} butir soal Uraian/Studi Kasus.`;
+
       const prompt = `Anda adalah pakar penyusun soal asesmen Kurikulum Merdeka pada Inspirasi Ruang GTK Kemendikdasmen.
-Susun paket instrumen evaluasi lengkap berupa Kisi-Kisi, Soal Pilihan Ganda (5 opsi A, B, C, D, E), Soal Uraian/Studi Kasus, serta Kunci Jawaban dan Pembahasan yang SPESIFIK untuk:
+Susun paket instrumen evaluasi lengkap berupa Kisi-Kisi, Soal Pilihan Ganda (5 opsi A, B, C, D, E)${targetEssay > 0 ? ', Soal Uraian/Studi Kasus' : ''}, serta Kunci Jawaban dan Pembahasan yang SPESIFIK untuk:
 
 Mata Pelajaran: ${mapel}
 Fase / Kelas: Fase ${fase} / Kelas ${kelas}
@@ -188,7 +195,7 @@ Daftar Tujuan Pembelajaran (TP):
 ${fallbackTps.length > 0 ? fallbackTps.map((t, idx) => `${idx + 1}. ${t.teks}`).join('\n') : `1. Menguasai konsep dan aplikasi ${fokus}`}
 
 KETENTUAN PENYUSUNAN SOAL:
-1. Buat tepat ${targetPg} butir soal Pilihan Ganda (opsi A, B, C, D, E) dan tepat ${targetEssay} butir soal Uraian/Studi Kasus.
+${essayInstruction}
 2. Soal WAJIB kontekstual, menggunakan kasus nyata/angka transaksi/skenario dunia kerja yang akurat sesuai topik "${fokus}".
 3. Setiap butir soal harus dilengkapi:
    - tpKode (misal "TP.1", "TP E.6.1", dst.)
@@ -212,16 +219,20 @@ Kembalikan HANYA JSON murni dengan struktur:
       "pembahasan": "Penjelasan perhitungan/rasional..."
     }
   ],
-  "essay": [
+  "essay": ${
+    targetEssay === 0
+      ? '[]'
+      : `[
     {
       "tpKode": "TP.1",
       "indikatorSoal": "Disajikan studi kasus ..., peserta didik dapat ...",
       "levelKognitif": "L3 / HOTS (C4 - Analisis Kasus)",
       "tanya": "Pertanyaan studi kasus uraian...",
       "kunci": "Langkah penyelesaian dan kunci jawaban lengkap...",
-      "skor": 50
+      "skor": ${Math.round(100 / targetEssay)}
     }
-  ]
+  ]`
+  }
 }`;
 
       const geminiCall = ai.models.generateContent({
@@ -233,8 +244,9 @@ Kembalikan HANYA JSON murni dengan struktur:
         },
       });
 
+      const timeoutMs = targetPg > 15 ? 18000 : 9500;
       const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error('timeout')), 7500)
+        setTimeout(() => reject(new Error('timeout')), timeoutMs)
       );
 
       const response: any = await Promise.race([geminiCall, timeoutPromise]);
@@ -252,7 +264,7 @@ Kembalikan HANYA JSON murni dengan struktur:
           waktuMenit: Number(waktuMenit) || 90,
         });
 
-        basePkg.pg = parsed.pg.slice(0, targetPg).map((item: any, i: number) => ({
+        const aiPg = parsed.pg.slice(0, targetPg).map((item: any, i: number) => ({
           id: `pg-ai-${i}-${Date.now()}`,
           tpKode: item.tpKode || `TP.${i + 1}`,
           indikatorSoal: item.indikatorSoal || `Disajikan kasus tentang ${fokus}, peserta didik dapat menentukan jawaban dengan tepat.`,
@@ -269,15 +281,30 @@ Kembalikan HANYA JSON murni dengan struktur:
           pembahasan: item.pembahasan || '',
         }));
 
-        basePkg.essay = parsed.essay.slice(0, targetEssay).map((item: any, i: number) => ({
-          id: `es-ai-${i}-${Date.now()}`,
-          tpKode: item.tpKode || `TP.${i + 1}`,
-          indikatorSoal: item.indikatorSoal || `Disajikan studi kasus tentang ${fokus}, peserta didik dapat menguraikan penyelesaiannya.`,
-          levelKognitif: item.levelKognitif || 'L3 / HOTS (C4 - Analisis Kasus)',
-          tanya: item.tanya || '',
-          kunci: item.kunci || '',
-          skor: Number(item.skor) || Math.round(100 / Math.max(1, targetEssay)),
-        }));
+        // If AI returned fewer PG items than requested, pad seamlessly up to targetPg
+        if (aiPg.length < targetPg) {
+          basePkg.pg = [...aiPg, ...basePkg.pg.slice(aiPg.length, targetPg)];
+        } else {
+          basePkg.pg = aiPg;
+        }
+
+        if (targetEssay === 0) {
+          basePkg.essay = [];
+        } else {
+          const aiEssay = parsed.essay.slice(0, targetEssay).map((item: any, i: number) => ({
+            id: `es-ai-${i}-${Date.now()}`,
+            tpKode: item.tpKode || `TP.${i + 1}`,
+            indikatorSoal: item.indikatorSoal || `Disajikan studi kasus tentang ${fokus}, peserta didik dapat menguraikan penyelesaiannya.`,
+            levelKognitif: item.levelKognitif || 'L3 / HOTS (C4 - Analisis Kasus)',
+            tanya: item.tanya || '',
+            kunci: item.kunci || '',
+            skor: Number(item.skor) || Math.round(100 / targetEssay),
+          }));
+          basePkg.essay =
+            aiEssay.length < targetEssay
+              ? [...aiEssay, ...basePkg.essay.slice(aiEssay.length, targetEssay)]
+              : aiEssay;
+        }
 
         return res.json({ pkg: basePkg, source: 'ai' });
       }

@@ -1,7 +1,8 @@
 import React from 'react';
 import { AppState, Semester } from '../types';
 import { DocHeader } from './DocHeader';
-import { docKop } from '../utils/docExport';
+import { docKop, getDocScopeInfo } from '../utils/docExport';
+import { useDocActions } from '../context/DocActionContext';
 
 interface PromesTabProps {
   state: AppState;
@@ -29,6 +30,9 @@ export const PromesTab: React.FC<PromesTabProps> = ({
   const p = state.profil;
   const sem = state.ui.sem;
   const bs = state.bulan.filter(b => b.sem === sem);
+  const { resetCustomDoc } = useDocActions();
+  const scope = getDocScopeInfo(state, 'promes');
+  const customPromesHtml = state.customDocs?.[scope.scopeKey];
 
   // Compute number map for TPs
   const NOMAP: Record<string, number> = {};
@@ -155,24 +159,51 @@ export const PromesTab: React.FC<PromesTabProps> = ({
               Semester 2
             </button>
           </div>
-          <button
-            onClick={() => onAutoSebar(sem)}
-            className="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-medium transition-colors cursor-pointer"
-          >
-            Sebar Otomatis
-          </button>
-          <button
-            onClick={() => onClearPromes(sem)}
-            className="px-3.5 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-medium transition-colors border border-slate-300 dark:border-slate-700 cursor-pointer"
-          >
-            Kosongkan Jadwal
-          </button>
-          <span className="text-xs text-slate-500 font-mono ml-auto">
-            {usedSlotsCount} dari {allSlots.length} minggu efektif terisi
-          </span>
+          {!customPromesHtml && (
+            <>
+              <button
+                onClick={() => onAutoSebar(sem)}
+                className="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-medium transition-colors cursor-pointer"
+              >
+                Sebar Otomatis
+              </button>
+              <button
+                onClick={() => onClearPromes(sem)}
+                className="px-3.5 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-medium transition-colors border border-slate-300 dark:border-slate-700 cursor-pointer"
+              >
+                Kosongkan Jadwal
+              </button>
+              <span className="text-xs text-slate-500 font-mono ml-auto">
+                {usedSlotsCount} dari {allSlots.length} minggu efektif terisi
+              </span>
+            </>
+          )}
+          {customPromesHtml && (
+            <div className="flex items-center gap-2 ml-auto">
+              <span className="text-xs text-amber-700 dark:text-amber-300 font-medium">
+                Menampilkan versi hasil edit manual
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  resetCustomDoc(scope.scopeKey);
+                  showToast?.('Promes dikembalikan ke jadwal interaktif otomatis.');
+                }}
+                className="px-3 py-1.5 bg-amber-100 dark:bg-amber-950/60 hover:bg-amber-200 text-amber-900 dark:text-amber-200 rounded-lg text-xs font-semibold border border-amber-300 dark:border-amber-700 cursor-pointer"
+              >
+                Kembali ke Jadwal Interaktif
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="docwrap">
+          {customPromesHtml ? (
+            <article
+              className="doc-paper wide font-serif"
+              dangerouslySetInnerHTML={{ __html: customPromesHtml }}
+            />
+          ) : (
           <article className="doc-paper wide font-serif">
             <div dangerouslySetInnerHTML={{ __html: docKop(state) }} />
             <h2>PROGRAM SEMESTER {sem}</h2>
@@ -337,6 +368,7 @@ export const PromesTab: React.FC<PromesTabProps> = ({
               </tbody>
             </table>
           </article>
+          )}
         </div>
       </div>
     );

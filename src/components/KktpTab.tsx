@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppState, Semester, TpItem } from '../types';
 import { DocHeader } from './DocHeader';
-import { generateKktpHtml } from '../utils/docExport';
+import { getTabDocHtml } from '../utils/docExport';
 
 interface KktpTabProps {
   state: AppState;
@@ -241,7 +241,7 @@ export const KktpTab: React.FC<KktpTabProps> = ({
     <div className="docwrap">
       <article
         className="doc-paper wide font-serif"
-        dangerouslySetInnerHTML={{ __html: generateKktpHtml(state) }}
+        dangerouslySetInnerHTML={{ __html: getTabDocHtml(state, 'kktp').html }}
       />
     </div>
   );

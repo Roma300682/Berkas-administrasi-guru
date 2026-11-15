@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { FileEdit, Download, Upload, Copy, RotateCcw } from 'lucide-react';
 import { AppState, Semester } from '../types';
 import { TABS } from '../data/defaultData';
 import { AKL_SUBJECTS_CATALOG } from '../curriculumAkl';
 import { downloadAllDocsWord, downloadDocForTab } from '../utils/docExport';
+import { getTabDetail, getTabStatus, jpAvailForSem, jpTotalForSem } from '../utils/tabStatus';
+import { useDocActions } from '../context/DocActionContext';
 import { KopEditor } from './KopEditor';
 
 interface BerandaTabProps {
@@ -25,114 +28,28 @@ export const BerandaTab: React.FC<BerandaTabProps> = ({
   showToast
 }) => {
   const p = state.profil;
-  const [backupText, setBackupText] = useState(JSON.stringify(state));
+  const { openDocEditor } = useDocActions();
+  const [backupText, setBackupText] = useState(() => JSON.stringify(state));
+  const [isEditingBackup, setIsEditingBackup] = useState(false);
+  const restoreFileRef = useRef<HTMLInputElement>(null);
 
-  const jpAvail = (s: Semester) => {
-    const bs = state.bulan.filter(b => b.sem === s);
-    return bs.reduce((acc, b) => acc + (b.n - b.off.length) * (Number(p.jp) || 0), 0);
-  };
-
-  const jpTotal = (s: Semester) => {
-    const uIds = state.unit.filter(u => u.sem === s).map(u => u.id);
-    const tps = state.tp.filter(t => uIds.includes(t.unitId));
-    return tps.reduce((acc, t) => acc + (Number(t.jp) || 0), 0);
-  };
-
-  const ratioSt = (r: number) => (r <= 0 ? 0 : r >= 1 ? 2 : 1);
-
-  const getStatus = (id: string): number => {
-    const n = state.tp.length;
-    const U = state.unit.length;
-    switch (id) {
-      case 'mulai': {
-        const fields = ['guru', 'sekolah', 'mapel', 'kelas', 'ta', 'kepsek'];
-        const filled = fields.filter(k => Boolean((p as any)[k])).length;
-        return ratioSt(filled / fields.length);
-      }
-      case 'waktu':
-        return jpAvail(1) > 0 && jpAvail(2) > 0 ? 2 : jpAvail(1) > 0 || jpAvail(2) > 0 ? 1 : 0;
-      case 'cpatp': {
-        const r = n ? state.tp.filter(t => t.teks && Number(t.jp) > 0).length / n : 0;
-        return ratioSt(state.cp.length ? r : Math.min(r, 0.5));
-      }
-      case 'prota':
-        return !n ? 0 : jpTotal(1) <= jpAvail(1) && jpTotal(2) <= jpAvail(2) ? 2 : 1;
-      case 'promes':
-        return ratioSt(n ? state.tp.filter(t => (state.promes[t.id] || []).length).length / n : 0);
-      case 'kktp':
-        return ratioSt(n ? state.tp.filter(t => t.ind && t.r1 && t.r2 && t.r3 && t.r4).length / n : 0);
-      case 'modul':
-        return ratioSt(
-          U
-            ? state.unit.filter(u => {
-                const m = state.modul[u.id];
-                return m && m.pendahuluan && m.memahami;
-              }).length / U
-            : 0
-        );
-      case 'lkpd':
-        return ratioSt(
-          U
-            ? state.unit.filter(u => {
-                const l = state.lkpd[u.id];
-                return l && l.tugas;
-              }).length / U
-            : 0
-        );
-      case 'soal':
-        return U > 0 ? 2 : 0;
-      default:
-        return 0;
+  useEffect(() => {
+    if (!isEditingBackup) {
+      setBackupText(JSON.stringify(state));
     }
-  };
+  }, [state, isEditingBackup]);
 
-  const getDetail = (id: string): string => {
-    const n = state.tp.length;
-    const U = state.unit.length;
-    const mgSum = (s: Semester) => {
-      const bs = state.bulan.filter(b => b.sem === s);
-      return bs.reduce((acc, b) => acc + (b.n - b.off.length), 0);
-    };
-    switch (id) {
-      case 'mulai':
-        return 'Identitas guru dan sekolah';
-      case 'waktu':
-        return `${mgSum(1) + mgSum(2)} minggu efektif · ${jpAvail(1) + jpAvail(2)} JP · Kalender Pendidikan`;
-      case 'cpatp':
-        return `${U} unit · ${n} TP`;
-      case 'prota':
-        return `${jpTotal(1) + jpTotal(2)} JP materi`;
-      case 'promes':
-        return `${state.tp.filter(t => (state.promes[t.id] || []).length).length} dari ${n} TP terjadwal`;
-      case 'kktp':
-        return `${state.tp.filter(t => t.ind && t.r1 && t.r2 && t.r3 && t.r4).length} dari ${n} TP lengkap`;
-      case 'modul':
-        return `${
-          state.unit.filter(u => {
-            const m = state.modul[u.id];
-            return m && m.pendahuluan && m.memahami;
-          }).length
-        } dari ${U} unit`;
-      case 'lkpd':
-        return `${
-          state.unit.filter(u => {
-            const l = state.lkpd[u.id];
-            return l && l.tugas;
-          }).length
-        } dari ${U} unit`;
-      case 'soal':
-        return `Kisi-kisi, Pilihan Ganda & Uraian (${U} unit)`;
-      default:
-        return '';
-    }
-  };
+  const jpAvail = (s: Semester) => jpAvailForSem(state, s);
+  const jpTotal = (s: Semester) => jpTotalForSem(state, s);
 
   const STL = ['Belum', 'Sebagian', 'Selesai'];
 
   const handleCopyBackup = () => {
     const json = JSON.stringify(state);
+    setBackupText(json);
+    setIsEditingBackup(false);
     navigator.clipboard.writeText(json);
-    showToast('Cadangan disalin ke clipboard.');
+    showToast('Cadangan terbaru disalin ke clipboard.');
   };
 
   const handleDownloadBackupJson = () => {
@@ -149,6 +66,20 @@ export const BerandaTab: React.FC<BerandaTabProps> = ({
     showToast('File cadangan (.json) berhasil diunduh.');
   };
 
+  const handleUploadBackupJson = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const content = String(reader.result || '');
+      setBackupText(content);
+      setIsEditingBackup(false);
+      onRestore(content);
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -160,17 +91,27 @@ export const BerandaTab: React.FC<BerandaTabProps> = ({
             Susun delapan perangkat ajar & evaluasi (termasuk Kalender Pendidikan terintegrasi dan Pembuatan Soal Ujian AI) dalam satu alur. Data yang diisi pada satu berkas dipakai otomatis di berkas berikutnya.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            const fn = downloadAllDocsWord(state);
-            showToast(`Berhasil mengunduh paket lengkap 8 dokumen: ${fn}`);
-          }}
-          className="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-colors flex items-center gap-2 cursor-pointer shrink-0"
-        >
-          <span>📥</span>
-          <span>Unduh Semua 8 Berkas Lengkap (.doc)</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={() => openDocEditor('all')}
+            className="px-3.5 py-2.5 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700 rounded-xl text-xs sm:text-sm font-semibold transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+          >
+            <FileEdit className="w-4 h-4" />
+            <span>Edit Paket Lengkap</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const fn = downloadAllDocsWord(state);
+              showToast(`Berhasil mengunduh paket lengkap 8 dokumen: ${fn}`);
+            }}
+            className="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-colors flex items-center gap-2 cursor-pointer whitespace-nowrap"
+          >
+            <Download className="w-4 h-4" />
+            <span>Unduh Semua 8 Berkas Lengkap (.doc)</span>
+          </button>
+        </div>
       </div>
 
       {state.sample && (
@@ -473,25 +414,31 @@ export const BerandaTab: React.FC<BerandaTabProps> = ({
 
           <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-xs flex flex-col gap-3">
             <div className="flex items-center justify-between gap-2">
-              <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Kemajuan & Unduh Berkas</h2>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Kemajuan &amp; Unduh Berkas</h2>
               <button
                 type="button"
                 onClick={() => {
                   const fn = downloadAllDocsWord(state);
-                  showToast(`Berhasil mengunduh semua 7 berkas: ${fn}`);
+                  showToast(`Berhasil mengunduh semua 8 berkas: ${fn}`);
                 }}
-                className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:underline cursor-pointer"
+                className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:underline cursor-pointer flex items-center gap-1"
               >
-                📥 Unduh Semua (.doc)
+                <Download className="w-3.5 h-3.5" />
+                <span>Unduh Semua (.doc)</span>
               </button>
             </div>
             <div className="flex flex-col gap-1">
               {TABS.slice(1).map(t => {
-                const st = getStatus(t.id);
+                const st = getTabStatus(state, t.id);
+                const detail = getTabDetail(state, t.id);
+                const isEdited = Object.keys(state.customDocs || {}).some(
+                  k => k === t.id || k.startsWith(`${t.id}:`)
+                );
+
                 return (
                   <div
                     key={t.id}
-                    className="flex items-center gap-2.5 w-full py-2 px-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors border-t border-slate-100 dark:border-slate-800 first:border-0"
+                    className="flex items-center gap-2 w-full py-2 px-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors border-t border-slate-100 dark:border-slate-800 first:border-0"
                   >
                     <button
                       type="button"
@@ -499,34 +446,48 @@ export const BerandaTab: React.FC<BerandaTabProps> = ({
                       className="flex items-center gap-3 flex-1 min-w-0 text-left cursor-pointer"
                     >
                       <span
-                        className={`w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold shrink-0 ${
+                        className={`w-6 h-6 rounded-md border flex items-center justify-center text-xs font-mono font-bold shrink-0 ${
                           st === 2
                             ? 'bg-emerald-700 border-emerald-700 text-white dark:bg-emerald-500 dark:text-slate-950'
                             : st === 1
-                            ? 'border-emerald-600 text-emerald-700 dark:border-emerald-400 dark:text-emerald-300'
+                            ? 'border-amber-500 text-amber-700 dark:border-amber-400 dark:text-amber-300'
                             : 'border-slate-300 text-slate-500 dark:border-slate-700 dark:text-slate-400'
                         }`}
                       >
                         {t.n}
                       </span>
                       <div className="flex flex-col flex-1 min-w-0">
-                        <b className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t.l}</b>
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <b className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
+                            {t.l}
+                          </b>
+                          <span
+                            className={`text-[11px] font-medium shrink-0 ${
+                              st === 2
+                                ? 'text-emerald-700 dark:text-emerald-400'
+                                : st === 1
+                                ? 'text-amber-700 dark:text-amber-400'
+                                : 'text-slate-400 dark:text-slate-500'
+                            }`}
+                          >
+                            · {STL[st]}
+                            {isEdited ? ' · Diedit' : ''}
+                          </span>
+                        </div>
                         <small className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                          {getDetail(t.id)}
+                          {detail}
                         </small>
                       </div>
                     </button>
-                    <span
-                      className={`text-[11px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${
-                        st === 2
-                          ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
-                          : st === 1
-                          ? 'bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
-                          : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-                      }`}
+                    <button
+                      type="button"
+                      onClick={() => openDocEditor(t.id)}
+                      title={`Edit dokumen ${t.l} sebelum unduh`}
+                      className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800 rounded-md text-[11px] font-semibold transition-colors cursor-pointer shrink-0 flex items-center gap-1"
                     >
-                      {STL[st]}
-                    </span>
+                      <FileEdit className="w-3 h-3" />
+                      <span>Edit</span>
+                    </button>
                     <button
                       type="button"
                       onClick={() => {
@@ -534,9 +495,10 @@ export const BerandaTab: React.FC<BerandaTabProps> = ({
                         showToast(`Berhasil mengunduh ${fn}`);
                       }}
                       title={`Unduh ${t.l} (.doc)`}
-                      className="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/70 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800 rounded-md text-[11px] font-semibold transition-colors cursor-pointer shrink-0"
+                      className="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/70 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800 rounded-md text-[11px] font-semibold transition-colors cursor-pointer shrink-0 flex items-center gap-1"
                     >
-                      📥 .doc
+                      <Download className="w-3 h-3" />
+                      <span>.doc</span>
                     </button>
                   </div>
                 );
@@ -548,39 +510,77 @@ export const BerandaTab: React.FC<BerandaTabProps> = ({
 
       {/* Cadangan Data / Backup */}
       <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-xs flex flex-col gap-4">
-        <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Cadangan Data</h2>
-        <p className="text-xs text-slate-600 dark:text-slate-400 m-0">
-          Data tersimpan otomatis di peramban ini. Salin cadangan secara berkala, atau untuk memindahkan data ke perangkat lain: tempel cadangan ke kotak di bawah lalu pulihkan.
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Cadangan &amp; Pemulihan Data</h2>
+            <p className="text-xs text-slate-600 dark:text-slate-400 m-0 mt-0.5">
+              Data tersimpan otomatis di peramban ini. Unduh cadangan berkala dalam format .json atau pulihkan dari file/teks cadangan.
+            </p>
+          </div>
+          {isEditingBackup && (
+            <button
+              type="button"
+              onClick={() => {
+                setIsEditingBackup(false);
+                setBackupText(JSON.stringify(state));
+              }}
+              className="text-xs font-medium text-emerald-700 dark:text-emerald-400 hover:underline cursor-pointer"
+            >
+              Muat Ulang Teks Cadangan Terbaru
+            </button>
+          )}
+        </div>
         <textarea
           className="w-full h-24 p-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-xs text-slate-900 dark:text-slate-100 resize-y"
           value={backupText}
-          onChange={e => setBackupText(e.target.value)}
+          onChange={e => {
+            setIsEditingBackup(true);
+            setBackupText(e.target.value);
+          }}
           aria-label="Cadangan data"
         />
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
             onClick={handleDownloadBackupJson}
-            className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-medium transition-colors cursor-pointer"
+            className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
           >
-            💾 Unduh Cadangan (.json)
+            <Download className="w-3.5 h-3.5" />
+            <span>Unduh Cadangan (.json)</span>
+          </button>
+          <input
+            ref={restoreFileRef}
+            type="file"
+            accept=".json,application/json"
+            onChange={handleUploadBackupJson}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => restoreFileRef.current?.click()}
+            className="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg text-xs font-semibold transition-colors border border-slate-300 dark:border-slate-700 cursor-pointer flex items-center gap-1.5"
+          >
+            <Upload className="w-3.5 h-3.5" />
+            <span>Unggah &amp; Pulihkan File (.json)</span>
           </button>
           <button
             type="button"
             onClick={handleCopyBackup}
-            className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg text-xs font-medium transition-colors border border-slate-300 dark:border-slate-700 cursor-pointer"
+            className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg text-xs font-medium transition-colors border border-slate-300 dark:border-slate-700 cursor-pointer flex items-center gap-1.5"
           >
-            📋 Salin Cadangan
+            <Copy className="w-3.5 h-3.5" />
+            <span>Salin Cadangan</span>
           </button>
           <button
             type="button"
             onClick={() => {
               onRestore(backupText);
+              setIsEditingBackup(false);
             }}
-            className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg text-xs font-medium transition-colors border border-slate-300 dark:border-slate-700 cursor-pointer"
+            className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg text-xs font-medium transition-colors border border-slate-300 dark:border-slate-700 cursor-pointer flex items-center gap-1.5"
           >
-            🔄 Pulihkan dari Kotak
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Pulihkan dari Kotak Teks</span>
           </button>
         </div>
       </section>

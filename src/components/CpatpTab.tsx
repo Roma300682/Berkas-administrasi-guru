@@ -3,7 +3,7 @@ import { AppState, Semester, CpItem, UnitItem, TpItem } from '../types';
 import { DocHeader } from './DocHeader';
 import { AKL_SUBJECTS_CATALOG } from '../curriculumAkl';
 import { generateStandardCurriculum } from '../serverCurriculum';
-import { generateCpatpHtml } from '../utils/docExport';
+import { getTabDocHtml } from '../utils/docExport';
 
 interface CpatpTabProps {
   state: AppState;
@@ -541,7 +541,7 @@ export const CpatpTab: React.FC<CpatpTabProps> = ({
     <div className="docwrap">
       <article
         className="doc-paper wide font-serif"
-        dangerouslySetInnerHTML={{ __html: generateCpatpHtml(state) }}
+        dangerouslySetInnerHTML={{ __html: getTabDocHtml(state, 'cpatp').html }}
       />
     </div>
   );

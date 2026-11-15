@@ -2,7 +2,7 @@ import React from 'react';
 import { AppState, UnitItem, TpItem } from '../types';
 import { DocHeader } from './DocHeader';
 import { DIMENSIONS } from '../data/defaultData';
-import { generateModulHtml } from '../utils/docExport';
+import { getTabDocHtml } from '../utils/docExport';
 
 interface ModulTabProps {
   state: AppState;
@@ -123,10 +123,10 @@ export const ModulTab: React.FC<ModulTabProps> = ({
             <button
               key={u.id}
               onClick={() => onSelectUnit(u.id)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors cursor-pointer ${
                 u.id === uId
                   ? 'bg-emerald-700 border-emerald-700 text-white'
-                  : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300'
+                  : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-emerald-600'
               }`}
             >
               {u.nama || `Unit ${i + 1}`} <span className="opacity-75 ml-1">S{u.sem}</span>
@@ -167,10 +167,10 @@ export const ModulTab: React.FC<ModulTabProps> = ({
                       <button
                         key={d}
                         onClick={() => onToggleDimensi(uId, d)}
-                        className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                        className={`px-3 py-1 rounded-lg text-xs font-medium border transition-colors cursor-pointer ${
                           active
                             ? 'bg-emerald-700 border-emerald-700 text-white'
-                            : 'bg-slate-50 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300'
+                            : 'bg-slate-50 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-emerald-600'
                         }`}
                       >
                         {d}
@@ -204,10 +204,10 @@ export const ModulTab: React.FC<ModulTabProps> = ({
           <button
             key={u.id}
             onClick={() => onSelectUnit(u.id)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors cursor-pointer ${
               u.id === uId
                 ? 'bg-emerald-700 border-emerald-700 text-white'
-                : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300'
+                : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-emerald-600'
             }`}
           >
             {u.nama || `Unit ${i + 1}`} <span className="opacity-75 ml-1">S{u.sem}</span>
@@ -218,7 +218,7 @@ export const ModulTab: React.FC<ModulTabProps> = ({
       <div className="docwrap">
         <article
           className="doc-paper font-serif"
-          dangerouslySetInnerHTML={{ __html: generateModulHtml(state, uId) }}
+          dangerouslySetInnerHTML={{ __html: getTabDocHtml(state, 'modul').html }}
         />
       </div>
     </div>

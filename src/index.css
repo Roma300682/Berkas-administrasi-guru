@@ -1,4 +1,10 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
 
 /* Official A4 Paper Document Template Styling */
 .docwrap {
@@ -33,6 +39,17 @@
   border-radius: 2px;
   word-wrap: break-word;
   overflow-wrap: break-word;
+}
+
+.doc-paper[contenteditable="true"] {
+  outline: 2px solid #059669;
+  outline-offset: 2px;
+  cursor: text;
+}
+
+.doc-paper[contenteditable="true"]:focus {
+  outline: 2.5px solid #047857;
+  box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.14), 0 8px 30px rgba(0, 0, 0, 0.18);
 }
 
 /* Standard A4 Landscape Sheet: 297mm x 210mm, Margin: Top 15mm, Right 18mm, Bottom 15mm, Left 18mm */
